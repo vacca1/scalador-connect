@@ -658,7 +658,7 @@ export default function Index() {
         className="absolute inset-0 bg-black/50 md:hidden animate-fade-in"
         onClick={() => setShowMenu(false)}
       />
-      <div className="absolute right-0 top-0 md:relative glass rounded-l-3xl md:rounded-3xl shadow-2xl shadow-blue-500/20 w-80 max-w-[85vw] h-full md:h-auto overflow-hidden animate-slide-in-right md:animate-scale-in">
+      <div className="absolute right-0 top-0 md:relative glass rounded-none md:rounded-3xl shadow-2xl shadow-blue-500/20 w-full md:w-80 h-full md:h-auto overflow-hidden animate-slide-in-right md:animate-scale-in">
         <div className="p-4 sm:p-6 bg-gradient-to-br from-blue-600 to-blue-500 text-white">
           <div className="flex items-center justify-between mb-4 md:mb-0">
             <div className="flex items-center gap-3 sm:gap-4">
@@ -678,7 +678,7 @@ export default function Index() {
             </button>
           </div>
         </div>
-        <div className="py-2 sm:py-3 bg-white max-h-[calc(100vh-120px)] md:max-h-none overflow-y-auto">
+        <div className="flex-1 py-2 sm:py-3 bg-white overflow-y-auto">
           <button
             onClick={() => navegarPara("vagas")}
             className="md:hidden w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
