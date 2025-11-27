@@ -715,7 +715,14 @@ export default function Index() {
             )}
           </button>
           <button
-            className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 rounded-xl sm:rounded-2xl flex items-center justify-center text-white font-black text-base sm:text-lg shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-110 transition-all duration-300"
+            className="md:hidden w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 rounded-xl sm:rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-110 transition-all duration-300"
+            onClick={() => setShowMenu(!showMenu)}
+            aria-label="Menu"
+          >
+            <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+          <button
+            className="hidden md:flex w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 rounded-xl sm:rounded-2xl items-center justify-center text-white font-black text-base sm:text-lg shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-110 transition-all duration-300"
             onClick={() => setShowMenu(!showMenu)}
           >
             S
