@@ -188,6 +188,7 @@ const MOCK_JOBS: Job[] = [
       cidade: "Brasília",
       estado: "DF",
       cep: "70000-000",
+      coordenadas: { lat: -15.8153, lng: -47.9193 },
     },
     data: "2025-11-28",
     horarioEntrada: "18:00",
@@ -228,6 +229,7 @@ const MOCK_JOBS: Job[] = [
       cidade: "Brasília",
       estado: "DF",
       cep: "70000-000",
+      coordenadas: { lat: -15.7094, lng: -47.9025 },
     },
     data: "2025-11-29",
     horarioEntrada: "08:00",
@@ -829,10 +831,13 @@ export default function Index() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-12">
           <div>
-            <h3 className="text-2xl sm:text-3xl font-black mb-3 sm:mb-4 flex items-center gap-2">
-              <span className="text-3xl sm:text-4xl gradient-text">S</span>
-              <span className="bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">calador</span>
-            </h3>
+            <div className="mb-4 sm:mb-6">
+              <img 
+                src={scaladorLogo} 
+                alt="Scalador" 
+                className="h-12 sm:h-16 w-auto object-contain"
+              />
+            </div>
             <p className="text-purple-200 text-xs sm:text-sm mb-2 font-medium">CNPJ: 41.264.266/0001-29</p>
             <p className="text-purple-200 text-xs sm:text-sm leading-relaxed">
               Quadra Crs 516 Bloco B, 66 - Asa Sul, Brasília - DF
