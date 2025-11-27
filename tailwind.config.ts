@@ -96,8 +96,8 @@ export default {
         '3xl': '1.5rem',
       },
       boxShadow: {
-        'glow-purple': '0 0 40px rgba(139, 92, 246, 0.4)',
         'glow-blue': '0 0 40px rgba(59, 130, 246, 0.4)',
+        'glow-cyan': '0 0 40px rgba(34, 211, 238, 0.4)',
         'glow-green': '0 0 40px rgba(16, 185, 129, 0.4)',
         'glow-orange': '0 0 40px rgba(249, 115, 22, 0.4)',
       },
@@ -130,8 +130,8 @@ export default {
           "100%": { opacity: "1", transform: "scale(1)" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 20px rgba(139, 92, 246, 0.3)" },
-          "50%": { boxShadow: "0 0 40px rgba(139, 92, 246, 0.6)" },
+          "0%, 100%": { boxShadow: "0 0 20px rgba(59, 130, 246, 0.3)" },
+          "50%": { boxShadow: "0 0 40px rgba(59, 130, 246, 0.6)" },
         },
         "shimmer": {
           "0%": { backgroundPosition: "-200% 0" },
