@@ -378,7 +378,7 @@ export default function Index() {
 
   // ===== COMPONENTES DE UI =====
   const Header = () => (
-    <header className="sticky top-0 z-50 backdrop-blur-2xl bg-white/80 border-b border-purple-100/20 shadow-lg shadow-purple-500/5">
+    <header className="sticky top-0 z-50 backdrop-blur-2xl bg-white/80 border-b border-blue-100/20 shadow-lg shadow-blue-500/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-10">
           <h1 
@@ -388,35 +388,35 @@ export default function Index() {
             <span className="text-4xl">S</span>calador
           </h1>
           <nav className="hidden md:flex gap-8">
-            <button onClick={() => navegarPara('vagas')} className="relative text-gray-700 hover:text-purple-600 font-semibold transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-purple-600 after:to-pink-500 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
+            <button onClick={() => navegarPara('vagas')} className="relative text-gray-700 hover:text-blue-600 font-semibold transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
               Vagas
             </button>
-            <button onClick={() => navegarPara('minhas-vagas')} className="relative text-gray-700 hover:text-purple-600 font-semibold transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-purple-600 after:to-pink-500 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
+            <button onClick={() => navegarPara('minhas-vagas')} className="relative text-gray-700 hover:text-blue-600 font-semibold transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
               Minhas Vagas
             </button>
-            <button onClick={() => navegarPara('publicar')} className="relative text-gray-700 hover:text-purple-600 font-semibold transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-purple-600 after:to-pink-500 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
+            <button onClick={() => navegarPara('publicar')} className="relative text-gray-700 hover:text-blue-600 font-semibold transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
               Publicar Vaga
             </button>
-            <button onClick={() => navegarPara('pagamentos')} className="relative text-gray-700 hover:text-purple-600 font-semibold transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-purple-600 after:to-pink-500 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
+            <button onClick={() => navegarPara('pagamentos')} className="relative text-gray-700 hover:text-blue-600 font-semibold transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
               Pagamentos
             </button>
           </nav>
         </div>
         <div className="flex items-center gap-3">
-          <button className="p-3 hover:bg-purple-50 rounded-xl transition-all duration-300 hidden md:block hover:scale-105">
+          <button className="p-3 hover:bg-blue-50 rounded-xl transition-all duration-300 hidden md:block hover:scale-105">
             <MessageSquare className="w-5 h-5 text-gray-600" />
           </button>
           <button 
-            className="p-3 hover:bg-purple-50 rounded-xl relative transition-all duration-300 hover:scale-105"
+            className="p-3 hover:bg-blue-50 rounded-xl relative transition-all duration-300 hover:scale-105"
             onClick={() => navegarPara('notificacoes')}
           >
             <Bell className="w-5 h-5 text-gray-600" />
             {notifications.filter(n => !n.lida).length > 0 && (
-              <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-gradient-to-r from-red-500 to-pink-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></span>
+              <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-gradient-to-r from-red-500 to-rose-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></span>
             )}
           </button>
           <button 
-            className="w-12 h-12 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-xl shadow-purple-500/40 hover:shadow-2xl hover:shadow-purple-600/50 hover:scale-105 transition-all duration-300"
+            className="w-12 h-12 bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-105 transition-all duration-300"
             onClick={() => setShowMenu(!showMenu)}
           >
             S
@@ -428,29 +428,29 @@ export default function Index() {
   );
 
   const MenuDropdown = () => (
-    <div className="absolute right-4 top-20 glass rounded-3xl shadow-2xl shadow-purple-500/20 w-80 z-50 overflow-hidden animate-scale-in">
-      <div className="p-6 bg-gradient-to-br from-purple-500 to-pink-500 text-white">
+    <div className="absolute right-4 top-20 glass rounded-3xl shadow-2xl shadow-blue-500/20 w-80 z-50 overflow-hidden animate-scale-in">
+      <div className="p-6 bg-gradient-to-br from-blue-600 to-blue-500 text-white">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl">
             S
           </div>
           <div>
             <p className="font-bold text-xl">Scalador</p>
-            <p className="text-sm text-purple-100">contato.scalador@gmail.com</p>
+            <p className="text-sm text-blue-100">contato.scalador@gmail.com</p>
           </div>
         </div>
       </div>
       <div className="py-3 bg-white">
-        <button onClick={() => navegarPara('publicar')} className="w-full px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
-          <Plus className="w-5 h-5 text-purple-600 group-hover:scale-110 transition-transform" /> Publicar vaga
+        <button onClick={() => navegarPara('publicar')} className="w-full px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
+          <Plus className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Publicar vaga
         </button>
-        <button onClick={() => navegarPara('minhas-vagas')} className="w-full px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
+        <button onClick={() => navegarPara('minhas-vagas')} className="w-full px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
           <Briefcase className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Minhas Vagas
         </button>
-        <button onClick={() => navegarPara('carteira')} className="w-full px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
+        <button onClick={() => navegarPara('carteira')} className="w-full px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
           <Wallet className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" /> Minha Carteira
         </button>
-        <button onClick={() => navegarPara('configuracoes')} className="w-full px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
+        <button onClick={() => navegarPara('configuracoes')} className="w-full px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
           <Settings className="w-5 h-5 text-orange-600 group-hover:scale-110 transition-transform" /> Configurações
         </button>
         <button className="w-full px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
@@ -499,7 +499,7 @@ export default function Index() {
             </div>
           </div>
         </div>
-        <div className="mt-12 pt-8 border-t border-purple-700/30 text-center text-purple-300 text-sm font-medium">
+        <div className="mt-12 pt-8 border-t border-blue-700/30 text-center text-blue-300 text-sm font-medium">
           desenvolvido com <span className="text-red-400 animate-pulse">🔥</span> por <span className="font-bold text-white">Labi9</span>
         </div>
       </div>
@@ -511,26 +511,26 @@ export default function Index() {
       aberta: { text: 'Vaga Aberta', color: 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg shadow-green-500/40' },
       aguardando_freelancer: { text: 'Aguardando', color: 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg shadow-yellow-500/40' },
       em_deslocamento: { text: 'Em Deslocamento', color: 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/40 animate-pulse' },
-      em_andamento: { text: 'Em Andamento', color: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/40' },
+      em_andamento: { text: 'Em Andamento', color: 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/40' },
       concluida: { text: 'Concluída', color: 'bg-gradient-to-r from-gray-500 to-gray-600 text-white shadow-lg shadow-gray-500/40' },
       cancelada: { text: 'Cancelada', color: 'bg-gradient-to-r from-red-500 to-rose-500 text-white shadow-lg shadow-red-500/40' }
     };
 
     return (
       <div 
-        className="glass rounded-3xl p-8 hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 cursor-pointer group hover:-translate-y-2 relative overflow-hidden"
+        className="glass rounded-3xl p-8 hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 cursor-pointer group hover:-translate-y-2 relative overflow-hidden"
         onClick={() => navegarPara('vaga-detalhes', job.id)}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         <div className="relative flex items-start gap-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center text-3xl shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl flex items-center justify-center text-3xl shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
             {job.logoEmpresa}
           </div>
           <div className="flex-1">
             <div className="flex items-start justify-between mb-3">
               <div>
-                <p className="text-sm font-semibold text-purple-600 mb-1">{job.empresa}</p>
-                <h3 className="text-2xl font-black text-gray-900 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-pink-500 group-hover:bg-clip-text transition-all duration-300">{job.titulo}</h3>
+                <p className="text-sm font-semibold text-blue-600 mb-1">{job.empresa}</p>
+                <h3 className="text-2xl font-black text-gray-900 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-cyan-500 group-hover:bg-clip-text transition-all duration-300">{job.titulo}</h3>
               </div>
               <span className={`px-5 py-2 rounded-full text-xs font-bold ${statusBadge[job.status].color}`}>
                 {statusBadge[job.status].text}
@@ -541,7 +541,7 @@ export default function Index() {
             </p>
             <p className="text-gray-700 text-base mb-6 line-clamp-2 leading-relaxed">{job.descricao}</p>
             <div className="flex flex-wrap gap-3 mb-6">
-              <span className="px-5 py-2 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200/50 text-purple-700 rounded-full text-sm font-bold shadow-sm">
+              <span className="px-5 py-2 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 text-blue-700 rounded-full text-sm font-bold shadow-sm">
                 {job.tipo === 'freelance' ? '⚡ Freelancer' : '📅 Temporário'}
               </span>
               <span className="px-5 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 text-blue-700 rounded-full text-sm font-bold shadow-sm">
@@ -553,7 +553,7 @@ export default function Index() {
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-gray-600 font-medium">
               <span className="flex items-center gap-2 group/item">
-                <MapPin className="w-5 h-5 text-purple-500 group-hover/item:scale-110 transition-transform" /> {job.localizacao.cidade}
+                <MapPin className="w-5 h-5 text-blue-500 group-hover/item:scale-110 transition-transform" /> {job.localizacao.cidade}
               </span>
               <span className="flex items-center gap-2 group/item">
                 <Calendar className="w-5 h-5 text-blue-500 group-hover/item:scale-110 transition-transform" /> {new Date(job.data).toLocaleDateString('pt-BR')}
@@ -589,16 +589,16 @@ export default function Index() {
         <div className="max-w-4xl mx-auto mb-10">
           <div className="flex gap-4">
             <div className="flex-1 relative group">
-              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-purple-400 w-6 h-6 group-focus-within:scale-110 group-focus-within:text-purple-600 transition-all" />
+              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-blue-400 w-6 h-6 group-focus-within:scale-110 group-focus-within:text-blue-600 transition-all" />
               <input
                 type="text"
                 placeholder="Procure por trabalhos incríveis..."
-                className="w-full pl-14 pr-6 py-5 glass rounded-2xl text-lg font-medium placeholder:text-gray-400 focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300"
+                className="w-full pl-14 pr-6 py-5 glass rounded-2xl text-lg font-medium placeholder:text-gray-400 focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300"
                 value={filtros.busca}
                 onChange={(e) => setFiltros({ ...filtros, busca: e.target.value })}
               />
             </div>
-            <button className="px-10 py-5 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-2xl font-bold text-lg shadow-xl shadow-purple-500/40 hover:shadow-2xl hover:shadow-purple-600/50 hover:scale-105 active:scale-95 transition-all duration-300">
+            <button className="px-10 py-5 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-2xl font-bold text-lg shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-105 active:scale-95 transition-all duration-300">
               Procurar
             </button>
           </div>
@@ -627,14 +627,14 @@ export default function Index() {
 
           {/* Sidebar de Filtros - Flutuante e fixo à direita */}
           <aside className="lg:w-80 flex-shrink-0">
-            <div className="glass rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 lg:sticky lg:top-24">
+            <div className="glass rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 lg:sticky lg:top-24">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-black text-gray-900 text-xl flex items-center gap-2">
-                  <Filter className="w-5 h-5 text-purple-600" /> Filtros
+                  <Filter className="w-5 h-5 text-blue-600" /> Filtros
                 </h3>
                 <button 
                   onClick={() => setFiltros({ busca: '', tipo: 'todos', profissao: 'todas', estado: 'todos', experiencia: 'todas' })}
-                  className="text-sm font-bold text-purple-600 hover:text-pink-600 hover:scale-110 transition-all"
+                  className="text-sm font-bold text-blue-600 hover:text-cyan-600 hover:scale-110 transition-all"
                 >
                   Limpar
                 </button>
@@ -644,7 +644,7 @@ export default function Index() {
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-3">Tipo de Vaga</label>
                   <select 
-                    className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300"
+                    className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300"
                     value={filtros.tipo}
                     onChange={(e) => setFiltros({ ...filtros, tipo: e.target.value })}
                   >
@@ -656,7 +656,7 @@ export default function Index() {
                 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-3">Profissão</label>
-                  <select className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300">
+                  <select className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300">
                     <option>Todas as profissões</option>
                     <option>🧹 Auxiliar de serviços gerais</option>
                     <option>🍽️ Garçom</option>
@@ -666,7 +666,7 @@ export default function Index() {
                 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-3">Experiência</label>
-                  <select className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300">
+                  <select className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300">
                     <option>Todas</option>
                     <option>⭐ Com experiência</option>
                     <option>🌟 Sem experiência</option>
@@ -755,18 +755,18 @@ export default function Index() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <button
               onClick={() => { setTipoVaga('freelance'); setStep(2); }}
-              className="glass rounded-3xl p-10 hover:shadow-2xl hover:shadow-purple-500/30 transition-all duration-500 text-left group relative overflow-hidden hover:-translate-y-2"
+              className="glass rounded-3xl p-10 hover:shadow-2xl hover:shadow-blue-500/30 transition-all duration-500 text-left group relative overflow-hidden hover:-translate-y-2"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
-                  <Briefcase className="w-8 h-8 text-purple-600" />
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
+                  <Briefcase className="w-8 h-8 text-blue-600" />
                 </div>
                 <h3 className="text-2xl font-black text-gray-900 mb-4">⚡ Freelance</h3>
                 <p className="text-gray-600 leading-relaxed font-medium mb-6">
                   Freelancers são profissionais temporários que oferecem à empresas a flexibilidade de contratar talentos sem necessidade de vínculo trabalhista.
                 </p>
-                <div className="flex items-center text-purple-600 font-bold group-hover:gap-3 gap-2 transition-all">
+                <div className="flex items-center text-blue-600 font-bold group-hover:gap-3 gap-2 transition-all">
                   Selecionar <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
@@ -1082,7 +1082,7 @@ export default function Index() {
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div 
-                  className="bg-gradient-to-r from-indigo-500 to-purple-600 h-3 rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-indigo-500 to-blue-600 h-3 rounded-full transition-all duration-500"
                   style={{ width: `${(item.valor / maxValor) * 100}%` }}
                 ></div>
               </div>
@@ -1167,8 +1167,8 @@ export default function Index() {
             titulo="Taxa de Aceitação"
             valor={`${taxaAceitacao.toFixed(0)}%`}
             subtitulo={`${freelancersAceitos} aceitos`}
-            icone={<CheckCircle className="w-5 h-5 text-purple-600" />}
-            cor="bg-purple-500"
+            icone={<CheckCircle className="w-5 h-5 text-blue-600" />}
+            cor="bg-blue-500"
             tendencia={-3.1}
           />
           <MetricCard
@@ -1191,7 +1191,7 @@ export default function Index() {
 
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <Briefcase className="w-5 h-5 text-purple-600" /> Vagas por Status
+              <Briefcase className="w-5 h-5 text-blue-600" /> Vagas por Status
             </h3>
             <PieChart data={vagasPorStatus} />
           </div>
@@ -1267,17 +1267,17 @@ export default function Index() {
               <p className="text-blue-100 text-xs">Valor líquido recebido pelos freelancers</p>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-6 text-white">
+            <div className="bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg p-6 text-white">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
                   <Activity className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-purple-100 text-sm">Taxa Scalador</p>
+                  <p className="text-cyan-100 text-sm">Taxa Scalador</p>
                   <p className="text-3xl font-bold">R$ {taxaScaladorTotal.toFixed(2)}</p>
                 </div>
               </div>
-              <p className="text-purple-100 text-xs">10% sobre o valor total</p>
+              <p className="text-cyan-100 text-xs">10% sobre o valor total</p>
             </div>
           </div>
 
@@ -1586,8 +1586,8 @@ export default function Index() {
 
             <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 text-left transition-all">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <Users className="w-5 h-5 text-purple-600" />
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Users className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
                   <p className="font-bold text-gray-900">Relatório de Freelancers</p>
@@ -2127,7 +2127,7 @@ export default function Index() {
     };
 
     return (
-      <div className="glass rounded-3xl p-6 shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
+      <div className="glass rounded-3xl p-6 shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-bold text-gray-700">{label}</span>
           <span className={`text-2xl font-black tabular-nums ${percentage < 30 ? 'text-red-600 animate-pulse' : 'text-gray-900'}`}>
