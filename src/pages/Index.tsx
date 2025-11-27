@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import scaladorLogo from "@/assets/scalador-logo.png";
 
 // ===== TIPOS E INTERFACES =====
 type JobStatus = "aberta" | "aguardando_freelancer" | "em_deslocamento" | "em_andamento" | "concluida" | "cancelada";
@@ -438,12 +439,12 @@ export default function Index() {
     <header className="sticky top-0 z-50 backdrop-blur-2xl bg-white/80 border-b border-blue-100/20 shadow-lg shadow-blue-500/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-10">
-          <h1
-            className="text-3xl font-black cursor-pointer flex items-center gap-2 gradient-text hover:scale-105 transition-transform duration-300"
+          <img
+            src={scaladorLogo}
+            alt="Scalador"
+            className="h-10 cursor-pointer hover:scale-105 transition-transform duration-300"
             onClick={() => navegarPara("vagas")}
-          >
-            <span className="text-4xl">S</span>calador
-          </h1>
+          />
           <nav className="hidden md:flex gap-8">
             <button
               onClick={() => navegarPara("vagas")}
