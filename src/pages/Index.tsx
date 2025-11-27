@@ -787,6 +787,112 @@ export default function Index() {
     </>
   );
 
+  // Menu mobile simples, em tela cheia
+  const MobileMenu = () => (
+    <>
+      <div
+        className="fixed inset-0 bg-black/50 z-40 md:hidden animate-fade-in"
+        onClick={() => setShowMenu(false)}
+      />
+      <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-2xl z-50 flex flex-col animate-slide-in-right md:hidden">
+        <div className="p-4 sm:p-6 bg-gradient-to-br from-blue-600 to-blue-500 text-white">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl flex items-center justify-center text-white font-black text-xl sm:text-2xl shadow-xl">
+                S
+              </div>
+              <div>
+                <p className="font-bold text-lg sm:text-xl">Scalador</p>
+                <p className="text-xs sm:text-sm text-blue-100">contato.scalador@gmail.com</p>
+              </div>
+            </div>
+            <button
+              className="p-2 hover:bg-white/20 rounded-lg transition-all"
+              onClick={() => setShowMenu(false)}
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+        <div className="flex-1 py-2 sm:py-3 bg-white overflow-y-auto">
+          <button
+            onClick={() => navegarPara("vagas")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+          >
+            <Home className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Vagas
+          </button>
+          <button
+            onClick={() => navegarPara("freelancers")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group"
+          >
+            <Users className="w-5 h-5 text-purple-600 group-hover:scale-110 transition-transform" /> Buscar Freelancers
+          </button>
+          <button
+            onClick={() => navegarPara("carteira")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group relative"
+          >
+            <Heart className="w-5 h-5 text-pink-600 group-hover:scale-110 transition-transform" />
+            Minha Carteira
+            {carteiraFreelancers.length > 0 && (
+              <span className="absolute right-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                {carteiraFreelancers.length}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => navegarPara("publicar")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group"
+          >
+            <Plus className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Publicar vaga
+          </button>
+          <button
+            onClick={() => navegarPara("minhas-vagas")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group"
+          >
+            <Briefcase className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Minhas Vagas
+          </button>
+          <button
+            onClick={() => navegarPara("pagamentos")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group"
+          >
+            <FileText className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Pagamentos
+          </button>
+          <button
+            onClick={() => navegarPara("saldo")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group"
+          >
+            <Wallet className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" /> Minha Carteira
+          </button>
+          <button
+            onClick={() => navegarPara("configuracoes")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group"
+          >
+            <Settings className="w-5 h-5 text-orange-600 group-hover:scale-110 transition-transform" /> Configurações
+          </button>
+          <button
+            onClick={() => navegarPara("notificacoes")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group"
+          >
+            <MessageSquare className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" /> Mensagens
+          </button>
+          <button
+            onClick={() => setShowMenu(false)}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group"
+          >
+            <HelpCircle className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" /> Preciso de ajuda
+          </button>
+          <hr className="my-2 border-gray-100" />
+          <button
+            onClick={() => setShowMenu(false)}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-red-50 flex items-center gap-3 text-red-600 font-semibold transition-all duração-300 group rounded-b-3xl"
+          >
+            <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" /> Sair
+          </button>
+        </div>
+      </div>
+    </>
+  );
+
   const Header = () => (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/30 border-b border-white/20 shadow-2xl shadow-blue-500/10">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
@@ -864,7 +970,7 @@ export default function Index() {
           </button>
         </div>
       </div>
-      {showMenu && <MenuDropdown />}
+      {showMenu && <MobileMenu />}
     </header>
   );
 
