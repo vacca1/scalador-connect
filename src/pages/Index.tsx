@@ -34,6 +34,10 @@ import {
   Home,
   Wallet,
   FileText,
+  Heart,
+  UserPlus,
+  Award,
+  Zap,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
@@ -102,6 +106,31 @@ interface Message {
   mensagem: string;
   timestamp: Date;
   tipo: "texto" | "sistema" | "whatsapp";
+}
+
+interface Freelancer {
+  id: string;
+  nome: string;
+  foto: string;
+  profissao: string;
+  rating: number;
+  totalTrabalhos: number;
+  experiencia: string;
+  localizacao: {
+    cidade: string;
+    estado: string;
+  };
+  habilidades: string[];
+  disponivel: boolean;
+  valorHora: number;
+  telefone: string;
+  descricao: string;
+  ultimosTrabalhos: {
+    empresa: string;
+    cargo: string;
+    avaliacao: number;
+    data: Date;
+  }[];
 }
 
 // ===== DADOS MOCKADOS =====
@@ -249,6 +278,101 @@ const MOCK_HISTORICO_FREELANCERS = [
   },
 ];
 
+const MOCK_FREELANCERS: Freelancer[] = [
+  {
+    id: "f1",
+    nome: "João Silva",
+    foto: "👨",
+    profissao: "Garçom",
+    rating: 4.8,
+    totalTrabalhos: 127,
+    experiencia: "5 anos",
+    localizacao: { cidade: "Brasília", estado: "DF" },
+    habilidades: ["Eventos", "Atendimento VIP", "Buffet"],
+    disponivel: true,
+    valorHora: 35.0,
+    telefone: "(61) 98765-4321",
+    descricao: "Profissional experiente em eventos corporativos e sociais",
+    ultimosTrabalhos: [
+      { empresa: "Restaurante Premium", cargo: "Garçom", avaliacao: 5, data: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
+      { empresa: "Hotel Central", cargo: "Garçom", avaliacao: 4.8, data: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000) },
+    ],
+  },
+  {
+    id: "f2",
+    nome: "Maria Santos",
+    foto: "👩",
+    profissao: "Auxiliar de Limpeza",
+    rating: 4.9,
+    totalTrabalhos: 203,
+    experiencia: "8 anos",
+    localizacao: { cidade: "Brasília", estado: "DF" },
+    habilidades: ["Limpeza Pesada", "Organização", "Eventos"],
+    disponivel: true,
+    valorHora: 28.0,
+    telefone: "(61) 98111-2222",
+    descricao: "Especialista em limpeza e organização de eventos",
+    ultimosTrabalhos: [
+      { empresa: "Scalador", cargo: "Auxiliar", avaliacao: 5, data: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) },
+      { empresa: "Shopping Center", cargo: "Limpeza", avaliacao: 4.9, data: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000) },
+    ],
+  },
+  {
+    id: "f3",
+    nome: "Carlos Lima",
+    foto: "👨‍💼",
+    profissao: "Recepcionista",
+    rating: 4.7,
+    totalTrabalhos: 85,
+    experiencia: "3 anos",
+    localizacao: { cidade: "Brasília", estado: "DF" },
+    habilidades: ["Atendimento", "Inglês fluente", "Informática"],
+    disponivel: true,
+    valorHora: 32.0,
+    telefone: "(61) 98333-4444",
+    descricao: "Recepcionista bilíngue com experiência em hotelaria",
+    ultimosTrabalhos: [
+      { empresa: "Hotel Central", cargo: "Recepcionista", avaliacao: 4.7, data: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
+    ],
+  },
+  {
+    id: "f4",
+    nome: "Ana Costa",
+    foto: "👩‍🍳",
+    profissao: "Cozinheira",
+    rating: 5.0,
+    totalTrabalhos: 156,
+    experiencia: "10 anos",
+    localizacao: { cidade: "Brasília", estado: "DF" },
+    habilidades: ["Cozinha Brasileira", "Eventos", "Buffet"],
+    disponivel: false,
+    valorHora: 45.0,
+    telefone: "(61) 98555-6666",
+    descricao: "Chef especializada em eventos e cozinha regional",
+    ultimosTrabalhos: [
+      { empresa: "Restaurante Gourmet", cargo: "Chef", avaliacao: 5, data: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+    ],
+  },
+  {
+    id: "f5",
+    nome: "Pedro Oliveira",
+    foto: "👨‍🔧",
+    profissao: "Técnico de Eventos",
+    rating: 4.6,
+    totalTrabalhos: 94,
+    experiencia: "4 anos",
+    localizacao: { cidade: "Brasília", estado: "DF" },
+    habilidades: ["Montagem", "Som e Luz", "Elétrica"],
+    disponivel: true,
+    valorHora: 38.0,
+    telefone: "(61) 98777-8888",
+    descricao: "Técnico completo para montagem e suporte de eventos",
+    ultimosTrabalhos: [
+      { empresa: "Eventos Premium", cargo: "Técnico", avaliacao: 4.6, data: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000) },
+    ],
+  },
+];
+
 // ===== COMPONENTE PRINCIPAL =====
 export default function Index() {
   const [currentPage, setCurrentPage] = useState("vagas");
@@ -269,6 +393,9 @@ export default function Index() {
     conteudo: null,
   });
   const [historicoFreelancers, setHistoricoFreelancers] = useState(MOCK_HISTORICO_FREELANCERS);
+  const [freelancers, setFreelancers] = useState<Freelancer[]>(MOCK_FREELANCERS);
+  const [carteiraFreelancers, setCarteiraFreelancers] = useState<string[]>(["f1", "f2"]); // IDs dos favoritos
+  const [selectedFreelancer, setSelectedFreelancer] = useState<Freelancer | null>(null);
   const { toast } = useToast();
 
   // Filtros
@@ -278,6 +405,13 @@ export default function Index() {
     profissao: "todas",
     estado: "todos",
     experiencia: "todas",
+  });
+
+  const [filtrosFreelancers, setFiltrosFreelancers] = useState({
+    busca: "",
+    profissao: "todas",
+    disponivel: "todos",
+    avaliacao: "todas",
   });
 
   // Adicionar notificações automáticas
@@ -434,6 +568,42 @@ export default function Index() {
     }
   };
 
+  // ===== FUNÇÕES CARTEIRA DE FREELANCERS =====
+  const toggleCarteiraFreelancer = (freelancerId: string) => {
+    setCarteiraFreelancers((prev) => {
+      if (prev.includes(freelancerId)) {
+        toast({
+          title: "Removido da carteira",
+          description: "Freelancer removido dos seus favoritos",
+        });
+        return prev.filter((id) => id !== freelancerId);
+      } else {
+        toast({
+          title: "Adicionado à carteira",
+          description: "Freelancer salvo nos seus favoritos",
+        });
+        return [...prev, freelancerId];
+      }
+    });
+  };
+
+  const convidarFreelancer = (freelancerId: string, vagaId?: string) => {
+    const freelancer = freelancers.find((f) => f.id === freelancerId);
+    if (!freelancer) return;
+
+    simularEnvioWhatsApp("convite_direto", freelancer.nome, {
+      tipo: "convite_personalizado",
+      mensagem: `A empresa quer convidar você para uma vaga!`,
+      freelancer: freelancer.nome,
+      telefone: freelancer.telefone,
+    });
+
+    toast({
+      title: "Convite enviado!",
+      description: `${freelancer.nome} receberá seu convite via WhatsApp`,
+    });
+  };
+
   // ===== COMPONENTES DE UI =====
   const Header = () => (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/30 border-b border-white/20 shadow-2xl shadow-blue-500/10">
@@ -453,6 +623,24 @@ export default function Index() {
               Vagas
             </button>
             <button
+              onClick={() => navegarPara("freelancers")}
+              className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm"
+            >
+              Freelancers
+            </button>
+            <button
+              onClick={() => navegarPara("carteira")}
+              className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm flex items-center gap-2"
+            >
+              <Heart className="w-4 h-4" />
+              Minha Carteira
+              {carteiraFreelancers.length > 0 && (
+                <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                  {carteiraFreelancers.length}
+                </span>
+              )}
+            </button>
+            <button
               onClick={() => navegarPara("minhas-vagas")}
               className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm"
             >
@@ -463,12 +651,6 @@ export default function Index() {
               className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm"
             >
               Publicar Vaga
-            </button>
-            <button
-              onClick={() => navegarPara("pagamentos")}
-              className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm"
-            >
-              Pagamentos
             </button>
           </nav>
         </div>
@@ -531,6 +713,24 @@ export default function Index() {
             <Home className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Vagas
           </button>
           <button
+            onClick={() => navegarPara("freelancers")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+          >
+            <Users className="w-5 h-5 text-purple-600 group-hover:scale-110 transition-transform" /> Buscar Freelancers
+          </button>
+          <button
+            onClick={() => navegarPara("carteira")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group relative"
+          >
+            <Heart className="w-5 h-5 text-pink-600 group-hover:scale-110 transition-transform" /> 
+            Minha Carteira
+            {carteiraFreelancers.length > 0 && (
+              <span className="absolute right-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                {carteiraFreelancers.length}
+              </span>
+            )}
+          </button>
+          <button
             onClick={() => navegarPara("publicar")}
             className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
@@ -549,7 +749,7 @@ export default function Index() {
             <FileText className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Pagamentos
           </button>
           <button
-            onClick={() => navegarPara("carteira")}
+            onClick={() => navegarPara("saldo")}
             className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
             <Wallet className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" /> Minha Carteira
@@ -2369,6 +2569,329 @@ export default function Index() {
     );
   };
 
+  // ===== PÁGINA BUSCAR FREELANCERS =====
+  const PaginaBuscarFreelancers = () => {
+    const freelancersFiltrados = freelancers.filter((freelancer) => {
+      if (filtrosFreelancers.busca && !freelancer.nome.toLowerCase().includes(filtrosFreelancers.busca.toLowerCase()) && !freelancer.profissao.toLowerCase().includes(filtrosFreelancers.busca.toLowerCase())) return false;
+      if (filtrosFreelancers.profissao !== "todas" && freelancer.profissao !== filtrosFreelancers.profissao) return false;
+      if (filtrosFreelancers.disponivel !== "todos" && ((filtrosFreelancers.disponivel === "sim" && !freelancer.disponivel) || (filtrosFreelancers.disponivel === "nao" && freelancer.disponivel))) return false;
+      if (filtrosFreelancers.avaliacao !== "todas") {
+        const minRating = parseFloat(filtrosFreelancers.avaliacao);
+        if (freelancer.rating < minRating) return false;
+      }
+      return true;
+    });
+
+    return (
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-6 sm:py-12">
+        <div className="mb-8 sm:mb-12 text-center animate-fade-in">
+          <h2 className="text-3xl sm:text-5xl md:text-6xl font-black mb-3 sm:mb-4">
+            <span className="gradient-text">Buscar Freelancers</span>
+          </h2>
+          <p className="text-gray-600 text-base sm:text-xl font-medium">Encontre profissionais de confiança 👥</p>
+        </div>
+
+        <div className="max-w-4xl mx-auto mb-6 sm:mb-10">
+          <div className="flex gap-2 sm:gap-4">
+            <div className="flex-1 relative group">
+              <Search className="absolute left-3 sm:left-5 top-1/2 transform -translate-y-1/2 text-purple-400 w-5 sm:w-6 h-5 sm:h-6 group-focus-within:scale-110 group-focus-within:text-purple-600 transition-all" />
+              <input
+                type="text"
+                placeholder="Buscar por nome ou profissão..."
+                className="w-full pl-10 sm:pl-14 pr-3 sm:pr-6 py-3 sm:py-5 glass rounded-xl sm:rounded-2xl text-sm sm:text-lg font-medium placeholder:text-gray-400 focus:ring-4 focus:ring-purple-500/30 focus:border-purple-400 transition-all duration-300"
+                value={filtrosFreelancers.busca}
+                onChange={(e) => setFiltrosFreelancers({ ...filtrosFreelancers, busca: e.target.value })}
+              />
+            </div>
+            <button className="px-5 sm:px-10 py-3 sm:py-5 bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 text-white rounded-xl sm:rounded-2xl font-bold text-sm sm:text-lg shadow-xl shadow-purple-500/40 hover:shadow-2xl hover:shadow-purple-600/50 hover:scale-105 active:scale-95 transition-all duration-300 whitespace-nowrap">
+              Buscar
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
+          <div className="flex-1 min-w-0">
+            {freelancersFiltrados.length === 0 ? (
+              <div className="text-center py-12 sm:py-20 glass rounded-2xl sm:rounded-3xl">
+                <div className="text-4xl sm:text-6xl mb-4 animate-float">🔍</div>
+                <p className="text-gray-600 text-lg sm:text-xl font-semibold mb-2">Nenhum freelancer encontrado</p>
+                <p className="text-gray-500 text-sm sm:text-base">Tente ajustar os filtros</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                {freelancersFiltrados.map((freelancer, idx) => (
+                  <FreelancerCard key={freelancer.id} freelancer={freelancer} delay={idx * 0.1} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          <aside className="lg:w-80 flex-shrink-0">
+            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 lg:sticky lg:top-24">
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <h3 className="font-black text-gray-900 text-lg sm:text-xl flex items-center gap-2">
+                  <Filter className="w-4 sm:w-5 h-4 sm:h-5 text-purple-600" /> Filtros
+                </h3>
+                <button
+                  onClick={() => setFiltrosFreelancers({ busca: "", profissao: "todas", disponivel: "todos", avaliacao: "todas" })}
+                  className="text-xs sm:text-sm font-bold text-purple-600 hover:text-pink-600 hover:scale-110 transition-all"
+                >
+                  Limpar
+                </button>
+              </div>
+
+              <div className="space-y-4 sm:space-y-5">
+                <div>
+                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Disponibilidade</label>
+                  <select
+                    className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-purple-500/30 focus:border-purple-400 transition-all duration-300"
+                    value={filtrosFreelancers.disponivel}
+                    onChange={(e) => setFiltrosFreelancers({ ...filtrosFreelancers, disponivel: e.target.value })}
+                  >
+                    <option value="todos">Todos</option>
+                    <option value="sim">✅ Disponível</option>
+                    <option value="nao">⏸️ Indisponível</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Avaliação Mínima</label>
+                  <select
+                    className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-purple-500/30 focus:border-purple-400 transition-all duration-300"
+                    value={filtrosFreelancers.avaliacao}
+                    onChange={(e) => setFiltrosFreelancers({ ...filtrosFreelancers, avaliacao: e.target.value })}
+                  >
+                    <option value="todas">Todas</option>
+                    <option value="4.5">⭐ 4.5+</option>
+                    <option value="4.0">⭐ 4.0+</option>
+                    <option value="3.5">⭐ 3.5+</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    );
+  };
+
+  // ===== PÁGINA CARTEIRA DE FREELANCERS =====
+  const PaginaCarteiraFreelancers = () => {
+    const freelancersFavoritos = freelancers.filter((f) => carteiraFreelancers.includes(f.id));
+
+    return (
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-6 sm:py-12">
+        <div className="mb-8 sm:mb-12 text-center animate-fade-in">
+          <h2 className="text-3xl sm:text-5xl md:text-6xl font-black mb-3 sm:mb-4 flex items-center justify-center gap-3">
+            <Heart className="w-10 sm:w-14 h-10 sm:h-14 text-pink-600" />
+            <span className="gradient-text">Minha Carteira</span>
+          </h2>
+          <p className="text-gray-600 text-base sm:text-xl font-medium">
+            Seus freelancers favoritos ({freelancersFavoritos.length})
+          </p>
+        </div>
+
+        {freelancersFavoritos.length === 0 ? (
+          <div className="text-center py-12 sm:py-20 glass rounded-2xl sm:rounded-3xl max-w-2xl mx-auto">
+            <Heart className="w-16 sm:w-20 h-16 sm:h-20 text-gray-300 mx-auto mb-4 sm:mb-6" />
+            <p className="text-gray-600 text-lg sm:text-2xl font-bold mb-2">Sua carteira está vazia</p>
+            <p className="text-gray-500 text-sm sm:text-base mb-6 sm:mb-8">
+              Adicione freelancers de confiança para convidá-los rapidamente
+            </p>
+            <button
+              onClick={() => navegarPara("freelancers")}
+              className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-pink-600 via-pink-500 to-rose-500 text-white rounded-xl sm:rounded-2xl font-bold text-sm sm:text-lg shadow-xl shadow-pink-500/40 hover:shadow-2xl hover:shadow-pink-600/50 hover:scale-105 active:scale-95 transition-all duration-300"
+            >
+              Buscar Freelancers
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {freelancersFavoritos.map((freelancer, idx) => (
+              <FreelancerCard key={freelancer.id} freelancer={freelancer} delay={idx * 0.1} showRemove />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // ===== COMPONENTE FREELANCER CARD =====
+  const FreelancerCard = ({ freelancer, delay = 0, showRemove = false }: { freelancer: Freelancer; delay?: number; showRemove?: boolean }) => {
+    const isFavorito = carteiraFreelancers.includes(freelancer.id);
+
+    return (
+      <div
+        className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 group hover:-translate-y-1 relative overflow-hidden animate-slide-up"
+        style={{ animationDelay: `${delay}s` }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        
+        <div className="relative">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                {freelancer.foto}
+              </div>
+              <div>
+                <h3 className="text-lg sm:text-xl font-black text-gray-900 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-pink-500 group-hover:bg-clip-text transition-all duration-300">
+                  {freelancer.nome}
+                </h3>
+                <p className="text-xs sm:text-sm font-semibold text-purple-600">{freelancer.profissao}</p>
+              </div>
+            </div>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleCarteiraFreelancer(freelancer.id);
+              }}
+              className="p-2 hover:bg-pink-50 rounded-xl transition-all duration-300 hover:scale-110"
+            >
+              <Heart className={`w-5 h-5 sm:w-6 sm:h-6 ${isFavorito ? "fill-pink-600 text-pink-600" : "text-gray-400"} transition-all`} />
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-1">
+              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+              <span className="text-base sm:text-lg font-black text-gray-900">{freelancer.rating}</span>
+            </div>
+            <span className="text-xs sm:text-sm text-gray-600">• {freelancer.totalTrabalhos} trabalhos</span>
+            <span className={`ml-auto px-2 sm:px-3 py-1 rounded-full text-xs font-bold ${freelancer.disponivel ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>
+              {freelancer.disponivel ? "✅ Disponível" : "⏸️ Ocupado"}
+            </span>
+          </div>
+
+          <p className="text-xs sm:text-sm text-gray-600 mb-3 line-clamp-2">{freelancer.descricao}</p>
+
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4">
+            {freelancer.habilidades.slice(0, 3).map((skill) => (
+              <span key={skill} className="px-2 sm:px-3 py-1 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200/50 text-purple-700 rounded-full text-xs font-bold">
+                {skill}
+              </span>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+            <div>
+              <p className="text-xs text-gray-500">Valor/hora</p>
+              <p className="text-xl sm:text-2xl font-black gradient-text-green">R$ {freelancer.valorHora}</p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setSelectedFreelancer(freelancer)}
+                className="px-3 sm:px-4 py-2 glass hover:bg-purple-50 rounded-xl text-xs sm:text-sm font-bold text-purple-600 hover:scale-105 transition-all"
+              >
+                Ver perfil
+              </button>
+              <button
+                onClick={() => convidarFreelancer(freelancer.id)}
+                className="px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-1 sm:gap-2"
+              >
+                <UserPlus className="w-3 sm:w-4 h-3 sm:h-4" /> Convidar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // ===== MODAL DETALHES FREELANCER =====
+  const ModalDetalhesFreelancer = () => {
+    if (!selectedFreelancer) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 animate-fade-in" onClick={() => setSelectedFreelancer(null)}>
+        <div className="glass rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in" onClick={(e) => e.stopPropagation()}>
+          <div className="p-4 sm:p-8">
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center text-4xl sm:text-5xl shadow-xl">
+                  {selectedFreelancer.foto}
+                </div>
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-black text-gray-900">{selectedFreelancer.nome}</h2>
+                  <p className="text-base sm:text-lg font-semibold text-purple-600">{selectedFreelancer.profissao}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                    <span className="text-lg font-black">{selectedFreelancer.rating}</span>
+                    <span className="text-sm text-gray-600">({selectedFreelancer.totalTrabalhos} trabalhos)</span>
+                  </div>
+                </div>
+              </div>
+              <button onClick={() => setSelectedFreelancer(null)} className="p-2 hover:bg-gray-100 rounded-xl transition-all">
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+
+            <div className={`p-3 sm:p-4 rounded-xl mb-6 ${selectedFreelancer.disponivel ? "bg-green-50 border-2 border-green-200" : "bg-gray-50 border-2 border-gray-200"}`}>
+              <p className="text-sm sm:text-base font-bold flex items-center gap-2">
+                {selectedFreelancer.disponivel ? "✅ Disponível agora" : "⏸️ Indisponível no momento"}
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <h3 className="text-lg sm:text-xl font-black text-gray-900 mb-3">Sobre</h3>
+              <p className="text-sm sm:text-base text-gray-700">{selectedFreelancer.descricao}</p>
+            </div>
+
+            <div className="mb-6">
+              <h3 className="text-lg sm:text-xl font-black text-gray-900 mb-3">Habilidades</h3>
+              <div className="flex flex-wrap gap-2">
+                {selectedFreelancer.habilidades.map((skill) => (
+                  <span key={skill} className="px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 text-purple-700 rounded-xl text-xs sm:text-sm font-bold">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <h3 className="text-lg sm:text-xl font-black text-gray-900 mb-3">Últimos Trabalhos</h3>
+              <div className="space-y-3">
+                {selectedFreelancer.ultimosTrabalhos.map((trabalho, idx) => (
+                  <div key={idx} className="p-3 sm:p-4 glass rounded-xl">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="font-bold text-gray-900">{trabalho.cargo}</p>
+                        <p className="text-xs sm:text-sm text-gray-600">{trabalho.empresa}</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <span className="font-bold">{trabalho.avaliacao}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => toggleCarteiraFreelancer(selectedFreelancer.id)}
+                className="flex-1 px-6 py-4 glass hover:bg-pink-50 rounded-xl sm:rounded-2xl font-bold text-pink-600 hover:scale-105 transition-all flex items-center justify-center gap-2"
+              >
+                <Heart className={`w-5 h-5 ${carteiraFreelancers.includes(selectedFreelancer.id) ? "fill-pink-600" : ""}`} />
+                {carteiraFreelancers.includes(selectedFreelancer.id) ? "Remover da carteira" : "Adicionar à carteira"}
+              </button>
+              <button
+                onClick={() => {
+                  convidarFreelancer(selectedFreelancer.id);
+                  setSelectedFreelancer(null);
+                }}
+                className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl sm:rounded-2xl font-bold shadow-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-2"
+              >
+                <UserPlus className="w-5 h-5" /> Convidar para vaga
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // ===== COMPONENTE MODAL WHATSAPP =====
   const ModalWhatsApp = () => {
     if (!modalWhatsApp.isOpen) return null;
@@ -2377,6 +2900,17 @@ export default function Index() {
       const { tipo, conteudo } = modalWhatsApp;
 
       switch (tipo) {
+        case "convite_direto":
+          return `🎯 *CONVITE ESPECIAL*
+
+Olá ${conteudo.freelancer}!
+
+A empresa ${jobs.find((j) => j.empresa === "Scalador")?.empresa || "Scalador"} gostaria de convidar você para uma vaga!
+
+Entre em contato pelo número: ${conteudo.telefone}
+
+Estamos ansiosos para trabalhar com você! 🤝`;
+
         case "nova_vaga":
           const mapsLink = conteudo.coordenadas
             ? `https://www.google.com/maps?q=${conteudo.coordenadas.lat},${conteudo.coordenadas.lng}`
@@ -2545,6 +3079,8 @@ Você tem 20 minutos para cancelar caso necessário.`;
 
       <main>
         {currentPage === "vagas" && <PaginaVagas />}
+        {currentPage === "freelancers" && <PaginaBuscarFreelancers />}
+        {currentPage === "carteira" && <PaginaCarteiraFreelancers />}
         {currentPage === "publicar" && <PaginaPublicarVaga />}
         {currentPage === "minhas-vagas" && <PaginaMinhasVagas />}
         {currentPage === "vaga-detalhes" && <PaginaVagaDetalhes />}
@@ -2554,6 +3090,7 @@ Você tem 20 minutos para cancelar caso necessário.`;
 
       <Footer />
       <ModalWhatsApp />
+      {selectedFreelancer && <ModalDetalhesFreelancer />}
     </div>
   );
 }
