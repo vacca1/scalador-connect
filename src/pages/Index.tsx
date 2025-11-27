@@ -63,6 +63,7 @@ interface Job {
   quantidadeFreelancers: number;
   localizacao: {
     endereco: string;
+    bairro: string;
     cidade: string;
     estado: string;
     cep: string;
@@ -151,6 +152,7 @@ const MOCK_JOBS: Job[] = [
     quantidadeFreelancers: 2,
     localizacao: {
       endereco: "SAUS Quadra 4",
+      bairro: "Asa Sul",
       cidade: "Brasília",
       estado: "DF",
       cep: "70070-040",
@@ -180,7 +182,8 @@ const MOCK_JOBS: Job[] = [
     valorComTaxa: 660.0,
     quantidadeFreelancers: 3,
     localizacao: {
-      endereco: "Quadra 516 Bloco B, 66 - Asa Sul",
+      endereco: "Quadra 516 Bloco B, 66",
+      bairro: "Asa Sul",
       cidade: "Brasília",
       estado: "DF",
       cep: "70000-000",
@@ -220,6 +223,7 @@ const MOCK_JOBS: Job[] = [
     quantidadeFreelancers: 1,
     localizacao: {
       endereco: "SHN Quadra 5",
+      bairro: "Asa Norte",
       cidade: "Brasília",
       estado: "DF",
       cep: "70000-000",
@@ -403,6 +407,7 @@ export default function Index() {
     busca: "",
     tipo: "todos",
     profissao: "todas",
+    bairro: "todos",
     estado: "todos",
     experiencia: "todas",
   });
@@ -913,7 +918,9 @@ export default function Index() {
             <div className="flex flex-wrap gap-3 sm:gap-6 text-xs sm:text-sm text-gray-600 font-medium">
               <span className="flex items-center gap-1.5 sm:gap-2 group/item">
                 <MapPin className="w-4 sm:w-5 h-4 sm:h-5 text-blue-500 group-hover/item:scale-110 transition-transform flex-shrink-0" />
-                <span className="truncate">{job.localizacao.cidade}</span>
+                <span className="font-bold text-blue-700">{job.localizacao.bairro}</span>
+                <span className="text-gray-400">•</span>
+                <span className="text-gray-600">{job.localizacao.cidade}</span>
               </span>
               <span className="flex items-center gap-1.5 sm:gap-2 group/item whitespace-nowrap">
                 <Calendar className="w-4 sm:w-5 h-4 sm:h-5 text-blue-500 group-hover/item:scale-110 transition-transform flex-shrink-0" />
@@ -933,8 +940,9 @@ export default function Index() {
   // ===== PÁGINAS =====
   const PaginaVagas = () => {
     const jobsFiltrados = jobs.filter((job) => {
-      if (filtros.busca && !job.titulo.toLowerCase().includes(filtros.busca.toLowerCase())) return false;
+      if (filtros.busca && !job.titulo.toLowerCase().includes(filtros.busca.toLowerCase()) && !job.localizacao.bairro.toLowerCase().includes(filtros.busca.toLowerCase())) return false;
       if (filtros.tipo !== "todos" && job.tipo !== filtros.tipo) return false;
+      if (filtros.bairro !== "todos" && job.localizacao.bairro !== filtros.bairro) return false;
       return true;
     });
 
@@ -996,7 +1004,7 @@ export default function Index() {
                 </h3>
                 <button
                   onClick={() =>
-                    setFiltros({ busca: "", tipo: "todos", profissao: "todas", estado: "todos", experiencia: "todas" })
+                    setFiltros({ busca: "", tipo: "todos", profissao: "todas", bairro: "todos", estado: "todos", experiencia: "todas" })
                   }
                   className="text-xs sm:text-sm font-bold text-blue-600 hover:text-cyan-600 hover:scale-110 transition-all"
                 >
@@ -1015,6 +1023,37 @@ export default function Index() {
                     <option value="todos">Todos os tipos</option>
                     <option value="freelance">⚡ Freelance</option>
                     <option value="temporario">📅 Temporário</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Bairro/Região</label>
+                  <select
+                    className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300"
+                    value={filtros.bairro}
+                    onChange={(e) => setFiltros({ ...filtros, bairro: e.target.value })}
+                  >
+                    <option value="todos">Todos os bairros</option>
+                    <option value="Asa Norte">🏙️ Asa Norte</option>
+                    <option value="Asa Sul">🏙️ Asa Sul</option>
+                    <option value="Águas Claras">💧 Águas Claras</option>
+                    <option value="Taguatinga">🏘️ Taguatinga</option>
+                    <option value="Ceilândia">🏘️ Ceilândia</option>
+                    <option value="Samambaia">🌿 Samambaia</option>
+                    <option value="Gama">🌳 Gama</option>
+                    <option value="Planaltina">🌾 Planaltina</option>
+                    <option value="Sobradinho">🏞️ Sobradinho</option>
+                    <option value="Brazlândia">🌲 Brazlândia</option>
+                    <option value="Santa Maria">⛪ Santa Maria</option>
+                    <option value="São Sebastião">🏡 São Sebastião</option>
+                    <option value="Recanto das Emas">🦜 Recanto das Emas</option>
+                    <option value="Lago Sul">🌊 Lago Sul</option>
+                    <option value="Lago Norte">🌊 Lago Norte</option>
+                    <option value="Riacho Fundo">🏞️ Riacho Fundo</option>
+                    <option value="Guará">🏘️ Guará</option>
+                    <option value="Cruzeiro">✝️ Cruzeiro</option>
+                    <option value="Sudoeste">🏙️ Sudoeste/Octogonal</option>
+                    <option value="Vicente Pires">🏡 Vicente Pires</option>
                   </select>
                 </div>
 
@@ -1057,6 +1096,7 @@ export default function Index() {
       horarioEntrada: "",
       horarioSaida: "",
       endereco: "",
+      bairro: "",
       cidade: "Brasília",
       estado: "DF",
       cep: "",
@@ -1085,6 +1125,7 @@ export default function Index() {
         quantidadeFreelancers: formData.quantidadeFreelancers,
         localizacao: {
           endereco: formData.endereco,
+          bairro: formData.bairro,
           cidade: formData.cidade,
           estado: formData.estado,
           cep: formData.cep,
@@ -1277,6 +1318,50 @@ export default function Index() {
                 value={formData.endereco}
                 onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
               />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Bairro/Região *</label>
+                <select
+                  className="w-full p-3 border border-gray-300 rounded-lg font-medium"
+                  value={formData.bairro}
+                  onChange={(e) => setFormData({ ...formData, bairro: e.target.value })}
+                >
+                  <option value="">Selecione o bairro</option>
+                  <option value="Asa Norte">🏙️ Asa Norte</option>
+                  <option value="Asa Sul">🏙️ Asa Sul</option>
+                  <option value="Águas Claras">💧 Águas Claras</option>
+                  <option value="Taguatinga">🏘️ Taguatinga</option>
+                  <option value="Ceilândia">🏘️ Ceilândia</option>
+                  <option value="Samambaia">🌿 Samambaia</option>
+                  <option value="Gama">🌳 Gama</option>
+                  <option value="Planaltina">🌾 Planaltina</option>
+                  <option value="Sobradinho">🏞️ Sobradinho</option>
+                  <option value="Brazlândia">🌲 Brazlândia</option>
+                  <option value="Santa Maria">⛪ Santa Maria</option>
+                  <option value="São Sebastião">🏡 São Sebastião</option>
+                  <option value="Recanto das Emas">🦜 Recanto das Emas</option>
+                  <option value="Lago Sul">🌊 Lago Sul</option>
+                  <option value="Lago Norte">🌊 Lago Norte</option>
+                  <option value="Riacho Fundo">🏞️ Riacho Fundo</option>
+                  <option value="Guará">🏘️ Guará</option>
+                  <option value="Cruzeiro">✝️ Cruzeiro</option>
+                  <option value="Sudoeste">🏙️ Sudoeste/Octogonal</option>
+                  <option value="Vicente Pires">🏡 Vicente Pires</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">CEP</label>
+                <input
+                  type="text"
+                  placeholder="00000-000"
+                  className="w-full p-3 border border-gray-300 rounded-lg"
+                  value={formData.cep}
+                  onChange={(e) => setFormData({ ...formData, cep: e.target.value })}
+                />
+              </div>
             </div>
 
             <div>
