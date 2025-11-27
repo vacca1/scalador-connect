@@ -658,7 +658,7 @@ export default function Index() {
         className="absolute inset-0 bg-black/50 md:hidden animate-fade-in"
         onClick={() => setShowMenu(false)}
       />
-      <div className="absolute right-0 top-0 md:relative glass rounded-none md:rounded-3xl shadow-2xl shadow-blue-500/20 w-full md:w-80 h-full md:h-auto overflow-hidden animate-slide-in-right md:animate-scale-in">
+      <div className="absolute right-0 top-0 bottom-0 md:relative glass rounded-none md:rounded-3xl shadow-2xl shadow-blue-500/20 w-full md:w-80 md:h-auto overflow-hidden animate-slide-in-right md:animate-scale-in flex flex-col">
         <div className="p-4 sm:p-6 bg-gradient-to-br from-blue-600 to-blue-500 text-white">
           <div className="flex items-center justify-between mb-4 md:mb-0">
             <div className="flex items-center gap-3 sm:gap-4">
@@ -680,19 +680,28 @@ export default function Index() {
         </div>
         <div className="flex-1 py-2 sm:py-3 bg-white overflow-y-auto">
           <button
-            onClick={() => navegarPara("vagas")}
+            onClick={() => {
+              navegarPara("vagas");
+              setShowMenu(false);
+            }}
             className="md:hidden w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
             <Home className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Vagas
           </button>
           <button
-            onClick={() => navegarPara("freelancers")}
+            onClick={() => {
+              navegarPara("freelancers");
+              setShowMenu(false);
+            }}
             className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
             <Users className="w-5 h-5 text-purple-600 group-hover:scale-110 transition-transform" /> Buscar Freelancers
           </button>
           <button
-            onClick={() => navegarPara("carteira")}
+            onClick={() => {
+              navegarPara("carteira");
+              setShowMenu(false);
+            }}
             className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group relative"
           >
             <Heart className="w-5 h-5 text-pink-600 group-hover:scale-110 transition-transform" /> 
@@ -704,46 +713,70 @@ export default function Index() {
             )}
           </button>
           <button
-            onClick={() => navegarPara("publicar")}
+            onClick={() => {
+              navegarPara("publicar");
+              setShowMenu(false);
+            }}
             className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
             <Plus className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Publicar vaga
           </button>
           <button
-            onClick={() => navegarPara("minhas-vagas")}
+            onClick={() => {
+              navegarPara("minhas-vagas");
+              setShowMenu(false);
+            }}
             className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
             <Briefcase className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Minhas Vagas
           </button>
           <button
-            onClick={() => navegarPara("pagamentos")}
+            onClick={() => {
+              navegarPara("pagamentos");
+              setShowMenu(false);
+            }}
             className="md:hidden w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
             <FileText className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Pagamentos
           </button>
           <button
-            onClick={() => navegarPara("saldo")}
+            onClick={() => {
+              navegarPara("saldo");
+              setShowMenu(false);
+            }}
             className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
             <Wallet className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" /> Minha Carteira
           </button>
           <button
-            onClick={() => navegarPara("configuracoes")}
+            onClick={() => {
+              navegarPara("configuracoes");
+              setShowMenu(false);
+            }}
             className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
             <Settings className="w-5 h-5 text-orange-600 group-hover:scale-110 transition-transform" /> Configurações
           </button>
           <button
-            onClick={() => navegarPara("notificacoes")}
+            onClick={() => {
+              navegarPara("notificacoes");
+              setShowMenu(false);
+            }}
             className="md:hidden w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
             <MessageSquare className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" /> Mensagens
           </button>
-          <button className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
+          <button 
+            onClick={() => setShowMenu(false)}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+          >
             <HelpCircle className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" /> Preciso de ajuda
           </button>
           <hr className="my-2 border-gray-100" />
-          <button className="w-full px-4 sm:px-6 py-3 text-left hover:bg-red-50 flex items-center gap-3 text-red-600 font-semibold transition-all duration-300 group rounded-b-3xl">
+          <button 
+            onClick={() => setShowMenu(false)}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-red-50 flex items-center gap-3 text-red-600 font-semibold transition-all duration-300 group rounded-b-3xl"
+          >
             <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" /> Sair
           </button>
         </div>
