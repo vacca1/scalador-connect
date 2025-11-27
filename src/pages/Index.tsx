@@ -437,12 +437,12 @@ export default function Index() {
   // ===== COMPONENTES DE UI =====
   const Header = () => (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/30 border-b border-white/20 shadow-2xl shadow-blue-500/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-10">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+        <div className="flex items-center gap-4 sm:gap-10">
           <img
             src={scaladorLogo}
             alt="Scalador"
-            className="h-10 cursor-pointer hover:scale-105 transition-transform duration-300"
+            className="h-8 sm:h-10 cursor-pointer hover:scale-105 transition-transform duration-300"
             onClick={() => navegarPara("vagas")}
           />
           <nav className="hidden md:flex gap-8">
@@ -472,21 +472,21 @@ export default function Index() {
             </button>
           </nav>
         </div>
-        <div className="flex items-center gap-3">
-          <button className="p-3 hover:bg-white/40 rounded-xl transition-all duration-300 hidden md:block hover:scale-105 backdrop-blur-sm">
-            <MessageSquare className="w-5 h-5 text-gray-800" />
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button className="p-2 sm:p-3 hover:bg-white/40 rounded-xl transition-all duration-300 hidden md:block hover:scale-105 backdrop-blur-sm">
+            <MessageSquare className="w-4 sm:w-5 h-4 sm:h-5 text-gray-800" />
           </button>
           <button
-            className="p-3 hover:bg-white/40 rounded-xl relative transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+            className="p-2 sm:p-3 hover:bg-white/40 rounded-xl relative transition-all duration-300 hover:scale-105 backdrop-blur-sm"
             onClick={() => navegarPara("notificacoes")}
           >
-            <Bell className="w-5 h-5 text-gray-800" />
+            <Bell className="w-4 sm:w-5 h-4 sm:h-5 text-gray-800" />
             {notifications.filter((n) => !n.lida).length > 0 && (
-              <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-gradient-to-r from-red-500 to-rose-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></span>
+              <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-2 sm:w-2.5 h-2 sm:h-2.5 bg-gradient-to-r from-red-500 to-rose-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></span>
             )}
           </button>
           <button
-            className="w-12 h-12 bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-110 transition-all duration-300"
+            className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 rounded-xl sm:rounded-2xl flex items-center justify-center text-white font-black text-base sm:text-lg shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-110 transition-all duration-300"
             onClick={() => setShowMenu(!showMenu)}
           >
             S
@@ -498,82 +498,115 @@ export default function Index() {
   );
 
   const MenuDropdown = () => (
-    <div className="absolute right-4 top-20 glass rounded-3xl shadow-2xl shadow-blue-500/20 w-80 z-50 overflow-hidden animate-scale-in">
-      <div className="p-6 bg-gradient-to-br from-blue-600 to-blue-500 text-white">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl">
-            S
-          </div>
-          <div>
-            <p className="font-bold text-xl">Scalador</p>
-            <p className="text-sm text-blue-100">contato.scalador@gmail.com</p>
+    <div className="fixed md:absolute inset-0 md:inset-auto md:right-4 md:top-20 z-50 md:z-50">
+      <div 
+        className="absolute inset-0 bg-black/50 md:hidden animate-fade-in"
+        onClick={() => setShowMenu(false)}
+      />
+      <div className="absolute right-0 top-0 md:relative glass rounded-l-3xl md:rounded-3xl shadow-2xl shadow-blue-500/20 w-80 max-w-[85vw] h-full md:h-auto overflow-hidden animate-slide-in-right md:animate-scale-in">
+        <div className="p-4 sm:p-6 bg-gradient-to-br from-blue-600 to-blue-500 text-white">
+          <div className="flex items-center justify-between mb-4 md:mb-0">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl flex items-center justify-center text-white font-black text-xl sm:text-2xl shadow-xl">
+                S
+              </div>
+              <div>
+                <p className="font-bold text-lg sm:text-xl">Scalador</p>
+                <p className="text-xs sm:text-sm text-blue-100">contato.scalador@gmail.com</p>
+              </div>
+            </div>
+            <button 
+              className="md:hidden p-2 hover:bg-white/20 rounded-lg transition-all"
+              onClick={() => setShowMenu(false)}
+            >
+              <X className="w-6 h-6" />
+            </button>
           </div>
         </div>
-      </div>
-      <div className="py-3 bg-white">
-        <button
-          onClick={() => navegarPara("publicar")}
-          className="w-full px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
-        >
-          <Plus className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Publicar vaga
-        </button>
-        <button
-          onClick={() => navegarPara("minhas-vagas")}
-          className="w-full px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
-        >
-          <Briefcase className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Minhas Vagas
-        </button>
-        <button
-          onClick={() => navegarPara("carteira")}
-          className="w-full px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
-        >
-          <Wallet className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" /> Minha Carteira
-        </button>
-        <button
-          onClick={() => navegarPara("configuracoes")}
-          className="w-full px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
-        >
-          <Settings className="w-5 h-5 text-orange-600 group-hover:scale-110 transition-transform" /> Configurações
-        </button>
-        <button className="w-full px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
-          <HelpCircle className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" /> Preciso de ajuda
-        </button>
-        <hr className="my-2 border-gray-100" />
-        <button className="w-full px-6 py-3 text-left hover:bg-red-50 flex items-center gap-3 text-red-600 font-semibold transition-all duration-300 group rounded-b-3xl">
-          <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" /> Sair
-        </button>
+        <div className="py-2 sm:py-3 bg-white max-h-[calc(100vh-120px)] md:max-h-none overflow-y-auto">
+          <button
+            onClick={() => navegarPara("vagas")}
+            className="md:hidden w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+          >
+            <Home className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Vagas
+          </button>
+          <button
+            onClick={() => navegarPara("publicar")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+          >
+            <Plus className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Publicar vaga
+          </button>
+          <button
+            onClick={() => navegarPara("minhas-vagas")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+          >
+            <Briefcase className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Minhas Vagas
+          </button>
+          <button
+            onClick={() => navegarPara("pagamentos")}
+            className="md:hidden w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+          >
+            <FileText className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Pagamentos
+          </button>
+          <button
+            onClick={() => navegarPara("carteira")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+          >
+            <Wallet className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" /> Minha Carteira
+          </button>
+          <button
+            onClick={() => navegarPara("configuracoes")}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+          >
+            <Settings className="w-5 h-5 text-orange-600 group-hover:scale-110 transition-transform" /> Configurações
+          </button>
+          <button
+            onClick={() => navegarPara("notificacoes")}
+            className="md:hidden w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+          >
+            <MessageSquare className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" /> Mensagens
+          </button>
+          <button className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
+            <HelpCircle className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" /> Preciso de ajuda
+          </button>
+          <hr className="my-2 border-gray-100" />
+          <button className="w-full px-4 sm:px-6 py-3 text-left hover:bg-red-50 flex items-center gap-3 text-red-600 font-semibold transition-all duration-300 group rounded-b-3xl">
+            <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" /> Sair
+          </button>
+        </div>
       </div>
     </div>
   );
 
   const Footer = () => (
-    <footer className="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white mt-32 relative overflow-hidden">
+    <footer className="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white mt-16 sm:mt-32 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10"></div>
-      <div className="relative max-w-7xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-12">
           <div>
-            <h3 className="text-3xl font-black mb-4 flex items-center gap-2">
-              <span className="text-4xl gradient-text">S</span>
+            <h3 className="text-2xl sm:text-3xl font-black mb-3 sm:mb-4 flex items-center gap-2">
+              <span className="text-3xl sm:text-4xl gradient-text">S</span>
               <span className="bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">calador</span>
             </h3>
-            <p className="text-purple-200 text-sm mb-2 font-medium">CNPJ: 41.264.266/0001-29</p>
-            <p className="text-purple-200 text-sm leading-relaxed">
+            <p className="text-purple-200 text-xs sm:text-sm mb-2 font-medium">CNPJ: 41.264.266/0001-29</p>
+            <p className="text-purple-200 text-xs sm:text-sm leading-relaxed">
               Quadra Crs 516 Bloco B, 66 - Asa Sul, Brasília - DF
             </p>
-            <p className="text-purple-300 text-sm mt-6 font-semibold">© 2025 Scalador. Todos os direitos reservados</p>
+            <p className="text-purple-300 text-xs sm:text-sm mt-4 sm:mt-6 font-semibold">© 2025 Scalador. Todos os direitos reservados</p>
           </div>
           <div>
-            <h4 className="font-bold text-xl mb-6 text-white">Contatos</h4>
-            <p className="text-purple-200 text-sm mb-3 flex items-center gap-3 hover:text-white transition-colors cursor-pointer group">
-              <Phone className="w-5 h-5 group-hover:scale-110 transition-transform" /> (11) 92089-3500
+            <h4 className="font-bold text-lg sm:text-xl mb-4 sm:mb-6 text-white">Contatos</h4>
+            <p className="text-purple-200 text-xs sm:text-sm mb-3 flex items-center gap-2 sm:gap-3 hover:text-white transition-colors cursor-pointer group">
+              <Phone className="w-4 sm:w-5 h-4 sm:h-5 group-hover:scale-110 transition-transform flex-shrink-0" /> (11) 92089-3500
             </p>
-            <p className="text-purple-200 text-sm flex items-center gap-3 hover:text-white transition-colors cursor-pointer group">
-              <span className="text-xl group-hover:scale-110 transition-transform">📧</span> contato.scalador@gmail.com
+            <p className="text-purple-200 text-xs sm:text-sm flex items-center gap-2 sm:gap-3 hover:text-white transition-colors cursor-pointer group">
+              <span className="text-lg sm:text-xl group-hover:scale-110 transition-transform">📧</span> 
+              <span className="break-all">contato.scalador@gmail.com</span>
             </p>
           </div>
-          <div>
-            <h4 className="font-bold text-xl mb-6 text-white">Soluções</h4>
-            <ul className="space-y-3 text-purple-200 text-sm font-medium">
+          <div className="sm:col-span-2 md:col-span-1">
+            <h4 className="font-bold text-lg sm:text-xl mb-4 sm:mb-6 text-white">Soluções</h4>
+            <ul className="space-y-2 sm:space-y-3 text-purple-200 text-xs sm:text-sm font-medium">
               <li>
                 <button
                   onClick={() => navegarPara("vagas")}
@@ -588,23 +621,23 @@ export default function Index() {
                 </a>
               </li>
             </ul>
-            <div className="flex gap-5 mt-6">
+            <div className="flex gap-4 sm:gap-5 mt-4 sm:mt-6">
               <a
                 href="#"
-                className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-purple-200 hover:text-white hover:scale-110 transition-all duration-300 shadow-lg"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-purple-200 hover:text-white hover:scale-110 transition-all duration-300 shadow-lg"
               >
                 Li
               </a>
               <a
                 href="#"
-                className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-purple-200 hover:text-white hover:scale-110 transition-all duration-300 shadow-lg"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-purple-200 hover:text-white hover:scale-110 transition-all duration-300 shadow-lg"
               >
                 In
               </a>
             </div>
           </div>
         </div>
-        <div className="mt-12 pt-8 border-t border-blue-700/30 text-center text-blue-300 text-sm font-medium">
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-blue-700/30 text-center text-blue-300 text-xs sm:text-sm font-medium">
           desenvolvido com <span className="text-red-400 animate-pulse">🔥</span> por{" "}
           <span className="font-bold text-white">Konecta</span>
         </div>
@@ -642,52 +675,52 @@ export default function Index() {
 
     return (
       <div
-        className="glass rounded-3xl p-8 hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 cursor-pointer group hover:-translate-y-2 relative overflow-hidden"
+        className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 cursor-pointer group hover:-translate-y-1 sm:hover:-translate-y-2 relative overflow-hidden"
         onClick={() => navegarPara("vaga-detalhes", job.id)}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        <div className="relative flex items-start gap-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl flex items-center justify-center text-3xl shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+        <div className="relative flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl sm:rounded-2xl flex items-center justify-center text-2xl sm:text-3xl shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 flex-shrink-0">
             {job.logoEmpresa}
           </div>
-          <div className="flex-1">
-            <div className="flex items-start justify-between mb-3">
-              <div>
-                <p className="text-sm font-semibold text-blue-600 mb-1">{job.empresa}</p>
-                <h3 className="text-2xl font-black text-gray-900 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-cyan-500 group-hover:bg-clip-text transition-all duration-300">
+          <div className="flex-1 w-full">
+            <div className="flex items-start justify-between mb-2 sm:mb-3 gap-2">
+              <div className="flex-1 min-w-0">
+                <p className="text-xs sm:text-sm font-semibold text-blue-600 mb-1">{job.empresa}</p>
+                <h3 className="text-lg sm:text-2xl font-black text-gray-900 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-cyan-500 group-hover:bg-clip-text transition-all duration-300 line-clamp-2">
                   {job.titulo}
                 </h3>
               </div>
-              <span className={`px-5 py-2 rounded-full text-xs font-bold ${statusBadge[job.status].color}`}>
+              <span className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs font-bold ${statusBadge[job.status].color} whitespace-nowrap flex-shrink-0`}>
                 {statusBadge[job.status].text}
               </span>
             </div>
-            <p className="text-4xl font-black gradient-text-green mb-4">
-              R$ {job.valorDiaria.toFixed(2)} <span className="text-sm font-semibold text-gray-500">/ dia</span>
+            <p className="text-2xl sm:text-4xl font-black gradient-text-green mb-3 sm:mb-4">
+              R$ {job.valorDiaria.toFixed(2)} <span className="text-xs sm:text-sm font-semibold text-gray-500">/ dia</span>
             </p>
-            <p className="text-gray-700 text-base mb-6 line-clamp-2 leading-relaxed">{job.descricao}</p>
-            <div className="flex flex-wrap gap-3 mb-6">
-              <span className="px-5 py-2 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 text-blue-700 rounded-full text-sm font-bold shadow-sm">
+            <p className="text-gray-700 text-sm sm:text-base mb-4 sm:mb-6 line-clamp-2 leading-relaxed">{job.descricao}</p>
+            <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
+              <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 text-blue-700 rounded-full text-xs sm:text-sm font-bold shadow-sm">
                 {job.tipo === "freelance" ? "⚡ Freelancer" : "📅 Temporário"}
               </span>
-              <span className="px-5 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 text-blue-700 rounded-full text-sm font-bold shadow-sm">
+              <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 text-blue-700 rounded-full text-xs sm:text-sm font-bold shadow-sm">
                 👔 {job.profissao}
               </span>
-              <span className="px-5 py-2 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50 text-orange-700 rounded-full text-sm font-bold shadow-sm">
+              <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50 text-orange-700 rounded-full text-xs sm:text-sm font-bold shadow-sm whitespace-nowrap">
                 {job.experienciaNecessaria ? "⭐ Com experiência" : "🌟 Sem experiência"}
               </span>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm text-gray-600 font-medium">
-              <span className="flex items-center gap-2 group/item">
-                <MapPin className="w-5 h-5 text-blue-500 group-hover/item:scale-110 transition-transform" />{" "}
-                {job.localizacao.cidade}
+            <div className="flex flex-wrap gap-3 sm:gap-6 text-xs sm:text-sm text-gray-600 font-medium">
+              <span className="flex items-center gap-1.5 sm:gap-2 group/item">
+                <MapPin className="w-4 sm:w-5 h-4 sm:h-5 text-blue-500 group-hover/item:scale-110 transition-transform flex-shrink-0" />
+                <span className="truncate">{job.localizacao.cidade}</span>
               </span>
-              <span className="flex items-center gap-2 group/item">
-                <Calendar className="w-5 h-5 text-blue-500 group-hover/item:scale-110 transition-transform" />{" "}
+              <span className="flex items-center gap-1.5 sm:gap-2 group/item whitespace-nowrap">
+                <Calendar className="w-4 sm:w-5 h-4 sm:h-5 text-blue-500 group-hover/item:scale-110 transition-transform flex-shrink-0" />
                 {new Date(job.data).toLocaleDateString("pt-BR")}
               </span>
-              <span className="flex items-center gap-2 group/item">
-                <Clock className="w-5 h-5 text-orange-500 group-hover/item:scale-110 transition-transform" />{" "}
+              <span className="flex items-center gap-1.5 sm:gap-2 group/item whitespace-nowrap">
+                <Clock className="w-4 sm:w-5 h-4 sm:h-5 text-orange-500 group-hover/item:scale-110 transition-transform flex-shrink-0" />
                 {job.horarioEntrada} - {job.horarioSaida}
               </span>
             </div>
@@ -706,45 +739,45 @@ export default function Index() {
     });
 
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-        <div className="mb-12 text-center animate-fade-in">
-          <h2 className="text-5xl md:text-6xl font-black mb-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-6 sm:py-12">
+        <div className="mb-8 sm:mb-12 text-center animate-fade-in">
+          <h2 className="text-3xl sm:text-5xl md:text-6xl font-black mb-3 sm:mb-4">
             <span className="gradient-text">Vagas Disponíveis</span>
           </h2>
-          <p className="text-gray-600 text-xl font-medium">Encontre as melhores oportunidades 🚀</p>
+          <p className="text-gray-600 text-base sm:text-xl font-medium">Encontre as melhores oportunidades 🚀</p>
         </div>
 
         {/* Search Bar - Acima de tudo */}
-        <div className="max-w-4xl mx-auto mb-10">
-          <div className="flex gap-4">
+        <div className="max-w-4xl mx-auto mb-6 sm:mb-10">
+          <div className="flex gap-2 sm:gap-4">
             <div className="flex-1 relative group">
-              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-blue-400 w-6 h-6 group-focus-within:scale-110 group-focus-within:text-blue-600 transition-all" />
+              <Search className="absolute left-3 sm:left-5 top-1/2 transform -translate-y-1/2 text-blue-400 w-5 sm:w-6 h-5 sm:h-6 group-focus-within:scale-110 group-focus-within:text-blue-600 transition-all" />
               <input
                 type="text"
-                placeholder="Procure por trabalhos incríveis..."
-                className="w-full pl-14 pr-6 py-5 glass rounded-2xl text-lg font-medium placeholder:text-gray-400 focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300"
+                placeholder="Procure por trabalhos..."
+                className="w-full pl-10 sm:pl-14 pr-3 sm:pr-6 py-3 sm:py-5 glass rounded-xl sm:rounded-2xl text-sm sm:text-lg font-medium placeholder:text-gray-400 focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300"
                 value={filtros.busca}
                 onChange={(e) => setFiltros({ ...filtros, busca: e.target.value })}
               />
             </div>
-            <button className="px-10 py-5 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-2xl font-bold text-lg shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-105 active:scale-95 transition-all duration-300">
-              Procurar
+            <button className="px-5 sm:px-10 py-3 sm:py-5 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-xl sm:rounded-2xl font-bold text-sm sm:text-lg shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-105 active:scale-95 transition-all duration-300 whitespace-nowrap">
+              Buscar
             </button>
           </div>
         </div>
 
         {/* Layout: Vagas à esquerda + Filtros à direita */}
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
           {/* Lista de Vagas - Ocupa o espaço restante */}
           <div className="flex-1 min-w-0">
             {jobsFiltrados.length === 0 ? (
-              <div className="text-center py-20 glass rounded-3xl">
-                <div className="text-6xl mb-4 animate-float">🔍</div>
-                <p className="text-gray-600 text-xl font-semibold mb-2">Nenhuma vaga encontrada</p>
-                <p className="text-gray-500">Tente ajustar os filtros selecionados</p>
+              <div className="text-center py-12 sm:py-20 glass rounded-2xl sm:rounded-3xl">
+                <div className="text-4xl sm:text-6xl mb-4 animate-float">🔍</div>
+                <p className="text-gray-600 text-lg sm:text-xl font-semibold mb-2">Nenhuma vaga encontrada</p>
+                <p className="text-gray-500 text-sm sm:text-base">Tente ajustar os filtros selecionados</p>
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-3 sm:space-y-6">
                 {jobsFiltrados.map((job, idx) => (
                   <div key={job.id} className="animate-slide-up" style={{ animationDelay: `${idx * 0.1}s` }}>
                     <JobCard job={job} />
@@ -756,26 +789,26 @@ export default function Index() {
 
           {/* Sidebar de Filtros - Flutuante e fixo à direita */}
           <aside className="lg:w-80 flex-shrink-0">
-            <div className="glass rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 lg:sticky lg:top-24">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="font-black text-gray-900 text-xl flex items-center gap-2">
-                  <Filter className="w-5 h-5 text-blue-600" /> Filtros
+            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 lg:sticky lg:top-24">
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <h3 className="font-black text-gray-900 text-lg sm:text-xl flex items-center gap-2">
+                  <Filter className="w-4 sm:w-5 h-4 sm:h-5 text-blue-600" /> Filtros
                 </h3>
                 <button
                   onClick={() =>
                     setFiltros({ busca: "", tipo: "todos", profissao: "todas", estado: "todos", experiencia: "todas" })
                   }
-                  className="text-sm font-bold text-blue-600 hover:text-cyan-600 hover:scale-110 transition-all"
+                  className="text-xs sm:text-sm font-bold text-blue-600 hover:text-cyan-600 hover:scale-110 transition-all"
                 >
                   Limpar
                 </button>
               </div>
 
-              <div className="space-y-5">
+              <div className="space-y-4 sm:space-y-5">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-3">Tipo de Vaga</label>
+                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Tipo de Vaga</label>
                   <select
-                    className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300"
+                    className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300"
                     value={filtros.tipo}
                     onChange={(e) => setFiltros({ ...filtros, tipo: e.target.value })}
                   >
@@ -786,8 +819,8 @@ export default function Index() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-3">Profissão</label>
-                  <select className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300">
+                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Profissão</label>
+                  <select className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300">
                     <option>Todas as profissões</option>
                     <option>🧹 Auxiliar de serviços gerais</option>
                     <option>🍽️ Garçom</option>
@@ -796,8 +829,8 @@ export default function Index() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-3">Experiência</label>
-                  <select className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300">
+                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Experiência</label>
+                  <select className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300">
                     <option>Todas</option>
                     <option>⭐ Com experiência</option>
                     <option>🌟 Sem experiência</option>
