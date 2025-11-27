@@ -604,9 +604,28 @@ export default function Index() {
           </div>
         </div>
 
-        {/* Layout: Filtros à esquerda + Vagas à direita */}
+        {/* Layout: Vagas à esquerda + Filtros à direita */}
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar de Filtros - Flutuante e fixo */}
+          {/* Lista de Vagas - Ocupa o espaço restante */}
+          <div className="flex-1 min-w-0">
+            {jobsFiltrados.length === 0 ? (
+              <div className="text-center py-20 glass rounded-3xl">
+                <div className="text-6xl mb-4 animate-float">🔍</div>
+                <p className="text-gray-600 text-xl font-semibold mb-2">Nenhuma vaga encontrada</p>
+                <p className="text-gray-500">Tente ajustar os filtros selecionados</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {jobsFiltrados.map((job, idx) => (
+                  <div key={job.id} className="animate-slide-up" style={{ animationDelay: `${idx * 0.1}s` }}>
+                    <JobCard job={job} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Sidebar de Filtros - Flutuante e fixo à direita */}
           <aside className="lg:w-80 flex-shrink-0">
             <div className="glass rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 lg:sticky lg:top-24">
               <div className="flex items-center justify-between mb-6">
@@ -656,25 +675,6 @@ export default function Index() {
               </div>
             </div>
           </aside>
-
-          {/* Lista de Vagas - Ocupa o espaço restante */}
-          <div className="flex-1 min-w-0">
-            {jobsFiltrados.length === 0 ? (
-              <div className="text-center py-20 glass rounded-3xl">
-                <div className="text-6xl mb-4 animate-float">🔍</div>
-                <p className="text-gray-600 text-xl font-semibold mb-2">Nenhuma vaga encontrada</p>
-                <p className="text-gray-500">Tente ajustar os filtros selecionados</p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {jobsFiltrados.map((job, idx) => (
-                  <div key={job.id} className="animate-slide-up" style={{ animationDelay: `${idx * 0.1}s` }}>
-                    <JobCard job={job} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
       </div>
     );
