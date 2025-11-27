@@ -653,12 +653,15 @@ export default function Index() {
 
   // ===== COMPONENTES DE UI =====
   const MenuDropdown = () => (
-    <div className="fixed md:absolute inset-0 md:inset-auto md:right-4 md:top-20 z-50 md:z-50">
-      <div 
-        className="absolute inset-0 bg-black/50 md:hidden animate-fade-in"
+    <>
+      {/* Overlay escuro que fecha o menu ao clicar */}
+      <div
+        className="fixed inset-0 bg-black/50 z-40 md:hidden animate-fade-in"
         onClick={() => setShowMenu(false)}
       />
-      <div className="absolute right-0 top-0 bottom-0 md:relative glass rounded-none md:rounded-3xl shadow-2xl shadow-blue-500/20 w-full md:w-80 md:h-auto overflow-hidden animate-slide-in-right md:animate-scale-in flex flex-col">
+
+      {/* Container do menu fixo à direita */}
+      <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-2xl z-50 md:absolute md:right-4 md:top-20 md:inset-auto md:w-80 md:rounded-3xl md:shadow-xl overflow-hidden flex flex-col animate-slide-in-right md:animate-scale-in">
         <div className="p-4 sm:p-6 bg-gradient-to-br from-blue-600 to-blue-500 text-white">
           <div className="flex items-center justify-between mb-4 md:mb-0">
             <div className="flex items-center gap-3 sm:gap-4">
@@ -670,7 +673,7 @@ export default function Index() {
                 <p className="text-xs sm:text-sm text-blue-100">contato.scalador@gmail.com</p>
               </div>
             </div>
-            <button 
+            <button
               className="md:hidden p-2 hover:bg-white/20 rounded-lg transition-all"
               onClick={() => setShowMenu(false)}
             >
@@ -678,7 +681,7 @@ export default function Index() {
             </button>
           </div>
         </div>
-        <div className="flex-1 py-2 sm:py-3 bg-white overflow-y-auto">
+        <div className="flex-1 h-[calc(100vh-100px)] md:h-auto py-2 sm:py-3 bg-white overflow-y-auto">
           <button
             onClick={() => {
               navegarPara("vagas");
@@ -704,7 +707,7 @@ export default function Index() {
             }}
             className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group relative"
           >
-            <Heart className="w-5 h-5 text-pink-600 group-hover:scale-110 transition-transform" /> 
+            <Heart className="w-5 h-5 text-pink-600 group-hover:scale-110 transition-transform" />
             Minha Carteira
             {carteiraFreelancers.length > 0 && (
               <span className="absolute right-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
@@ -766,14 +769,14 @@ export default function Index() {
           >
             <MessageSquare className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" /> Mensagens
           </button>
-          <button 
+          <button
             onClick={() => setShowMenu(false)}
             className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
             <HelpCircle className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" /> Preciso de ajuda
           </button>
           <hr className="my-2 border-gray-100" />
-          <button 
+          <button
             onClick={() => setShowMenu(false)}
             className="w-full px-4 sm:px-6 py-3 text-left hover:bg-red-50 flex items-center gap-3 text-red-600 font-semibold transition-all duration-300 group rounded-b-3xl"
           >
@@ -781,7 +784,7 @@ export default function Index() {
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 
   const Header = () => (
