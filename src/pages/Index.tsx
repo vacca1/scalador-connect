@@ -652,87 +652,6 @@ export default function Index() {
   };
 
   // ===== COMPONENTES DE UI =====
-  const Header = () => (
-    <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/30 border-b border-white/20 shadow-2xl shadow-blue-500/10">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4 sm:gap-10">
-          <img
-            src={scaladorLogo}
-            alt="Scalador"
-            className="h-8 sm:h-10 cursor-pointer hover:scale-105 transition-transform duration-300"
-            onClick={() => navegarPara("vagas")}
-          />
-          <nav className="hidden md:flex gap-8">
-            <button
-              onClick={() => navegarPara("vagas")}
-              className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm"
-            >
-              Vagas
-            </button>
-            <button
-              onClick={() => navegarPara("freelancers")}
-              className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm"
-            >
-              Freelancers
-            </button>
-            <button
-              onClick={() => navegarPara("carteira")}
-              className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm flex items-center gap-2"
-            >
-              <Heart className="w-4 h-4" />
-              Minha Carteira
-              {carteiraFreelancers.length > 0 && (
-                <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                  {carteiraFreelancers.length}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => navegarPara("minhas-vagas")}
-              className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm"
-            >
-              Minhas Vagas
-            </button>
-            <button
-              onClick={() => navegarPara("publicar")}
-              className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm"
-            >
-              Publicar Vaga
-            </button>
-          </nav>
-        </div>
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button className="p-2 sm:p-3 hover:bg-white/40 rounded-xl transition-all duration-300 hidden md:block hover:scale-105 backdrop-blur-sm">
-            <MessageSquare className="w-4 sm:w-5 h-4 sm:h-5 text-gray-800" />
-          </button>
-          <button
-            className="p-2 sm:p-3 hover:bg-white/40 rounded-xl relative transition-all duration-300 hover:scale-105 backdrop-blur-sm"
-            onClick={() => navegarPara("notificacoes")}
-          >
-            <Bell className="w-4 sm:w-5 h-4 sm:h-5 text-gray-800" />
-            {notifications.filter((n) => !n.lida).length > 0 && (
-              <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-2 sm:w-2.5 h-2 sm:h-2.5 bg-gradient-to-r from-red-500 to-rose-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></span>
-            )}
-          </button>
-          <button
-            className="md:hidden w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 rounded-xl sm:rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-110 transition-all duration-300"
-            onClick={() => setShowMenu(!showMenu)}
-            aria-label="Menu"
-          >
-            <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
-          </button>
-          <button
-            className="hidden md:flex w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 rounded-xl sm:rounded-2xl items-center justify-center text-white font-black text-base sm:text-lg shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-110 transition-all duration-300"
-            onClick={() => setShowMenu(!showMenu)}
-          >
-            S
-          </button>
-        </div>
-      </div>
-      {showMenu && <MenuDropdown />}
-    </header>
-  );
-
   const MenuDropdown = () => (
     <div className="fixed md:absolute inset-0 md:inset-auto md:right-4 md:top-20 z-50 md:z-50">
       <div 
@@ -830,6 +749,87 @@ export default function Index() {
         </div>
       </div>
     </div>
+  );
+
+  const Header = () => (
+    <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/30 border-b border-white/20 shadow-2xl shadow-blue-500/10">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+        <div className="flex items-center gap-4 sm:gap-10">
+          <img
+            src={scaladorLogo}
+            alt="Scalador"
+            className="h-8 sm:h-10 cursor-pointer hover:scale-105 transition-transform duration-300"
+            onClick={() => navegarPara("vagas")}
+          />
+          <nav className="hidden md:flex gap-8">
+            <button
+              onClick={() => navegarPara("vagas")}
+              className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm"
+            >
+              Vagas
+            </button>
+            <button
+              onClick={() => navegarPara("freelancers")}
+              className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm"
+            >
+              Freelancers
+            </button>
+            <button
+              onClick={() => navegarPara("carteira")}
+              className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm flex items-center gap-2"
+            >
+              <Heart className="w-4 h-4" />
+              Minha Carteira
+              {carteiraFreelancers.length > 0 && (
+                <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                  {carteiraFreelancers.length}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => navegarPara("minhas-vagas")}
+              className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm"
+            >
+              Minhas Vagas
+            </button>
+            <button
+              onClick={() => navegarPara("publicar")}
+              className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm"
+            >
+              Publicar Vaga
+            </button>
+          </nav>
+        </div>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button className="p-2 sm:p-3 hover:bg-white/40 rounded-xl transition-all duration-300 hidden md:block hover:scale-105 backdrop-blur-sm">
+            <MessageSquare className="w-4 sm:w-5 h-4 sm:h-5 text-gray-800" />
+          </button>
+          <button
+            className="p-2 sm:p-3 hover:bg-white/40 rounded-xl relative transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+            onClick={() => navegarPara("notificacoes")}
+          >
+            <Bell className="w-4 sm:w-5 h-4 sm:h-5 text-gray-800" />
+            {notifications.filter((n) => !n.lida).length > 0 && (
+              <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-2 sm:w-2.5 h-2 sm:h-2.5 bg-gradient-to-r from-red-500 to-rose-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></span>
+            )}
+          </button>
+          <button
+            className="md:hidden w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 rounded-xl sm:rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-110 transition-all duration-300"
+            onClick={() => setShowMenu(!showMenu)}
+            aria-label="Menu"
+          >
+            <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+          <button
+            className="hidden md:flex w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 rounded-xl sm:rounded-2xl items-center justify-center text-white font-black text-base sm:text-lg shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-110 transition-all duration-300"
+            onClick={() => setShowMenu(!showMenu)}
+          >
+            S
+          </button>
+        </div>
+      </div>
+      {showMenu && <MenuDropdown />}
+    </header>
   );
 
   const Footer = () => (
