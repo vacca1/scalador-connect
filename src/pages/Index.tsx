@@ -189,6 +189,14 @@ const MOCK_JOBS: Job[] = [
   }
 ];
 
+const MOCK_HISTORICO_FREELANCERS = [
+  { id: 'h1', freelancerId: 'f1', nome: 'João Silva', jobId: '2', status: 'aceito', data: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
+  { id: 'h2', freelancerId: 'f2', nome: 'Maria Santos', jobId: '1', status: 'concluido', data: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
+  { id: 'h3', freelancerId: 'f3', nome: 'Carlos Lima', jobId: '3', status: 'aceito', data: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000) },
+  { id: 'h4', freelancerId: 'f4', nome: 'Ana Costa', jobId: '1', status: 'recusado', data: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) },
+  { id: 'h5', freelancerId: 'f5', nome: 'Pedro Oliveira', jobId: '2', status: 'cancelado_empresa', data: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000) },
+];
+
 // ===== COMPONENTE PRINCIPAL =====
 export default function Index() {
   const [currentPage, setCurrentPage] = useState('vagas');
@@ -199,6 +207,7 @@ export default function Index() {
   const [saldoAtual, setSaldoAtual] = useState(500.00);
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   const [whatsappData, setWhatsappData] = useState<any>(null);
+  const [historicoFreelancers, setHistoricoFreelancers] = useState(MOCK_HISTORICO_FREELANCERS);
   const { toast } = useToast();
 
   // Filtros
@@ -958,176 +967,746 @@ export default function Index() {
   };
 
   const PaginaMinhasVagas = () => {
-    const [abaAtiva, setAbaAtiva] = useState<'abertas' | 'andamento' | 'encerradas'>('abertas');
+    const [periodoFiltro, setPeriodoFiltro] = useState<'7dias' | '30dias' | '90dias' | 'ano'>('30dias');
+    const [visualizacao, setVisualizacao] = useState<'visao-geral' | 'financeiro' | 'freelancers' | 'vagas' | 'relatorios'>('visao-geral');
 
-    const vagasAbertas = jobs.filter(j => j.status === 'aberta' || j.status === 'aguardando_freelancer');
-    const vagasAndamento = jobs.filter(j => j.status === 'em_deslocamento' || j.status === 'em_andamento');
-    const vagasEncerradas = jobs.filter(j => j.status === 'concluida' || j.status === 'cancelada');
+    // ===== CÁLCULOS DE MÉTRICAS =====
+    const hoje = new Date();
+    const diasFiltro = periodoFiltro === '7dias' ? 7 : periodoFiltro === '30dias' ? 30 : periodoFiltro === '90dias' ? 90 : 365;
+    const dataInicio = new Date(hoje.getTime() - diasFiltro * 24 * 60 * 60 * 1000);
 
-    const gastoMesAtual = jobs
-      .filter(j => new Date(j.publicadoEm).getMonth() === new Date().getMonth())
-      .reduce((acc, j) => acc + j.valorComTaxa, 0);
+    const vagasFiltradas = jobs.filter(j => j.publicadoEm >= dataInicio);
+    const gastoTotal = vagasFiltradas.reduce((acc, j) => acc + j.valorComTaxa, 0);
+    const gastoMedio = vagasFiltradas.length > 0 ? gastoTotal / vagasFiltradas.length : 0;
 
-    const totalVagas = jobs.length;
-    const totalFreelancers = jobs.reduce((acc, j) => acc + j.quantidadeFreelancers, 0);
+    const vagasPreenchidas = vagasFiltradas.filter(j => j.status === 'concluida' || j.status === 'em_andamento').length;
+    const vagasAbertas = vagasFiltradas.filter(j => j.status === 'aberta' || j.status === 'aguardando_freelancer').length;
+    const vagasCanceladas = vagasFiltradas.filter(j => j.status === 'cancelada').length;
+    const taxaPreenchimento = vagasFiltradas.length > 0 ? (vagasPreenchidas / vagasFiltradas.length) * 100 : 0;
 
+    const freelancersAceitos = historicoFreelancers.filter(f => f.status === 'aceito' || f.status === 'concluido').length;
+    const freelancersRecusados = historicoFreelancers.filter(f => f.status === 'recusado').length;
+    const freelancersCancelados = historicoFreelancers.filter(f => f.status === 'cancelado_empresa').length;
+    const taxaAceitacao = (freelancersAceitos + freelancersRecusados) > 0 ? (freelancersAceitos / (freelancersAceitos + freelancersRecusados)) * 100 : 0;
+
+    // Dados para gráficos
+    const gastosPorMes = [
+      { mes: 'Jul', valor: 320, vagas: 2 },
+      { mes: 'Ago', valor: 450, vagas: 3 },
+      { mes: 'Set', valor: 380, vagas: 2 },
+      { mes: 'Out', valor: 520, vagas: 4 },
+      { mes: 'Nov', valor: gastoTotal, vagas: vagasFiltradas.length }
+    ];
+
+    const vagasPorStatus = [
+      { status: 'Concluídas', quantidade: vagasPreenchidas, cor: 'bg-green-500' },
+      { status: 'Em Aberto', quantidade: vagasAbertas, cor: 'bg-blue-500' },
+      { status: 'Em Andamento', quantidade: jobs.filter(j => j.status === 'em_andamento' || j.status === 'em_deslocamento').length, cor: 'bg-purple-500' },
+      { status: 'Canceladas', quantidade: vagasCanceladas, cor: 'bg-red-500' }
+    ];
+
+    const topProfissoes = [
+      { profissao: 'Garçom', vagas: 5, gasto: 1000, mediaAvaliacao: 4.8 },
+      { profissao: 'Auxiliar de Serviços', vagas: 3, gasto: 480, mediaAvaliacao: 4.5 },
+      { profissao: 'Recepcionista', vagas: 2, gasto: 300, mediaAvaliacao: 4.9 }
+    ];
+
+    const freelancersRanking = [
+      { id: 'f1', nome: 'João Silva', foto: '👨', vagas: 8, rating: 4.8, valorTotal: 1600, pontualidade: 95 },
+      { id: 'f3', nome: 'Carlos Lima', foto: '👨‍💼', vagas: 5, rating: 5.0, valorTotal: 750, pontualidade: 100 },
+      { id: 'f2', nome: 'Maria Santos', foto: '👩', vagas: 3, rating: 4.5, valorTotal: 450, pontualidade: 90 }
+    ];
+
+    const alertasUrgentes = [
+      { id: 'a1', tipo: 'pagamento', mensagem: 'Pagamento pendente: R$ 200,00', urgencia: 'alta' },
+      { id: 'a2', tipo: 'vaga', mensagem: '2 vagas sem candidatos há 24h', urgencia: 'media' },
+      { id: 'a3', tipo: 'checkin', mensagem: 'Freelancer aguardando confirmação', urgencia: 'alta' }
+    ];
+
+    // ===== COMPONENTE: CARD DE MÉTRICA =====
+    const MetricCard = ({ titulo, valor, subtitulo, icone, cor, tendencia }: any) => (
+      <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-gray-600 text-sm font-medium">{titulo}</span>
+          <div className={`w-10 h-10 rounded-lg ${cor} bg-opacity-10 flex items-center justify-center`}>
+            {icone}
+          </div>
+        </div>
+        <p className="text-3xl font-bold text-gray-900 mb-1">{valor}</p>
+        {subtitulo && <p className="text-sm text-gray-500">{subtitulo}</p>}
+        {tendencia && (
+          <div className={`mt-2 text-xs font-medium ${tendencia > 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {tendencia > 0 ? '↗' : '↘'} {Math.abs(tendencia).toFixed(1)}% vs período anterior
+          </div>
+        )}
+      </div>
+    );
+
+    // ===== COMPONENTE: GRÁFICO DE BARRAS SIMPLES =====
+    const BarChart = ({ data, label }: { data: any[]; label: string }) => {
+      const maxValor = Math.max(...data.map(d => d.valor));
+      return (
+        <div className="space-y-3">
+          {data.map((item, idx) => (
+            <div key={idx}>
+              <div className="flex items-center justify-between text-sm mb-1">
+                <span className="text-gray-700 font-medium">{item.mes}</span>
+                <span className="text-gray-900 font-bold">R$ {item.valor.toFixed(0)}</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-3">
+                <div 
+                  className="bg-gradient-to-r from-indigo-500 to-purple-600 h-3 rounded-full transition-all duration-500"
+                  style={{ width: `${(item.valor / maxValor) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    };
+
+    // ===== COMPONENTE: GRÁFICO DE PIZZA (simulado com barras) =====
+    const PieChart = ({ data }: { data: any[] }) => {
+      const total = data.reduce((acc, d) => acc + d.quantidade, 0);
+      return (
+        <div className="space-y-3">
+          {data.map((item, idx) => {
+            const porcentagem = total > 0 ? (item.quantidade / total) * 100 : 0;
+            return (
+              <div key={idx}>
+                <div className="flex items-center justify-between text-sm mb-1">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-3 h-3 rounded-full ${item.cor}`}></div>
+                    <span className="text-gray-700 font-medium">{item.status}</span>
+                  </div>
+                  <span className="text-gray-900 font-bold">{item.quantidade} ({porcentagem.toFixed(0)}%)</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className={`${item.cor} h-2 rounded-full transition-all duration-500`}
+                    style={{ width: `${porcentagem}%` }}
+                  ></div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      );
+    };
+
+    // ===== VISÃO GERAL =====
+    const VisaoGeral = () => (
+      <div className="space-y-6">
+        {/* Alertas Urgentes */}
+        {alertasUrgentes.length > 0 && (
+          <div className="bg-gradient-to-r from-red-50 to-orange-50 border-l-4 border-red-500 rounded-lg p-4">
+            <h3 className="font-bold text-red-900 mb-3 flex items-center gap-2">
+              <AlertCircle className="w-5 h-5" /> Alertas Urgentes
+            </h3>
+            <div className="space-y-2">
+              {alertasUrgentes.map(alerta => (
+                <div key={alerta.id} className={`flex items-center justify-between p-2 rounded ${
+                  alerta.urgencia === 'alta' ? 'bg-red-100' : 'bg-yellow-100'
+                }`}>
+                  <span className="text-sm font-medium text-gray-800">{alerta.mensagem}</span>
+                  <button className="px-3 py-1 bg-white rounded text-xs font-medium hover:bg-gray-50">
+                    Resolver
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Métricas Principais */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <MetricCard
+            titulo="Gastos no Período"
+            valor={`R$ ${gastoTotal.toFixed(2)}`}
+            subtitulo={`${vagasFiltradas.length} vagas`}
+            icone={<DollarSign className="w-5 h-5 text-green-600" />}
+            cor="bg-green-500"
+            tendencia={15.5}
+          />
+          <MetricCard
+            titulo="Taxa de Preenchimento"
+            valor={`${taxaPreenchimento.toFixed(0)}%`}
+            subtitulo={`${vagasPreenchidas} de ${vagasFiltradas.length} vagas`}
+            icone={<TrendingUp className="w-5 h-5 text-indigo-600" />}
+            cor="bg-indigo-500"
+            tendencia={8.2}
+          />
+          <MetricCard
+            titulo="Taxa de Aceitação"
+            valor={`${taxaAceitacao.toFixed(0)}%`}
+            subtitulo={`${freelancersAceitos} aceitos`}
+            icone={<CheckCircle className="w-5 h-5 text-purple-600" />}
+            cor="bg-purple-500"
+            tendencia={-3.1}
+          />
+          <MetricCard
+            titulo="Custo Médio/Vaga"
+            valor={`R$ ${gastoMedio.toFixed(2)}`}
+            subtitulo="Últimas vagas"
+            icone={<Activity className="w-5 h-5 text-orange-600" />}
+            cor="bg-orange-500"
+          />
+        </div>
+
+        {/* Gráficos */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-indigo-600" /> Gastos por Mês
+            </h3>
+            <BarChart data={gastosPorMes} label="Gastos" />
+          </div>
+
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Briefcase className="w-5 h-5 text-purple-600" /> Vagas por Status
+            </h3>
+            <PieChart data={vagasPorStatus} />
+          </div>
+        </div>
+
+        {/* Top Profissões */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <Star className="w-5 h-5 text-yellow-600" /> Top Profissões Contratadas
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Profissão</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vagas</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gasto Total</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Avaliação Média</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {topProfissoes.map((prof, idx) => (
+                  <tr key={idx} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 font-medium text-gray-900">{prof.profissao}</td>
+                    <td className="px-4 py-3 text-gray-600">{prof.vagas}</td>
+                    <td className="px-4 py-3 text-green-600 font-semibold">R$ {prof.gasto.toFixed(2)}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <span className="font-medium">{prof.mediaAvaliacao}</span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+
+    // ===== ANÁLISE FINANCEIRA =====
+    const AnaliseFinanceira = () => {
+      const taxaScaladorTotal = vagasFiltradas.reduce((acc, j) => acc + j.taxaScalador, 0);
+      const valorLiquidoFreelancers = vagasFiltradas.reduce((acc, j) => acc + j.valorTotal, 0);
+
+      return (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg p-6 text-white">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                  <DollarSign className="w-6 h-6" />
+                </div>
+                <div>
+                  <p className="text-green-100 text-sm">Investimento Total</p>
+                  <p className="text-3xl font-bold">R$ {gastoTotal.toFixed(2)}</p>
+                </div>
+              </div>
+              <p className="text-green-100 text-xs">Valor pago (incluindo taxa 10%)</p>
+            </div>
+
+            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-6 text-white">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                  <Users className="w-6 h-6" />
+                </div>
+                <div>
+                  <p className="text-blue-100 text-sm">Valor Freelancers</p>
+                  <p className="text-3xl font-bold">R$ {valorLiquidoFreelancers.toFixed(2)}</p>
+                </div>
+              </div>
+              <p className="text-blue-100 text-xs">Valor líquido recebido pelos freelancers</p>
+            </div>
+
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-6 text-white">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                  <Activity className="w-6 h-6" />
+                </div>
+                <div>
+                  <p className="text-purple-100 text-sm">Taxa Scalador</p>
+                  <p className="text-3xl font-bold">R$ {taxaScaladorTotal.toFixed(2)}</p>
+                </div>
+              </div>
+              <p className="text-purple-100 text-xs">10% sobre o valor total</p>
+            </div>
+          </div>
+
+          {/* Detalhamento por Vaga */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">💰 Detalhamento Financeiro por Vaga</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vaga</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Data</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Freelancers</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Valor Base</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Taxa 10%</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Pago</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {vagasFiltradas.map(vaga => (
+                    <tr key={vaga.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 font-medium text-gray-900">{vaga.titulo}</td>
+                      <td className="px-4 py-3 text-gray-600 text-sm">{new Date(vaga.data).toLocaleDateString('pt-BR')}</td>
+                      <td className="px-4 py-3 text-gray-600">{vaga.quantidadeFreelancers}x</td>
+                      <td className="px-4 py-3 text-gray-900">R$ {vaga.valorTotal.toFixed(2)}</td>
+                      <td className="px-4 py-3 text-orange-600">R$ {vaga.taxaScalador.toFixed(2)}</td>
+                      <td className="px-4 py-3 font-bold text-green-600">R$ {vaga.valorComTaxa.toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot className="bg-gray-50 font-bold">
+                  <tr>
+                    <td colSpan={3} className="px-4 py-3 text-gray-900">TOTAL</td>
+                    <td className="px-4 py-3 text-gray-900">R$ {valorLiquidoFreelancers.toFixed(2)}</td>
+                    <td className="px-4 py-3 text-orange-600">R$ {taxaScaladorTotal.toFixed(2)}</td>
+                    <td className="px-4 py-3 text-green-600">R$ {gastoTotal.toFixed(2)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+          {/* Gráfico de Pizza - Distribuição de Gastos */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">📊 Distribuição de Gastos por Profissão</h3>
+            <div className="space-y-3">
+              {topProfissoes.map((prof, idx) => {
+                const porcentagem = gastoTotal > 0 ? (prof.gasto / gastoTotal) * 100 : 0;
+                return (
+                  <div key={idx}>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span className="text-gray-700 font-medium">{prof.profissao}</span>
+                      <span className="text-gray-900 font-bold">R$ {prof.gasto} ({porcentagem.toFixed(1)}%)</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-3">
+                      <div 
+                        className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full transition-all duration-500"
+                        style={{ width: `${porcentagem}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ===== RANKING DE FREELANCERS =====
+    const RankingFreelancers = () => (
+      <div className="space-y-6">
+        <div className="bg-gradient-to-r from-purple-500 to-indigo-500 rounded-lg p-6 text-white">
+          <h2 className="text-2xl font-bold mb-2">🏆 Ranking de Freelancers</h2>
+          <p className="text-purple-100">Os melhores profissionais que trabalharam com você</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {freelancersRanking.slice(0, 3).map((freelancer, idx) => (
+            <div key={freelancer.id} className={`bg-white rounded-lg border-2 p-6 ${
+              idx === 0 ? 'border-yellow-400 shadow-lg' : 'border-gray-200'
+            }`}>
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-5xl">{freelancer.foto}</div>
+                {idx === 0 && <div className="text-4xl">👑</div>}
+                {idx === 1 && <div className="text-3xl">🥈</div>}
+                {idx === 2 && <div className="text-3xl">🥉</div>}
+              </div>
+              <h3 className="font-bold text-gray-900 text-lg mb-2">{freelancer.nome}</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Vagas</span>
+                  <span className="font-bold text-gray-900">{freelancer.vagas}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Avaliação</span>
+                  <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <span className="font-bold text-gray-900">{freelancer.rating}</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Total Pago</span>
+                  <span className="font-bold text-green-600">R$ {freelancer.valorTotal}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Pontualidade</span>
+                  <span className="font-bold text-indigo-600">{freelancer.pontualidade}%</span>
+                </div>
+              </div>
+              <button className="w-full mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">
+                Ver Perfil
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Tabela Completa */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h3 className="font-bold text-gray-900 mb-4">📋 Histórico Completo de Freelancers</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Posição</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Freelancer</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vagas</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Avaliação</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pontualidade</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Pago</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ações</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {freelancersRanking.map((freelancer, idx) => (
+                  <tr key={freelancer.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3">
+                      <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-indigo-600">
+                        {idx + 1}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="text-2xl">{freelancer.foto}</div>
+                        <div>
+                          <p className="font-medium text-gray-900">{freelancer.nome}</p>
+                          <p className="text-xs text-gray-500">ID: {freelancer.id}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 font-medium text-gray-900">{freelancer.vagas}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <span className="font-medium">{freelancer.rating}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-full bg-gray-200 rounded-full h-2 max-w-[80px]">
+                          <div 
+                            className="bg-green-500 h-2 rounded-full"
+                            style={{ width: `${freelancer.pontualidade}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-sm font-medium text-gray-700">{freelancer.pontualidade}%</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 font-bold text-green-600">R$ {freelancer.valorTotal}</td>
+                    <td className="px-4 py-3">
+                      <button className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 text-sm font-medium">
+                        Contratar Novamente
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+
+    // ===== ANÁLISE DE VAGAS =====
+    const AnaliseVagas = () => {
+      const vagasPorDia = [
+        { dia: 'Seg', quantidade: 2 },
+        { dia: 'Ter', quantidade: 1 },
+        { dia: 'Qua', quantidade: 3 },
+        { dia: 'Qui', quantidade: 2 },
+        { dia: 'Sex', quantidade: 4 },
+        { dia: 'Sáb', quantidade: 1 },
+        { dia: 'Dom', quantidade: 0 }
+      ];
+
+      const maxVagas = Math.max(...vagasPorDia.map(d => d.quantidade));
+
+      return (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="text-center">
+                <p className="text-gray-600 text-sm mb-2">Tempo Médio de Preenchimento</p>
+                <p className="text-4xl font-bold text-indigo-600">2.5h</p>
+                <p className="text-xs text-gray-500 mt-1">Desde publicação até aceite</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="text-center">
+                <p className="text-gray-600 text-sm mb-2">Candidaturas por Vaga</p>
+                <p className="text-4xl font-bold text-purple-600">3.2</p>
+                <p className="text-xs text-gray-500 mt-1">Média de candidatos</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="text-center">
+                <p className="text-gray-600 text-sm mb-2">Taxa de Cancelamento</p>
+                <p className="text-4xl font-bold text-red-600">5%</p>
+                <p className="text-xs text-gray-500 mt-1">Vagas canceladas</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="text-center">
+                <p className="text-gray-600 text-sm mb-2">Satisfação Média</p>
+                <p className="text-4xl font-bold text-yellow-600">4.7</p>
+                <p className="text-xs text-gray-500 mt-1">Avaliação das empresas</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Distribuição por Dia da Semana */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">📅 Vagas por Dia da Semana</h3>
+            <div className="grid grid-cols-7 gap-2">
+              {vagasPorDia.map((dia, idx) => (
+                <div key={idx} className="text-center">
+                  <div className="mb-2">
+                    <div 
+                      className="mx-auto bg-indigo-500 rounded-t"
+                      style={{ 
+                        height: `${(dia.quantidade / maxVagas) * 120}px`,
+                        width: '40px',
+                        minHeight: dia.quantidade > 0 ? '20px' : '0'
+                      }}
+                    ></div>
+                  </div>
+                  <p className="text-xs font-medium text-gray-600">{dia.dia}</p>
+                  <p className="text-sm font-bold text-gray-900">{dia.quantidade}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Calendário de Próximas Vagas */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">🗓️ Calendário de Vagas</h3>
+            <div className="grid grid-cols-7 gap-2">
+              {[...Array(30)].map((_, idx) => {
+                const temVaga = idx === 5 || idx === 12 || idx === 20;
+                return (
+                  <div 
+                    key={idx}
+                    className={`aspect-square rounded-lg border-2 flex items-center justify-center text-sm font-medium ${
+                      temVaga 
+                        ? 'bg-indigo-100 border-indigo-500 text-indigo-700' 
+                        : 'border-gray-200 text-gray-600'
+                    }`}
+                  >
+                    {idx + 1}
+                  </div>
+                );
+              })}
+            </div>
+            <div className="mt-4 flex items-center gap-4 text-xs">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-indigo-100 border-2 border-indigo-500 rounded"></div>
+                <span className="text-gray-600">Dia com vaga agendada</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ===== RELATÓRIOS =====
+    const Relatorios = () => (
+      <div className="space-y-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h3 className="font-bold text-gray-900 mb-4">📄 Gerar Relatórios</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 text-left transition-all">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <DollarSign className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-gray-900">Relatório Financeiro</p>
+                  <p className="text-xs text-gray-500">Gastos, taxas e ROI</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">Excel • PDF</p>
+            </button>
+
+            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 text-left transition-all">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <Users className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-gray-900">Relatório de Freelancers</p>
+                  <p className="text-xs text-gray-500">Performance e histórico</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">Excel • PDF</p>
+            </button>
+
+            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 text-left transition-all">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Briefcase className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-gray-900">Relatório de Vagas</p>
+                  <p className="text-xs text-gray-500">Status e métricas</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">Excel • PDF</p>
+            </button>
+
+            <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 text-left transition-all">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-orange-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-gray-900">Relatório Completo</p>
+                  <p className="text-xs text-gray-500">Todas as métricas</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">Excel • PDF</p>
+            </button>
+          </div>
+        </div>
+
+        {/* Preview de Relatório */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h3 className="font-bold text-gray-900 mb-4">📊 Preview - Resumo Executivo</h3>
+          <div className="space-y-4 text-sm">
+            <div className="flex justify-between py-2 border-b">
+              <span className="text-gray-600">Período analisado:</span>
+              <span className="font-medium">Últimos 30 dias</span>
+            </div>
+            <div className="flex justify-between py-2 border-b">
+              <span className="text-gray-600">Total de vagas publicadas:</span>
+              <span className="font-medium">{vagasFiltradas.length}</span>
+            </div>
+            <div className="flex justify-between py-2 border-b">
+              <span className="text-gray-600">Vagas preenchidas:</span>
+              <span className="font-medium text-green-600">{vagasPreenchidas} ({taxaPreenchimento.toFixed(0)}%)</span>
+            </div>
+            <div className="flex justify-between py-2 border-b">
+              <span className="text-gray-600">Investimento total:</span>
+              <span className="font-medium text-gray-900">R$ {gastoTotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between py-2 border-b">
+              <span className="text-gray-600">Freelancers contratados:</span>
+              <span className="font-medium">{freelancersAceitos}</span>
+            </div>
+            <div className="flex justify-between py-2 border-b">
+              <span className="text-gray-600">Taxa de aceitação:</span>
+              <span className="font-medium text-indigo-600">{taxaAceitacao.toFixed(0)}%</span>
+            </div>
+          </div>
+          <button className="w-full mt-6 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium flex items-center justify-center gap-2">
+            <FileText className="w-5 h-5" />
+            Baixar Relatório Completo (PDF)
+          </button>
+        </div>
+      </div>
+    );
+
+    // ===== RENDER PRINCIPAL =====
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Dashboard</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Gastos no Mês</span>
-                <DollarSign className="w-5 h-5 text-green-600" />
-              </div>
-              <p className="text-2xl font-bold text-gray-900">R$ {gastoMesAtual.toFixed(2)}</p>
-              <p className="text-xs text-gray-500 mt-1">Novembro 2025</p>
-            </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">📊 Dashboard Completo</h1>
+          <p className="text-gray-600">Análise completa do seu negócio na Scalador</p>
+        </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Total de Vagas</span>
-                <Briefcase className="w-5 h-5 text-indigo-600" />
-              </div>
-              <p className="text-2xl font-bold text-gray-900">{totalVagas}</p>
-              <p className="text-xs text-gray-500 mt-1">Todas as vagas</p>
+        {/* Filtros */}
+        <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-700">Período:</span>
+            <div className="flex gap-2">
+              {['7dias', '30dias', '90dias', 'ano'].map((periodo) => (
+                <button
+                  key={periodo}
+                  onClick={() => setPeriodoFiltro(periodo as any)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    periodoFiltro === periodo
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {periodo === '7dias' ? '7 dias' : periodo === '30dias' ? '30 dias' : periodo === '90dias' ? '90 dias' : 'Ano'}
+                </button>
+              ))}
             </div>
+          </div>
 
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Freelancers</span>
-                <Users className="w-5 h-5 text-purple-600" />
-              </div>
-              <p className="text-2xl font-bold text-gray-900">{totalFreelancers}</p>
-              <p className="text-xs text-gray-500 mt-1">Direcionados</p>
-            </div>
-
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Taxa Média</span>
-                <Activity className="w-5 h-5 text-orange-600" />
-              </div>
-              <p className="text-2xl font-bold text-gray-900">92%</p>
-              <p className="text-xs text-gray-500 mt-1">Aproveitamento</p>
-            </div>
+          <div className="flex gap-2">
+            <button className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-sm font-medium">
+              Exportar Dados
+            </button>
+            <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
+              Atualizar
+            </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <div className="flex flex-col items-center mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl font-bold mb-3">
-                  S
-                </div>
-                <h3 className="text-xl font-bold text-gray-900">Scalador</h3>
-                <p className="text-sm text-gray-500 flex items-center gap-1">
-                  <MapPin className="w-3 h-3" /> Asa Sul
-                </p>
-                <div className="flex items-center gap-1 mt-2">
-                  {[1,2,3,4].map(i => <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />)}
-                  <Star className="w-4 h-4 text-gray-300" />
-                </div>
-                <p className="text-xs text-gray-500 mt-1">17 avaliações</p>
-              </div>
-
-              <div className="mb-6">
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">SOBRE NÓS</h4>
-                <p className="text-sm text-gray-600">
-                  Plataforma de conexão entre empresas e freelancers qualificados.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <button 
-                  onClick={() => navegarPara('configuracoes')}
-                  className="w-full flex items-center justify-center gap-2 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
-                >
-                  <Edit className="w-4 h-4" /> Editar perfil
-                </button>
-                <button 
-                  onClick={() => navegarPara('publicar')}
-                  className="w-full flex items-center justify-center gap-2 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium"
-                >
-                  <Plus className="w-4 h-4" /> Nova vaga
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg border border-gray-200">
-              <div className="border-b border-gray-200">
-                <div className="flex">
-                  <button
-                    onClick={() => setAbaAtiva('abertas')}
-                    className={`flex-1 py-4 px-6 font-medium border-b-2 transition-colors ${
-                      abaAtiva === 'abertas' 
-                        ? 'border-indigo-600 text-indigo-600' 
-                        : 'border-transparent text-gray-500 hover:text-gray-700'
-                    }`}
-                  >
-                    Abertas ({vagasAbertas.length})
-                  </button>
-                  <button
-                    onClick={() => setAbaAtiva('andamento')}
-                    className={`flex-1 py-4 px-6 font-medium border-b-2 transition-colors ${
-                      abaAtiva === 'andamento' 
-                        ? 'border-indigo-600 text-indigo-600' 
-                        : 'border-transparent text-gray-500 hover:text-gray-700'
-                    }`}
-                  >
-                    Em Andamento ({vagasAndamento.length})
-                  </button>
-                  <button
-                    onClick={() => setAbaAtiva('encerradas')}
-                    className={`flex-1 py-4 px-6 font-medium border-b-2 transition-colors ${
-                      abaAtiva === 'encerradas' 
-                        ? 'border-indigo-600 text-indigo-600' 
-                        : 'border-transparent text-gray-500 hover:text-gray-700'
-                    }`}
-                  >
-                    Encerradas ({vagasEncerradas.length})
-                  </button>
-                </div>
-              </div>
-
-              <div className="p-6">
-                {abaAtiva === 'abertas' && (
-                  <div className="space-y-4">
-                    {vagasAbertas.length === 0 ? (
-                      <p className="text-center text-gray-500 py-8">0 vaga</p>
-                    ) : (
-                      vagasAbertas.map(job => <JobCard key={job.id} job={job} />)
-                    )}
-                  </div>
-                )}
-
-                {abaAtiva === 'andamento' && (
-                  <div className="space-y-4">
-                    {vagasAndamento.length === 0 ? (
-                      <p className="text-center text-gray-500 py-8">0 vaga</p>
-                    ) : (
-                      vagasAndamento.map(job => <JobCard key={job.id} job={job} />)
-                    )}
-                  </div>
-                )}
-
-                {abaAtiva === 'encerradas' && (
-                  <div className="space-y-4">
-                    {vagasEncerradas.length === 0 ? (
-                      <p className="text-center text-gray-500 py-8">0 vaga</p>
-                    ) : (
-                      vagasEncerradas.map(job => <JobCard key={job.id} job={job} />)
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+        {/* Tabs de Visualização */}
+        <div className="bg-white rounded-lg border border-gray-200 mb-6">
+          <div className="flex border-b border-gray-200 overflow-x-auto">
+            {[
+              { id: 'visao-geral', label: 'Visão Geral', icon: <Activity className="w-4 h-4" /> },
+              { id: 'financeiro', label: 'Financeiro', icon: <DollarSign className="w-4 h-4" /> },
+              { id: 'freelancers', label: 'Freelancers', icon: <Users className="w-4 h-4" /> },
+              { id: 'vagas', label: 'Vagas', icon: <Briefcase className="w-4 h-4" /> },
+              { id: 'relatorios', label: 'Relatórios', icon: <FileText className="w-4 h-4" /> }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setVisualizacao(tab.id as any)}
+                className={`flex-1 min-w-[120px] py-4 px-6 font-medium border-b-2 transition-colors flex items-center justify-center gap-2 ${
+                  visualizacao === tab.id
+                    ? 'border-indigo-600 text-indigo-600 bg-indigo-50'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                {tab.icon}
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
+
+        {/* Conteúdo */}
+        {visualizacao === 'visao-geral' && <VisaoGeral />}
+        {visualizacao === 'financeiro' && <AnaliseFinanceira />}
+        {visualizacao === 'freelancers' && <RankingFreelancers />}
+        {visualizacao === 'vagas' && <AnaliseVagas />}
+        {visualizacao === 'relatorios' && <Relatorios />}
       </div>
     );
   };
