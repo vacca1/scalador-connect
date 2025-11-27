@@ -791,10 +791,10 @@ export default function Index() {
   const MobileMenu = () => (
     <>
       <div
-        className="fixed inset-0 bg-black/50 z-40 md:hidden animate-fade-in"
+        className="fixed inset-0 bg-black/50 z-[9998] md:hidden animate-fade-in"
         onClick={() => setShowMenu(false)}
       />
-      <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-2xl z-50 flex flex-col animate-slide-in-right md:hidden">
+      <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-2xl z-[9999] flex flex-col animate-slide-in-right md:hidden">
         <div className="p-4 sm:p-6 bg-gradient-to-br from-blue-600 to-blue-500 text-white">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3 sm:gap-4">
@@ -970,7 +970,7 @@ export default function Index() {
           </button>
         </div>
       </div>
-      {showMenu && <MobileMenu />}
+      {/* Menu mobile renderizado fora do header para ficar acima de tudo */}
     </header>
   );
 
@@ -3392,10 +3392,10 @@ Você tem 20 minutos para cancelar caso necessário.`;
     );
   };
 
-  // ===== RENDER PRINCIPAL =====
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+      {showMenu && <MobileMenu />}
 
       <main>
         {currentPage === "vagas" && <PaginaVagas />}
