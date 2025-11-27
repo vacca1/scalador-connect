@@ -120,6 +120,7 @@ interface Freelancer {
   localizacao: {
     cidade: string;
     estado: string;
+    coordenadas: { lat: number; lng: number };
   };
   habilidades: string[];
   disponivel: boolean;
@@ -291,7 +292,11 @@ const MOCK_FREELANCERS: Freelancer[] = [
     rating: 4.8,
     totalTrabalhos: 127,
     experiencia: "5 anos",
-    localizacao: { cidade: "Brasília", estado: "DF" },
+    localizacao: { 
+      cidade: "Brasília", 
+      estado: "DF",
+      coordenadas: { lat: -15.7801, lng: -47.9292 } // Asa Sul
+    },
     habilidades: ["Eventos", "Atendimento VIP", "Buffet"],
     disponivel: true,
     valorHora: 35.0,
@@ -310,7 +315,11 @@ const MOCK_FREELANCERS: Freelancer[] = [
     rating: 4.9,
     totalTrabalhos: 203,
     experiencia: "8 anos",
-    localizacao: { cidade: "Brasília", estado: "DF" },
+    localizacao: { 
+      cidade: "Brasília", 
+      estado: "DF",
+      coordenadas: { lat: -15.8270, lng: -48.0501 } // Taguatinga
+    },
     habilidades: ["Limpeza Pesada", "Organização", "Eventos"],
     disponivel: true,
     valorHora: 28.0,
@@ -329,7 +338,11 @@ const MOCK_FREELANCERS: Freelancer[] = [
     rating: 4.7,
     totalTrabalhos: 85,
     experiencia: "3 anos",
-    localizacao: { cidade: "Brasília", estado: "DF" },
+    localizacao: { 
+      cidade: "Brasília", 
+      estado: "DF",
+      coordenadas: { lat: -15.7217, lng: -47.8870 } // Asa Norte
+    },
     habilidades: ["Atendimento", "Inglês fluente", "Informática"],
     disponivel: true,
     valorHora: 32.0,
@@ -347,7 +360,11 @@ const MOCK_FREELANCERS: Freelancer[] = [
     rating: 5.0,
     totalTrabalhos: 156,
     experiencia: "10 anos",
-    localizacao: { cidade: "Brasília", estado: "DF" },
+    localizacao: { 
+      cidade: "Brasília", 
+      estado: "DF",
+      coordenadas: { lat: -15.8930, lng: -48.0591 } // Ceilândia
+    },
     habilidades: ["Cozinha Brasileira", "Eventos", "Buffet"],
     disponivel: false,
     valorHora: 45.0,
@@ -365,7 +382,11 @@ const MOCK_FREELANCERS: Freelancer[] = [
     rating: 4.6,
     totalTrabalhos: 94,
     experiencia: "4 anos",
-    localizacao: { cidade: "Brasília", estado: "DF" },
+    localizacao: { 
+      cidade: "Brasília", 
+      estado: "DF",
+      coordenadas: { lat: -15.8398, lng: -48.0226 } // Águas Claras
+    },
     habilidades: ["Montagem", "Som e Luz", "Elétrica"],
     disponivel: true,
     valorHora: 38.0,
@@ -402,6 +423,24 @@ export default function Index() {
   const [selectedFreelancer, setSelectedFreelancer] = useState<Freelancer | null>(null);
   const { toast } = useToast();
 
+  // Localização do usuário (empresa) - Exemplo: Asa Sul
+  const localizacaoUsuario = { lat: -15.7801, lng: -47.9292 };
+
+  // Função para calcular distância entre dois pontos (Haversine)
+  const calcularDistancia = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+    const R = 6371; // Raio da Terra em km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
   // Filtros
   const [filtros, setFiltros] = useState({
     busca: "",
@@ -410,6 +449,7 @@ export default function Index() {
     bairro: "todos",
     estado: "todos",
     experiencia: "todas",
+    distanciaMaxima: "todas",
   });
 
   const [filtrosFreelancers, setFiltrosFreelancers] = useState({
@@ -922,6 +962,19 @@ export default function Index() {
                 <span className="text-gray-400">•</span>
                 <span className="text-gray-600">{job.localizacao.cidade}</span>
               </span>
+              {job.localizacao.coordenadas && (
+                <span className="flex items-center gap-1.5 sm:gap-2 group/item whitespace-nowrap">
+                  <Navigation className="w-4 sm:w-5 h-4 sm:h-5 text-green-500 group-hover/item:scale-110 transition-transform flex-shrink-0" />
+                  <span className="font-bold text-green-600">
+                    {calcularDistancia(
+                      localizacaoUsuario.lat,
+                      localizacaoUsuario.lng,
+                      job.localizacao.coordenadas.lat,
+                      job.localizacao.coordenadas.lng
+                    ).toFixed(1)}km
+                  </span>
+                </span>
+              )}
               <span className="flex items-center gap-1.5 sm:gap-2 group/item whitespace-nowrap">
                 <Calendar className="w-4 sm:w-5 h-4 sm:h-5 text-blue-500 group-hover/item:scale-110 transition-transform flex-shrink-0" />
                 {new Date(job.data).toLocaleDateString("pt-BR")}
@@ -943,6 +996,19 @@ export default function Index() {
       if (filtros.busca && !job.titulo.toLowerCase().includes(filtros.busca.toLowerCase()) && !job.localizacao.bairro.toLowerCase().includes(filtros.busca.toLowerCase())) return false;
       if (filtros.tipo !== "todos" && job.tipo !== filtros.tipo) return false;
       if (filtros.bairro !== "todos" && job.localizacao.bairro !== filtros.bairro) return false;
+      
+      // Filtro de distância
+      if (filtros.distanciaMaxima !== "todas" && job.localizacao.coordenadas) {
+        const distancia = calcularDistancia(
+          localizacaoUsuario.lat,
+          localizacaoUsuario.lng,
+          job.localizacao.coordenadas.lat,
+          job.localizacao.coordenadas.lng
+        );
+        const maxDistancia = parseFloat(filtros.distanciaMaxima);
+        if (distancia > maxDistancia) return false;
+      }
+      
       return true;
     });
 
@@ -1004,7 +1070,7 @@ export default function Index() {
                 </h3>
                 <button
                   onClick={() =>
-                    setFiltros({ busca: "", tipo: "todos", profissao: "todas", bairro: "todos", estado: "todos", experiencia: "todas" })
+                    setFiltros({ busca: "", tipo: "todos", profissao: "todas", bairro: "todos", estado: "todos", experiencia: "todas", distanciaMaxima: "todas" })
                   }
                   className="text-xs sm:text-sm font-bold text-blue-600 hover:text-cyan-600 hover:scale-110 transition-all"
                 >
@@ -1073,6 +1139,21 @@ export default function Index() {
                     <option>Todas</option>
                     <option>⭐ Com experiência</option>
                     <option>🌟 Sem experiência</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Distância Máxima</label>
+                  <select
+                    className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300"
+                    value={filtros.distanciaMaxima}
+                    onChange={(e) => setFiltros({ ...filtros, distanciaMaxima: e.target.value })}
+                  >
+                    <option value="todas">Todas as distâncias</option>
+                    <option value="5">📍 Até 5km</option>
+                    <option value="10">📍 Até 10km</option>
+                    <option value="20">📍 Até 20km</option>
+                    <option value="30">📍 Até 30km</option>
                   </select>
                 </div>
               </div>
