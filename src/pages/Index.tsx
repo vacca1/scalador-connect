@@ -7,6 +7,8 @@ import {
   Edit, Settings, HelpCircle, LogOut, Filter, ChevronDown,
   Home, Wallet, FileText
 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 
 // ===== TIPOS E INTERFACES =====
 type JobStatus = 'aberta' | 'aguardando_freelancer' | 'em_deslocamento' | 'em_andamento' | 'concluida' | 'cancelada';
@@ -195,6 +197,9 @@ export default function Index() {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [showMenu, setShowMenu] = useState(false);
   const [saldoAtual, setSaldoAtual] = useState(500.00);
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
+  const [whatsappData, setWhatsappData] = useState<any>(null);
+  const { toast } = useToast();
 
   // Filtros
   const [filtros, setFiltros] = useState({
@@ -241,18 +246,38 @@ export default function Index() {
 
   // ===== FUNÇÕES DE AÇÃO =====
   const simularEnvioWhatsApp = (tipo: string, destinatario: string, conteudo: any) => {
-    console.log('📱 SIMULANDO ENVIO WHATSAPP:', { tipo, destinatario, conteudo });
+    // Buscar job se tiver jobId
+    const job = conteudo.jobId ? jobs.find(j => j.id === conteudo.jobId) : null;
+    
+    setWhatsappData({
+      tipo,
+      destinatario,
+      conteudo,
+      job: job || conteudo // Se não encontrar job, usa o próprio conteúdo como job
+    });
+    setShowWhatsAppModal(true);
+  };
+
+  const enviarWhatsApp = () => {
+    console.log('📱 ENVIANDO WHATSAPP:', whatsappData);
     
     // Adicionar notificação de confirmação
     const novaNotif: Notification = {
       id: `n${Date.now()}`,
       tipo: 'sistema',
       titulo: 'WhatsApp enviado',
-      mensagem: `Mensagem enviada para ${destinatario}`,
+      mensagem: `Mensagem enviada para ${whatsappData.destinatario}`,
       timestamp: new Date(),
       lida: false
     };
     setNotifications(prev => [novaNotif, ...prev]);
+
+    // Fechar modal e mostrar toast
+    setShowWhatsAppModal(false);
+    toast({
+      title: "WhatsApp enviado!",
+      description: `Mensagem enviada para ${whatsappData.destinatario}`,
+    });
 
     // Simular resposta após alguns segundos
     setTimeout(() => {
@@ -260,7 +285,7 @@ export default function Index() {
         id: `n${Date.now() + 1}`,
         tipo: 'mensagem',
         titulo: 'Resposta recebida',
-        mensagem: `${destinatario} visualizou a mensagem`,
+        mensagem: `${whatsappData.destinatario} visualizou a mensagem`,
         timestamp: new Date(),
         lida: false
       };
@@ -283,11 +308,8 @@ export default function Index() {
 
     // Simular envio para freelancers via WhatsApp
     simularEnvioWhatsApp('nova_vaga', 'Todos os freelancers', {
-      titulo: novaVaga.titulo,
-      valor: novaVaga.valorDiaria,
-      local: novaVaga.localizacao.cidade,
-      data: novaVaga.data,
-      horario: `${novaVaga.horarioEntrada} - ${novaVaga.horarioSaida}`
+      ...novaVaga,
+      jobId: novaVaga.id
     });
 
     navegarPara('minhas-vagas');
@@ -1172,7 +1194,10 @@ export default function Index() {
 
               <div className="flex gap-3">
                 <button
-                  onClick={() => simularEnvioWhatsApp('mensagem_empresa', job.freelancerSelecionado!.nome, { texto: 'Olá! Estamos aguardando você.' })}
+                  onClick={() => simularEnvioWhatsApp('mensagem_empresa', job.freelancerSelecionado!.nome, { 
+                    texto: 'Olá! Estamos aguardando você.',
+                    jobId: job.id
+                  })}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium"
                 >
                   <Phone className="w-4 h-4" /> Enviar WhatsApp
@@ -1455,6 +1480,142 @@ export default function Index() {
     );
   };
 
+  // ===== COMPONENTE MODAL WHATSAPP =====
+  const ModalWhatsApp = () => {
+    if (!whatsappData) return null;
+
+    const formatarMensagem = () => {
+      const { tipo, conteudo, job } = whatsappData;
+
+      if (tipo === 'nova_vaga') {
+        const vaga = job || conteudo;
+        const googleMapsUrl = vaga.localizacao?.coordenadas 
+          ? `https://www.google.com/maps?q=${vaga.localizacao.coordenadas.lat},${vaga.localizacao.coordenadas.lng}`
+          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(vaga.localizacao?.endereco || vaga.local)}`;
+        
+        const wazeUrl = vaga.localizacao?.coordenadas
+          ? `https://waze.com/ul?ll=${vaga.localizacao.coordenadas.lat},${vaga.localizacao.coordenadas.lng}&navigate=yes`
+          : `https://waze.com/ul?q=${encodeURIComponent(vaga.localizacao?.endereco || vaga.local)}`;
+
+        return {
+          titulo: '🎯 NOVA VAGA DISPONÍVEL',
+          linhas: [
+            `📋 *${vaga.titulo || conteudo.titulo}*`,
+            `💰 Valor: R$ ${(vaga.valorDiaria || conteudo.valor)?.toFixed(2)}/dia`,
+            `📍 Local: ${vaga.localizacao?.cidade || conteudo.local}`,
+            `📅 Data: ${vaga.data || conteudo.data}`,
+            `⏰ Horário: ${vaga.horarioEntrada || conteudo.horario?.split(' - ')[0]} - ${vaga.horarioSaida || conteudo.horario?.split(' - ')[1]}`,
+            vaga.vestimenta && `👔 Vestimenta: ${vaga.vestimenta}`,
+          ].filter(Boolean),
+          links: [
+            { texto: '📍 Google Maps', url: googleMapsUrl },
+            { texto: '🚗 Waze', url: wazeUrl }
+          ]
+        };
+      }
+
+      if (tipo === 'confirmacao_empresa') {
+        return {
+          titulo: '✅ VAGA CONFIRMADA',
+          linhas: [
+            `Olá! A empresa *confirmou sua participação*.`,
+            ``,
+            `Você pode se deslocar para o local da vaga.`,
+            ``,
+            `Boa sorte! 🚀`
+          ]
+        };
+      }
+
+      if (tipo === 'mensagem_empresa') {
+        return {
+          titulo: '💬 MENSAGEM DA EMPRESA',
+          linhas: [
+            conteudo.texto || 'Olá! Estamos aguardando você.'
+          ]
+        };
+      }
+
+      if (tipo === 'cancelamento') {
+        return {
+          titulo: '⚠️ VAGA CANCELADA',
+          linhas: [
+            `Infelizmente a empresa solicitou outro profissional.`,
+            ``,
+            `Mas não se preocupe, novas oportunidades surgirão em breve!`
+          ]
+        };
+      }
+
+      return {
+        titulo: '📱 MENSAGEM',
+        linhas: [conteudo.mensagem || 'Mensagem do sistema']
+      };
+    };
+
+    const mensagemFormatada = formatarMensagem();
+
+    return (
+      <Dialog open={showWhatsAppModal} onOpenChange={setShowWhatsAppModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <Phone className="w-5 h-5 text-white" />
+              </div>
+              Enviar via WhatsApp
+            </DialogTitle>
+            <DialogDescription>
+              Para: {whatsappData.destinatario}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 my-4">
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <p className="font-semibold text-green-700 mb-3">{mensagemFormatada.titulo}</p>
+              {mensagemFormatada.linhas.map((linha, idx) => (
+                <p key={idx} className="text-sm text-gray-700 mb-1">{linha}</p>
+              ))}
+              
+              {mensagemFormatada.links && (
+                <div className="mt-4 pt-3 border-t border-gray-200">
+                  <p className="text-sm font-semibold text-gray-700 mb-2">🗺️ LOCALIZAÇÃO:</p>
+                  {mensagemFormatada.links.map((link, idx) => (
+                    <a
+                      key={idx}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-sm text-blue-600 hover:text-blue-700 underline mb-1"
+                    >
+                      {link.texto}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowWhatsAppModal(false)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={enviarWhatsApp}
+              className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium flex items-center justify-center gap-2"
+            >
+              <Send className="w-4 h-4" />
+              Enviar
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
   // ===== RENDER PRINCIPAL =====
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1470,6 +1631,7 @@ export default function Index() {
       </main>
 
       <Footer />
+      <ModalWhatsApp />
     </div>
   );
 }
