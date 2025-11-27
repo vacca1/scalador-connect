@@ -585,89 +585,97 @@ export default function Index() {
           <p className="text-gray-600 text-xl font-medium">Encontre as melhores oportunidades 🚀</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-10">
-          <div className="lg:col-span-3">
-            <div className="flex gap-4 mb-8">
-              <div className="flex-1 relative group">
-                <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-purple-400 w-6 h-6 group-focus-within:scale-110 group-focus-within:text-purple-600 transition-all" />
-                <input
-                  type="text"
-                  placeholder="Procure por trabalhos incríveis..."
-                  className="w-full pl-14 pr-6 py-5 glass rounded-2xl text-lg font-medium placeholder:text-gray-400 focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300"
-                  value={filtros.busca}
-                  onChange={(e) => setFiltros({ ...filtros, busca: e.target.value })}
-                />
-              </div>
-              <button className="px-10 py-5 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-2xl font-bold text-lg shadow-xl shadow-purple-500/40 hover:shadow-2xl hover:shadow-purple-600/50 hover:scale-105 active:scale-95 transition-all duration-300">
-                Procurar
-              </button>
+        {/* Search Bar - Acima de tudo */}
+        <div className="max-w-4xl mx-auto mb-10">
+          <div className="flex gap-4">
+            <div className="flex-1 relative group">
+              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-purple-400 w-6 h-6 group-focus-within:scale-110 group-focus-within:text-purple-600 transition-all" />
+              <input
+                type="text"
+                placeholder="Procure por trabalhos incríveis..."
+                className="w-full pl-14 pr-6 py-5 glass rounded-2xl text-lg font-medium placeholder:text-gray-400 focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300"
+                value={filtros.busca}
+                onChange={(e) => setFiltros({ ...filtros, busca: e.target.value })}
+              />
             </div>
+            <button className="px-10 py-5 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-2xl font-bold text-lg shadow-xl shadow-purple-500/40 hover:shadow-2xl hover:shadow-purple-600/50 hover:scale-105 active:scale-95 transition-all duration-300">
+              Procurar
+            </button>
           </div>
-          
-          <div className="glass rounded-3xl p-8 h-fit shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-black text-gray-900 text-xl flex items-center gap-2">
-                <Filter className="w-5 h-5 text-purple-600" /> Filtros
-              </h3>
-              <button 
-                onClick={() => setFiltros({ busca: '', tipo: 'todos', profissao: 'todas', estado: 'todos', experiencia: 'todas' })}
-                className="text-sm font-bold text-purple-600 hover:text-pink-600 hover:scale-110 transition-all"
-              >
-                Limpar
-              </button>
-            </div>
-            
-            <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3">Tipo de Vaga</label>
-                <select 
-                  className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300"
-                  value={filtros.tipo}
-                  onChange={(e) => setFiltros({ ...filtros, tipo: e.target.value })}
+        </div>
+
+        {/* Layout: Filtros à esquerda + Vagas à direita */}
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar de Filtros - Flutuante e fixo */}
+          <aside className="lg:w-80 flex-shrink-0">
+            <div className="glass rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 lg:sticky lg:top-24">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-black text-gray-900 text-xl flex items-center gap-2">
+                  <Filter className="w-5 h-5 text-purple-600" /> Filtros
+                </h3>
+                <button 
+                  onClick={() => setFiltros({ busca: '', tipo: 'todos', profissao: 'todas', estado: 'todos', experiencia: 'todas' })}
+                  className="text-sm font-bold text-purple-600 hover:text-pink-600 hover:scale-110 transition-all"
                 >
-                  <option value="todos">Todos os tipos</option>
-                  <option value="freelance">⚡ Freelance</option>
-                  <option value="temporario">📅 Temporário</option>
-                </select>
+                  Limpar
+                </button>
               </div>
               
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3">Profissão</label>
-                <select className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300">
-                  <option>Todas as profissões</option>
-                  <option>🧹 Auxiliar de serviços gerais</option>
-                  <option>🍽️ Garçom</option>
-                  <option>📋 Recepcionista</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3">Experiência</label>
-                <select className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300">
-                  <option>Todas</option>
-                  <option>⭐ Com experiência</option>
-                  <option>🌟 Sem experiência</option>
-                </select>
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Tipo de Vaga</label>
+                  <select 
+                    className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300"
+                    value={filtros.tipo}
+                    onChange={(e) => setFiltros({ ...filtros, tipo: e.target.value })}
+                  >
+                    <option value="todos">Todos os tipos</option>
+                    <option value="freelance">⚡ Freelance</option>
+                    <option value="temporario">📅 Temporário</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Profissão</label>
+                  <select className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300">
+                    <option>Todas as profissões</option>
+                    <option>🧹 Auxiliar de serviços gerais</option>
+                    <option>🍽️ Garçom</option>
+                    <option>📋 Recepcionista</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Experiência</label>
+                  <select className="w-full p-4 glass rounded-xl font-medium focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300">
+                    <option>Todas</option>
+                    <option>⭐ Com experiência</option>
+                    <option>🌟 Sem experiência</option>
+                  </select>
+                </div>
               </div>
             </div>
+          </aside>
+
+          {/* Lista de Vagas - Ocupa o espaço restante */}
+          <div className="flex-1 min-w-0">
+            {jobsFiltrados.length === 0 ? (
+              <div className="text-center py-20 glass rounded-3xl">
+                <div className="text-6xl mb-4 animate-float">🔍</div>
+                <p className="text-gray-600 text-xl font-semibold mb-2">Nenhuma vaga encontrada</p>
+                <p className="text-gray-500">Tente ajustar os filtros selecionados</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {jobsFiltrados.map((job, idx) => (
+                  <div key={job.id} className="animate-slide-up" style={{ animationDelay: `${idx * 0.1}s` }}>
+                    <JobCard job={job} />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-
-        <div className="space-y-6">
-          {jobsFiltrados.map((job, idx) => (
-            <div key={job.id} className="animate-slide-up" style={{ animationDelay: `${idx * 0.1}s` }}>
-              <JobCard job={job} />
-            </div>
-          ))}
-        </div>
-
-        {jobsFiltrados.length === 0 && (
-          <div className="text-center py-20 glass rounded-3xl">
-            <div className="text-6xl mb-4 animate-float">🔍</div>
-            <p className="text-gray-600 text-xl font-semibold mb-2">Nenhuma vaga encontrada</p>
-            <p className="text-gray-500">Tente ajustar os filtros selecionados</p>
-          </div>
-        )}
       </div>
     );
   };
