@@ -46,6 +46,12 @@ import scaladorLogo from "@/assets/scalador-logo.png";
 // ===== TIPOS E INTERFACES =====
 type JobStatus = "aberta" | "aguardando_freelancer" | "em_deslocamento" | "em_andamento" | "concluida" | "cancelada";
 type JobType = "freelance" | "temporario";
+type UserType = "empresa" | "freelancer" | "visitante";
+
+interface FAQ {
+  pergunta: string;
+  resposta: string;
+}
 
 interface Job {
   id: string;
@@ -77,6 +83,7 @@ interface Job {
   beneficios: string[];
   status: JobStatus;
   publicadoEm: Date;
+  perguntasFrequentes?: FAQ[];
   freelancerSelecionado?: {
     id: string;
     nome: string;
@@ -89,6 +96,20 @@ interface Job {
   };
   tempoLimiteEmpresaCancelar?: Date;
 }
+
+// ===== HELPER: TEMPO DE PUBLICAÇÃO =====
+const getTempoPublicacao = (data: Date): string => {
+  const diff = Date.now() - data.getTime();
+  const minutos = Math.floor(diff / (1000 * 60));
+  const horas = Math.floor(diff / (1000 * 60 * 60));
+  const dias = Math.floor(horas / 24);
+
+  if (minutos < 60) return minutos <= 1 ? "há menos de 1 minuto" : `há ${minutos} minutos`;
+  if (horas === 1) return "há 1 hora";
+  if (horas < 24) return `há ${horas} horas`;
+  if (dias === 1) return "há 1 dia";
+  return `há ${dias} dias`;
+};
 
 interface Notification {
   id: string;
@@ -167,6 +188,11 @@ const MOCK_JOBS: Job[] = [
     beneficios: ["Passagem", "Alimentação"],
     status: "aberta",
     publicadoEm: new Date(Date.now() - 5 * 60 * 60 * 1000),
+    perguntasFrequentes: [
+      { pergunta: "Preciso levar meu próprio uniforme?", resposta: "Não, a vestimenta padrão é: calça preta, camisa branca e sapato fechado." },
+      { pergunta: "Há alimentação incluída?", resposta: "Sim, alimentação e passagem estão inclusas nos benefícios." },
+      { pergunta: "Preciso ter experiência prévia?", resposta: "Sim, é necessário ter experiência na área." },
+    ],
   },
   {
     id: "2",
@@ -198,6 +224,11 @@ const MOCK_JOBS: Job[] = [
     beneficios: ["Alimentação"],
     status: "em_deslocamento",
     publicadoEm: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    perguntasFrequentes: [
+      { pergunta: "Qual é o código de vestimenta?", resposta: "Terno preto com gravata e sapato social." },
+      { pergunta: "Há estacionamento disponível?", resposta: "Sim, estacionamento gratuito para funcionários." },
+      { pergunta: "Posso sair mais cedo?", resposta: "O horário de saída é fixo às 23:00, salvo liberação do coordenador." },
+    ],
     freelancerSelecionado: {
       id: "f1",
       nome: "João Silva",
@@ -239,6 +270,11 @@ const MOCK_JOBS: Job[] = [
     beneficios: ["Vale transporte", "Vale refeição"],
     status: "aberta",
     publicadoEm: new Date(Date.now() - 1 * 60 * 60 * 1000),
+    perguntasFrequentes: [
+      { pergunta: "É necessário falar inglês?", resposta: "Inglês básico é desejável, mas não obrigatório." },
+      { pergunta: "Há treinamento?", resposta: "Sim, será fornecido treinamento no primeiro dia." },
+      { pergunta: "Qual o horário do almoço?", resposta: "Intervalo de 1 hora entre 12:00 e 13:00." },
+    ],
   },
 ];
 
@@ -423,6 +459,7 @@ export default function Index() {
   const [freelancers, setFreelancers] = useState<Freelancer[]>(MOCK_FREELANCERS);
   const [carteiraFreelancers, setCarteiraFreelancers] = useState<string[]>(["f1", "f2"]); // IDs dos favoritos
   const [selectedFreelancer, setSelectedFreelancer] = useState<Freelancer | null>(null);
+  const [userType, setUserType] = useState<UserType>("freelancer"); // Tipo de usuário logado
   const { toast } = useToast();
 
   // Localização do usuário (empresa) - Exemplo: Asa Sul
@@ -2471,39 +2508,58 @@ export default function Index() {
     if (!selectedJob) return null;
 
     const job = jobs.find((j) => j.id === selectedJob.id) || selectedJob;
+    const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+
+    const candidatarVaga = (vagaId: string) => {
+      toast({
+        title: "Candidatura enviada!",
+        description: "Sua candidatura foi registrada. Aguarde o retorno da empresa.",
+      });
+      simularEnvioWhatsApp("candidatura", job.empresa, {
+        freelancer: "Você",
+        vaga: job.titulo,
+        mensagem: "Nova candidatura recebida!",
+      });
+    };
 
     return (
       <div className="max-w-5xl mx-auto px-4 py-8">
+        {/* Header com botão voltar */}
         <button
           onClick={() => navegarPara("vagas")}
-          className="flex items-center text-gray-600 hover:text-gray-900 mb-6"
+          className="flex items-center gap-2 text-gray-600 hover:text-scalador-orange mb-6 font-medium transition-colors"
         >
-          ← Voltar para vagas
+          <ArrowRight className="w-4 h-4 rotate-180" /> Voltar para vagas
         </button>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-8 mb-6">
+        <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 mb-6 shadow-xl">
+          {/* Cabeçalho da vaga */}
           <div className="flex items-start gap-4 mb-6">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-3xl">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-orange-100 to-amber-100 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl shadow-lg">
               {job.logoEmpresa}
             </div>
             <div className="flex-1">
-              <p className="text-indigo-600 font-medium mb-1">{job.empresa}</p>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{job.titulo}</h1>
-              <p className="text-sm text-gray-500">
-                publicado há: {Math.floor((Date.now() - job.publicadoEm.getTime()) / (1000 * 60 * 60))} horas
+              <p className="text-scalador-orange font-bold mb-1">{job.empresa}</p>
+              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2">{job.titulo}</h1>
+              <p className="text-sm text-gray-500 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-scalador-orange" />
+                Publicado {getTempoPublicacao(job.publicadoEm)}
               </p>
             </div>
           </div>
 
+          {/* Seção freelancer em deslocamento */}
           {job.status === "em_deslocamento" && job.freelancerSelecionado && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-2xl p-6 mb-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">🚶 Freelancer a caminho</h3>
+                  <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <span className="animate-bounce">🚶</span> Freelancer a caminho
+                  </h3>
                   <div className="flex items-center gap-4">
                     <div className="text-3xl">{job.freelancerSelecionado.foto}</div>
                     <div>
-                      <p className="font-semibold text-gray-900">{job.freelancerSelecionado.nome}</p>
+                      <p className="font-bold text-gray-900">{job.freelancerSelecionado.nome}</p>
                       <p className="text-sm text-gray-600">{job.freelancerSelecionado.telefone}</p>
                       <div className="flex items-center gap-1 mt-1">
                         {[1, 2, 3, 4, 5].map((i) => (
@@ -2516,14 +2572,14 @@ export default function Index() {
                       </div>
                     </div>
                   </div>
-                  <p className="text-sm text-blue-700 mt-3">
+                  <p className="text-sm text-blue-700 mt-3 font-medium">
                     ⏱️ Tempo estimado de chegada: <strong>{job.freelancerSelecionado.tempoEstimadoChegada}</strong>
                   </p>
                 </div>
                 {job.tempoLimiteEmpresaCancelar && new Date() < job.tempoLimiteEmpresaCancelar && (
                   <button
                     onClick={() => cancelarFreelancer(job.id)}
-                    className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-medium text-sm"
+                    className="px-4 py-2 bg-red-100 text-red-700 rounded-xl hover:bg-red-200 font-bold text-sm transition-colors"
                   >
                     Solicitar outro
                   </button>
@@ -2548,13 +2604,13 @@ export default function Index() {
                       jobId: job.id,
                     })
                   }
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-bold transition-colors"
                 >
                   <Phone className="w-4 h-4" /> Enviar WhatsApp
                 </button>
                 <button
                   onClick={() => confirmarChegada(job.id, "empresa")}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-scalador-blue text-white rounded-xl hover:bg-scalador-blue/90 font-bold transition-colors"
                 >
                   <CheckCircle className="w-4 h-4" /> Confirmar Chegada
                 </button>
@@ -2563,115 +2619,198 @@ export default function Index() {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="md:col-span-2">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">SOBRE A VAGA</h2>
-              <p className="text-gray-700 mb-6">{job.descricao}</p>
+            {/* Coluna principal */}
+            <div className="md:col-span-2 space-y-6">
+              {/* Sobre a Vaga */}
+              <div>
+                <h2 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-scalador-orange" /> SOBRE A VAGA
+                </h2>
+                <p className="text-gray-700 leading-relaxed">{job.descricao}</p>
+              </div>
 
+              {/* Atividades */}
               {job.atividades.length > 0 && (
-                <>
-                  <h3 className="font-semibold text-gray-900 mb-3">Atividades:</h3>
-                  <ul className="list-disc list-inside space-y-2 text-gray-700 mb-6">
+                <div>
+                  <h3 className="font-bold text-gray-900 mb-3">Atividades:</h3>
+                  <ul className="space-y-2">
                     {job.atividades.map((atividade, idx) => (
-                      <li key={idx}>{atividade}</li>
+                      <li key={idx} className="flex items-start gap-2 text-gray-700">
+                        <Check className="w-5 h-5 text-scalador-green flex-shrink-0 mt-0.5" />
+                        {atividade}
+                      </li>
                     ))}
                   </ul>
-                </>
+                </div>
               )}
 
-              <div className="bg-gray-50 rounded-lg p-6 mt-6">
-                <h3 className="font-semibold text-gray-900 mb-4">PERGUNTAS FREQUENTES</h3>
-                <div className="space-y-4">
-                  <div>
-                    <p className="font-medium text-gray-900 mb-1">É necessário ter experiência?</p>
-                    <p className="text-gray-600">{job.experienciaNecessaria ? "Sim" : "Não"}</p>
-                  </div>
-                  {job.beneficios.length > 0 && (
-                    <div>
-                      <p className="font-medium text-gray-900 mb-1">Quais são os benefícios inclusos?</p>
-                      <p className="text-gray-600">{job.beneficios.join(", ")}</p>
-                    </div>
-                  )}
-                  {job.vestimenta && (
-                    <div>
-                      <p className="font-medium text-gray-900 mb-1">Qual é o padrão de apresentação?</p>
-                      <p className="text-gray-600">{job.vestimenta}</p>
-                    </div>
+              {/* Localização com Bairro Destacado */}
+              <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-6 border border-orange-200/50">
+                <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-scalador-orange" /> Localização
+                </h3>
+                <div className="space-y-2">
+                  <p className="text-2xl font-black text-scalador-orange">{job.localizacao.bairro}</p>
+                  <p className="text-gray-700">{job.localizacao.endereco}</p>
+                  <p className="text-gray-600">{job.localizacao.cidade} - {job.localizacao.estado}</p>
+                  <p className="text-sm text-gray-500">CEP: {job.localizacao.cep}</p>
+                </div>
+                {job.localizacao.coordenadas && (
+                  <button
+                    onClick={() =>
+                      window.open(
+                        `https://www.google.com/maps?q=${job.localizacao.coordenadas!.lat},${job.localizacao.coordenadas!.lng}`,
+                        "_blank",
+                      )
+                    }
+                    className="mt-4 flex items-center justify-center gap-2 px-4 py-3 bg-scalador-orange text-white rounded-xl hover:bg-scalador-orange/90 font-bold transition-colors w-full"
+                  >
+                    <Navigation className="w-4 h-4" /> Ver no Google Maps
+                  </button>
+                )}
+              </div>
+
+              {/* Perguntas Frequentes */}
+              <div className="bg-gray-50 rounded-2xl p-6">
+                <h3 className="font-black text-gray-900 mb-4 flex items-center gap-2">
+                  <HelpCircle className="w-5 h-5 text-scalador-blue" /> PERGUNTAS FREQUENTES
+                </h3>
+                <div className="space-y-3">
+                  {job.perguntasFrequentes && job.perguntasFrequentes.length > 0 ? (
+                    job.perguntasFrequentes.map((faq, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-300"
+                      >
+                        <button
+                          onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
+                          className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors"
+                        >
+                          <span className="font-bold text-gray-900">{faq.pergunta}</span>
+                          <ChevronDown
+                            className={`w-5 h-5 text-scalador-orange transition-transform duration-300 ${
+                              expandedFaq === idx ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
+                        {expandedFaq === idx && (
+                          <div className="px-4 pb-4 text-gray-600 animate-fade-in">
+                            {faq.resposta}
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <>
+                      <div className="bg-white rounded-xl border border-gray-200 p-4">
+                        <p className="font-bold text-gray-900 mb-1">É necessário ter experiência?</p>
+                        <p className="text-gray-600">{job.experienciaNecessaria ? "Sim" : "Não"}</p>
+                      </div>
+                      {job.beneficios.length > 0 && (
+                        <div className="bg-white rounded-xl border border-gray-200 p-4">
+                          <p className="font-bold text-gray-900 mb-1">Quais são os benefícios inclusos?</p>
+                          <p className="text-gray-600">{job.beneficios.join(", ")}</p>
+                        </div>
+                      )}
+                      {job.vestimenta && (
+                        <div className="bg-white rounded-xl border border-gray-200 p-4">
+                          <p className="font-bold text-gray-900 mb-1">Qual é o padrão de apresentação?</p>
+                          <p className="text-gray-600">{job.vestimenta}</p>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
             </div>
 
+            {/* Sidebar - Informações */}
             <div className="md:col-span-1">
-              <div className="bg-gray-50 rounded-lg p-6 sticky top-24">
-                <h3 className="font-semibold text-gray-900 mb-4">INFORMAÇÕES DA VAGA</h3>
+              <div className="glass rounded-2xl p-6 sticky top-24 shadow-xl">
+                <h3 className="font-black text-gray-900 mb-4">INFORMAÇÕES DA VAGA</h3>
                 <div className="space-y-4">
-                  <div>
+                  {/* Remuneração */}
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200/50">
                     <p className="text-sm text-gray-600 mb-1">Remuneração</p>
-                    <p className="text-2xl font-bold text-green-600">R$ {job.valorDiaria.toFixed(2)} / dia</p>
-                    <p className="text-xs text-gray-500">
-                      (R$ {(job.valorDiaria * 0.98).toFixed(2)} / dia com taxas incluídas)
+                    <p className="text-3xl font-black text-scalador-green">
+                      R$ {job.valorDiaria.toFixed(2)}
                     </p>
+                    <p className="text-sm text-gray-500">por dia</p>
                   </div>
 
                   <div className="flex items-center gap-3 pt-3 border-t border-gray-200">
-                    <Briefcase className="w-5 h-5 text-gray-400" />
+                    <Briefcase className="w-5 h-5 text-scalador-orange" />
                     <div>
                       <p className="text-sm text-gray-600">Tipo de Vaga</p>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-bold text-gray-900">
                         {job.tipo === "freelance" ? "Vaga Freelancer" : "Vaga Temporária"}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 pt-3 border-t border-gray-200">
-                    <User className="w-5 h-5 text-gray-400" />
+                    <User className="w-5 h-5 text-scalador-orange" />
                     <div>
                       <p className="text-sm text-gray-600">Profissão</p>
-                      <p className="font-medium text-gray-900">{job.profissao}</p>
+                      <p className="font-bold text-gray-900">{job.profissao}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 pt-3 border-t border-gray-200">
-                    <MapPin className="w-5 h-5 text-gray-400" />
-                    <div>
-                      <p className="text-sm text-gray-600">Localização</p>
-                      <p className="font-medium text-gray-900">{job.localizacao.endereco}</p>
-                      <p className="text-sm text-gray-600">
-                        {job.localizacao.cidade} - {job.localizacao.estado}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 pt-3 border-t border-gray-200">
-                    <Calendar className="w-5 h-5 text-gray-400" />
+                    <Calendar className="w-5 h-5 text-scalador-orange" />
                     <div>
                       <p className="text-sm text-gray-600">Data</p>
-                      <p className="font-medium text-gray-900">{new Date(job.data).toLocaleDateString("pt-BR")}</p>
+                      <p className="font-bold text-gray-900">{new Date(job.data).toLocaleDateString("pt-BR")}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 pt-3 border-t border-gray-200">
-                    <Clock className="w-5 h-5 text-gray-400" />
+                    <Clock className="w-5 h-5 text-scalador-orange" />
                     <div>
                       <p className="text-sm text-gray-600">Horário</p>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-bold text-gray-900">
                         {job.horarioEntrada} - {job.horarioSaida}
                       </p>
                     </div>
                   </div>
 
-                  {job.localizacao.coordenadas && (
+                  <div className="flex items-center gap-3 pt-3 border-t border-gray-200">
+                    <Users className="w-5 h-5 text-scalador-orange" />
+                    <div>
+                      <p className="text-sm text-gray-600">Vagas disponíveis</p>
+                      <p className="font-bold text-gray-900">{job.quantidadeFreelancers} freelancer(s)</p>
+                    </div>
+                  </div>
+
+                  {/* Botão de candidatura - só aparece para freelancers */}
+                  {userType === "freelancer" && job.status === "aberta" && (
                     <button
-                      onClick={() =>
-                        window.open(
-                          `https://www.google.com/maps?q=${job.localizacao.coordenadas!.lat},${job.localizacao.coordenadas!.lng}`,
-                          "_blank",
-                        )
-                      }
-                      className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium"
+                      onClick={() => candidatarVaga(job.id)}
+                      className="w-full mt-6 py-4 sm:py-5 bg-gradient-to-r from-scalador-orange to-scalador-orange-light text-white text-lg sm:text-xl font-black rounded-2xl shadow-2xl shadow-orange-500/40 hover:shadow-orange-600/50 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3"
                     >
-                      <Navigation className="w-4 h-4" /> Ver no Mapa
+                      <Send className="w-5 h-5 sm:w-6 sm:h-6" /> Me Candidatar
                     </button>
+                  )}
+
+                  {/* Mensagem para empresas */}
+                  {userType === "empresa" && (
+                    <div className="mt-4 bg-blue-50 rounded-xl p-4 text-center">
+                      <p className="text-sm text-blue-700 font-medium">
+                        Esta é uma de suas vagas publicadas
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Mensagem para visitantes */}
+                  {userType === "visitante" && (
+                    <div className="mt-4 bg-gray-100 rounded-xl p-4 text-center">
+                      <p className="text-sm text-gray-600 font-medium mb-2">
+                        Faça login para se candidatar
+                      </p>
+                      <button className="px-4 py-2 bg-scalador-orange text-white rounded-xl font-bold text-sm hover:bg-scalador-orange/90 transition-colors">
+                        Entrar
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
