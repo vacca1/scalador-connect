@@ -168,6 +168,30 @@ interface AvaliacaoDetalhada {
   apresentacao: number;      // 1-5
 }
 
+// ===== INTERFACE SISTEMA DE FALTAS E REPUTAÇÃO =====
+interface HistoricoComparecimento {
+  totalAgendados: number;      // Total de trabalhos agendados
+  totalCompareceu: number;     // Total de trabalhos que compareceu
+  totalFaltas: number;         // Total de faltas
+  taxaComparecimento: number;  // Percentual (0-100)
+  ultimaFalta?: Date;          // Data da última falta
+  historicoDetalhado: {
+    data: Date;
+    empresa: string;
+    compareceu: boolean;
+    justificativa?: string;
+  }[];
+}
+
+// Helper para determinar badge de comparecimento
+const getBadgeComparecimento = (taxa: number): { label: string; cor: string; icon: string; alerta: boolean } => {
+  if (taxa === 100) return { label: "100% Presença", cor: "bg-green-100 text-green-700 border-green-300", icon: "🏆", alerta: false };
+  if (taxa >= 95) return { label: "95%+ Presença", cor: "bg-emerald-100 text-emerald-700 border-emerald-300", icon: "⭐", alerta: false };
+  if (taxa >= 90) return { label: "90%+ Presença", cor: "bg-blue-100 text-blue-700 border-blue-300", icon: "✓", alerta: false };
+  if (taxa >= 80) return { label: "80%+ Presença", cor: "bg-amber-100 text-amber-700 border-amber-300", icon: "⚠️", alerta: true };
+  return { label: `${taxa.toFixed(0)}% Presença`, cor: "bg-red-100 text-red-700 border-red-300", icon: "⛔", alerta: true };
+};
+
 interface Freelancer {
   id: string;
   nome: string;
@@ -188,6 +212,7 @@ interface Freelancer {
   telefone: string;
   descricao: string;
   avaliacaoDetalhada: AvaliacaoDetalhada;
+  historicoComparecimento: HistoricoComparecimento;
   ultimosTrabalhos: {
     empresa: string;
     cargo: string;
@@ -388,6 +413,16 @@ const MOCK_FREELANCERS: Freelancer[] = [
       profissionalismo: 4.9,
       apresentacao: 4.7,
     },
+    historicoComparecimento: {
+      totalAgendados: 127,
+      totalCompareceu: 127,
+      totalFaltas: 0,
+      taxaComparecimento: 100,
+      historicoDetalhado: [
+        { data: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), empresa: "Restaurante Premium", compareceu: true },
+        { data: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), empresa: "Hotel Central", compareceu: true },
+      ],
+    },
     ultimosTrabalhos: [
       { empresa: "Restaurante Premium", cargo: "Garçom", avaliacao: 5, data: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
       { empresa: "Hotel Central", cargo: "Garçom", avaliacao: 4.8, data: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000) },
@@ -418,6 +453,18 @@ const MOCK_FREELANCERS: Freelancer[] = [
       comunicacao: 4.8,
       profissionalismo: 5.0,
       apresentacao: 4.8,
+    },
+    historicoComparecimento: {
+      totalAgendados: 203,
+      totalCompareceu: 199,
+      totalFaltas: 4,
+      taxaComparecimento: 98.03,
+      ultimaFalta: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
+      historicoDetalhado: [
+        { data: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), empresa: "Scalador", compareceu: true },
+        { data: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), empresa: "Shopping Center", compareceu: true },
+        { data: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000), empresa: "Evento Corporativo", compareceu: false, justificativa: "Emergência médica" },
+      ],
     },
     ultimosTrabalhos: [
       { empresa: "Scalador", cargo: "Auxiliar", avaliacao: 5, data: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) },
@@ -450,6 +497,17 @@ const MOCK_FREELANCERS: Freelancer[] = [
       profissionalismo: 4.7,
       apresentacao: 4.6,
     },
+    historicoComparecimento: {
+      totalAgendados: 85,
+      totalCompareceu: 78,
+      totalFaltas: 7,
+      taxaComparecimento: 91.76,
+      ultimaFalta: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+      historicoDetalhado: [
+        { data: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), empresa: "Hotel Central", compareceu: true },
+        { data: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), empresa: "Evento XYZ", compareceu: false, justificativa: "Problema de transporte" },
+      ],
+    },
     ultimosTrabalhos: [
       { empresa: "Hotel Central", cargo: "Recepcionista", avaliacao: 4.7, data: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
     ],
@@ -480,6 +538,15 @@ const MOCK_FREELANCERS: Freelancer[] = [
       profissionalismo: 5.0,
       apresentacao: 5.0,
     },
+    historicoComparecimento: {
+      totalAgendados: 156,
+      totalCompareceu: 156,
+      totalFaltas: 0,
+      taxaComparecimento: 100,
+      historicoDetalhado: [
+        { data: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), empresa: "Restaurante Gourmet", compareceu: true },
+      ],
+    },
     ultimosTrabalhos: [
       { empresa: "Restaurante Gourmet", cargo: "Chef", avaliacao: 5, data: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
     ],
@@ -509,6 +576,18 @@ const MOCK_FREELANCERS: Freelancer[] = [
       comunicacao: 4.5,
       profissionalismo: 4.6,
       apresentacao: 4.8,
+    },
+    historicoComparecimento: {
+      totalAgendados: 94,
+      totalCompareceu: 75,
+      totalFaltas: 19,
+      taxaComparecimento: 79.79,
+      ultimaFalta: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      historicoDetalhado: [
+        { data: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), empresa: "Eventos Premium", compareceu: true },
+        { data: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), empresa: "Show Festival", compareceu: false, justificativa: "Não compareceu" },
+        { data: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000), empresa: "Congresso Tech", compareceu: false },
+      ],
     },
     ultimosTrabalhos: [
       { empresa: "Eventos Premium", cargo: "Técnico", avaliacao: 4.6, data: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000) },
@@ -3448,16 +3527,41 @@ export default function Index() {
             </button>
           </div>
 
-          <div className="flex items-center gap-2 mb-3">
+          {/* Rating e Badge de Comparecimento */}
+          <div className="flex items-center flex-wrap gap-2 mb-3">
             <div className="flex items-center gap-1">
               <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
               <span className="text-base sm:text-lg font-black text-gray-900">{freelancer.rating}</span>
             </div>
             <span className="text-xs sm:text-sm text-gray-600">• {freelancer.totalTrabalhos} trabalhos</span>
+            
+            {/* Badge de Comparecimento */}
+            {(() => {
+              const badge = getBadgeComparecimento(freelancer.historicoComparecimento.taxaComparecimento);
+              return (
+                <span className={`px-2 py-0.5 rounded-full text-xs font-bold border ${badge.cor}`}>
+                  {badge.icon} {badge.label}
+                </span>
+              );
+            })()}
+            
             <span className={`ml-auto px-2 sm:px-3 py-1 rounded-full text-xs font-bold ${freelancer.disponivel ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>
               {freelancer.disponivel ? "✅ Disponível" : "⏸️ Ocupado"}
             </span>
           </div>
+
+          {/* Alerta de Faltas para Empresas */}
+          {userType === "empresa" && freelancer.historicoComparecimento.taxaComparecimento < 90 && (
+            <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+              <span className="text-xs text-red-700 font-medium">
+                ⚠️ Atenção: {freelancer.historicoComparecimento.totalFaltas} falta(s) registrada(s)
+                {freelancer.historicoComparecimento.ultimaFalta && (
+                  <span className="text-red-600"> • Última: {new Date(freelancer.historicoComparecimento.ultimaFalta).toLocaleDateString("pt-BR")}</span>
+                )}
+              </span>
+            </div>
+          )}
 
           <p className="text-xs sm:text-sm text-gray-600 mb-3 line-clamp-2">{freelancer.descricao}</p>
 
@@ -3569,7 +3673,104 @@ export default function Index() {
                     </div>
                   </div>
                 ))}
+            </div>
+
+            {/* ===== HISTÓRICO DE COMPARECIMENTO ===== */}
+            <div className="mb-6 p-4 sm:p-6 rounded-2xl border-2 overflow-hidden" style={{
+              background: selectedFreelancer.historicoComparecimento.taxaComparecimento >= 95 
+                ? 'linear-gradient(to br, rgb(236, 253, 245), rgb(209, 250, 229))' 
+                : selectedFreelancer.historicoComparecimento.taxaComparecimento >= 90 
+                ? 'linear-gradient(to br, rgb(239, 246, 255), rgb(219, 234, 254))'
+                : 'linear-gradient(to br, rgb(254, 252, 232), rgb(254, 249, 195))',
+              borderColor: selectedFreelancer.historicoComparecimento.taxaComparecimento >= 95 
+                ? 'rgb(134, 239, 172)' 
+                : selectedFreelancer.historicoComparecimento.taxaComparecimento >= 90 
+                ? 'rgb(147, 197, 253)'
+                : 'rgb(252, 211, 77)'
+            }}>
+              <h3 className="text-lg sm:text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
+                <Award className="w-5 h-5 text-purple-500" />
+                Histórico de Comparecimento
+              </h3>
+              
+              {/* Badge principal */}
+              {(() => {
+                const badge = getBadgeComparecimento(selectedFreelancer.historicoComparecimento.taxaComparecimento);
+                return (
+                  <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 ${badge.cor} mb-4`}>
+                    <span className="text-2xl">{badge.icon}</span>
+                    <div>
+                      <p className="font-black text-lg">{badge.label}</p>
+                      <p className="text-xs opacity-80">{selectedFreelancer.historicoComparecimento.totalCompareceu} de {selectedFreelancer.historicoComparecimento.totalAgendados} trabalhos</p>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Estatísticas */}
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                <div className="text-center p-3 bg-white/60 rounded-xl">
+                  <p className="text-2xl font-black text-green-600">{selectedFreelancer.historicoComparecimento.totalCompareceu}</p>
+                  <p className="text-xs text-gray-600 font-medium">Compareceu</p>
+                </div>
+                <div className="text-center p-3 bg-white/60 rounded-xl">
+                  <p className="text-2xl font-black text-red-500">{selectedFreelancer.historicoComparecimento.totalFaltas}</p>
+                  <p className="text-xs text-gray-600 font-medium">Faltas</p>
+                </div>
+                <div className="text-center p-3 bg-white/60 rounded-xl">
+                  <p className="text-2xl font-black text-purple-600">{selectedFreelancer.historicoComparecimento.taxaComparecimento.toFixed(1)}%</p>
+                  <p className="text-xs text-gray-600 font-medium">Taxa</p>
+                </div>
               </div>
+
+              {/* Alerta para empresas se taxa < 90% */}
+              {userType === "empresa" && selectedFreelancer.historicoComparecimento.taxaComparecimento < 90 && (
+                <div className="p-3 bg-red-100 border-2 border-red-300 rounded-xl mb-4">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-bold text-red-700">⚠️ Alerta de Confiabilidade</p>
+                      <p className="text-xs text-red-600 mt-1">
+                        Este freelancer tem um histórico de {selectedFreelancer.historicoComparecimento.totalFaltas} falta(s) em {selectedFreelancer.historicoComparecimento.totalAgendados} trabalhos agendados.
+                        {selectedFreelancer.historicoComparecimento.ultimaFalta && (
+                          <span className="block mt-1">Última falta: {new Date(selectedFreelancer.historicoComparecimento.ultimaFalta).toLocaleDateString("pt-BR")}</span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Histórico detalhado (últimos 3) */}
+              {selectedFreelancer.historicoComparecimento.historicoDetalhado.length > 0 && (
+                <div>
+                  <p className="text-sm font-bold text-gray-700 mb-2">Últimos registros:</p>
+                  <div className="space-y-2">
+                    {selectedFreelancer.historicoComparecimento.historicoDetalhado.slice(0, 3).map((registro, idx) => (
+                      <div key={idx} className={`flex items-center justify-between p-2 rounded-lg ${registro.compareceu ? 'bg-green-50' : 'bg-red-50'}`}>
+                        <div className="flex items-center gap-2">
+                          {registro.compareceu ? (
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <XCircle className="w-4 h-4 text-red-500" />
+                          )}
+                          <span className="text-sm font-medium text-gray-700">{registro.empresa}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className={`text-xs font-bold ${registro.compareceu ? 'text-green-600' : 'text-red-500'}`}>
+                            {registro.compareceu ? 'Compareceu' : 'Faltou'}
+                          </span>
+                          <p className="text-xs text-gray-500">{new Date(registro.data).toLocaleDateString("pt-BR")}</p>
+                          {registro.justificativa && (
+                            <p className="text-xs text-gray-400 italic">{registro.justificativa}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
               
               {/* Pontos de melhoria se algum critério < 4.5 */}
               {(() => {
