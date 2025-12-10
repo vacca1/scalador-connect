@@ -38,6 +38,7 @@ import {
   UserPlus,
   Award,
   Zap,
+  Lock,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
@@ -109,6 +110,34 @@ const getTempoPublicacao = (data: Date): string => {
   if (horas < 24) return `há ${horas} horas`;
   if (dias === 1) return "há 1 dia";
   return `há ${dias} dias`;
+};
+
+// ===== SISTEMA DE VALORES DIFERENCIADOS =====
+interface ValoresVaga {
+  valorBase: number;           // Valor base (nunca mostrado diretamente)
+  valorParaEmpresa: number;    // valorBase * 1.099
+  taxaServico: number;         // 9.9%
+  valorParaFreelancer: number; // valorBase
+  modalidadePosPago?: {
+    valorComTaxa: number;      // valorBase * 1.15
+    taxaPosPago: number;       // 15%
+  };
+}
+
+const calcularValores = (valorBase: number): ValoresVaga => {
+  const taxaNormal = 0.099; // 9.9%
+  const taxaPosPago = 0.15; // 15%
+
+  return {
+    valorBase,
+    valorParaEmpresa: valorBase * (1 + taxaNormal),
+    taxaServico: 9.9,
+    valorParaFreelancer: valorBase,
+    modalidadePosPago: {
+      valorComTaxa: valorBase * (1 + taxaPosPago),
+      taxaPosPago: 15,
+    },
+  };
 };
 
 interface Notification {
@@ -980,6 +1009,39 @@ export default function Index() {
           </nav>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Toggle de tipo de usuário (para demonstração) */}
+          <div className="hidden lg:flex items-center gap-1 bg-white/60 backdrop-blur-sm rounded-xl p-1 border border-gray-200/50">
+            <button
+              onClick={() => setUserType("freelancer")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                userType === "freelancer"
+                  ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              Freelancer
+            </button>
+            <button
+              onClick={() => setUserType("empresa")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                userType === "empresa"
+                  ? "bg-gradient-to-r from-scalador-orange to-amber-500 text-white shadow-lg"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              Empresa
+            </button>
+            <button
+              onClick={() => setUserType("visitante")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                userType === "visitante"
+                  ? "bg-gradient-to-r from-gray-500 to-gray-600 text-white shadow-lg"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              Visitante
+            </button>
+          </div>
           <button className="p-2 sm:p-3 hover:bg-white/40 rounded-xl transition-all duration-300 hidden md:block hover:scale-105 backdrop-blur-sm">
             <MessageSquare className="w-4 sm:w-5 h-4 sm:h-5 text-gray-800" />
           </button>
@@ -1081,6 +1143,78 @@ export default function Index() {
     </footer>
   );
 
+  // ===== COMPONENTE DISPLAY VALOR =====
+  const DisplayValor = ({ 
+    valorBase, 
+    tipoUsuario, 
+    size = "default",
+    showDetails = false 
+  }: { 
+    valorBase: number; 
+    tipoUsuario: UserType; 
+    size?: "small" | "default" | "large";
+    showDetails?: boolean;
+  }) => {
+    const valores = calcularValores(valorBase);
+    
+    const sizeClasses = {
+      small: "text-lg sm:text-xl",
+      default: "text-2xl sm:text-4xl",
+      large: "text-3xl sm:text-5xl",
+    };
+
+    // EMPRESA vê valor COM taxa (laranja)
+    if (tipoUsuario === "empresa") {
+      return (
+        <div>
+          <p className={`${sizeClasses[size]} font-black text-scalador-orange`}>
+            R$ {valores.valorParaEmpresa.toFixed(2)}
+            {size !== "large" && <span className="text-xs sm:text-sm font-semibold text-gray-500"> / dia</span>}
+          </p>
+          {showDetails && (
+            <p className="text-xs text-scalador-orange/80 font-medium mt-1">
+              Inclui taxa de serviço ({valores.taxaServico}%)
+            </p>
+          )}
+        </div>
+      );
+    }
+
+    // FREELANCER vê valor SEM taxa (verde)
+    if (tipoUsuario === "freelancer") {
+      return (
+        <div>
+          <p className={`${sizeClasses[size]} font-black gradient-text-green`}>
+            R$ {valores.valorParaFreelancer.toFixed(2)}
+            {size !== "large" && <span className="text-xs sm:text-sm font-semibold text-gray-500"> / dia</span>}
+          </p>
+          {showDetails && (
+            <p className="text-xs text-scalador-green font-medium mt-1">
+              Valor líquido a receber
+            </p>
+          )}
+        </div>
+      );
+    }
+
+    // VISITANTE vê bloqueado
+    return (
+      <div className="flex items-center gap-2">
+        <div className="relative">
+          <p className={`${sizeClasses[size]} font-black text-gray-300 blur-sm select-none`}>
+            R$ ---.--
+          </p>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-full">
+              <Lock className="w-4 h-4 text-gray-500" />
+              <span className="text-xs font-bold text-gray-600">Faça login para ver</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const JobCard = ({ job }: { job: Job }) => {
     const statusBadge = {
       aberta: {
@@ -1131,9 +1265,9 @@ export default function Index() {
                 {statusBadge[job.status].text}
               </span>
             </div>
-            <p className="text-2xl sm:text-4xl font-black gradient-text-green mb-3 sm:mb-4">
-              R$ {job.valorDiaria.toFixed(2)} <span className="text-xs sm:text-sm font-semibold text-gray-500">/ dia</span>
-            </p>
+            <div className="mb-3 sm:mb-4">
+              <DisplayValor valorBase={job.valorDiaria} tipoUsuario={userType} />
+            </div>
             <p className="text-gray-700 text-sm sm:text-base mb-4 sm:mb-6 line-clamp-2 leading-relaxed">{job.descricao}</p>
             <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
               <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50 text-scalador-orange rounded-full text-xs sm:text-sm font-bold shadow-sm">
@@ -1553,6 +1687,45 @@ export default function Index() {
                 />
               </div>
             </div>
+
+            {/* Preview de valores - FASE 4 */}
+            {formData.valorDiaria > 0 && (
+              <div className="bg-gradient-to-r from-orange-50 to-green-50 rounded-2xl p-6 border border-orange-200/50">
+                <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <DollarSign className="w-5 h-5 text-scalador-orange" /> Preview dos valores
+                </h4>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="bg-white rounded-xl p-4 border border-orange-200/50">
+                    <p className="text-sm text-gray-500 mb-1">Você pagará</p>
+                    <p className="text-2xl font-black text-scalador-orange">
+                      R$ {calcularValores(formData.valorDiaria).valorParaEmpresa.toFixed(2)}
+                    </p>
+                    <p className="text-xs text-scalador-orange/80 mt-1">
+                      (inclui taxa de {calcularValores(formData.valorDiaria).taxaServico}%)
+                    </p>
+                  </div>
+                  <div className="bg-white rounded-xl p-4 border border-green-200/50">
+                    <p className="text-sm text-gray-500 mb-1">Freelancer receberá</p>
+                    <p className="text-2xl font-black text-scalador-green">
+                      R$ {calcularValores(formData.valorDiaria).valorParaFreelancer.toFixed(2)}
+                    </p>
+                    <p className="text-xs text-scalador-green/80 mt-1">
+                      (valor líquido)
+                    </p>
+                  </div>
+                </div>
+                {formData.quantidadeFreelancers > 1 && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="text-sm text-gray-600">
+                      <strong>Total para {formData.quantidadeFreelancers} freelancers:</strong>{" "}
+                      <span className="text-scalador-orange font-black">
+                        R$ {(calcularValores(formData.valorDiaria).valorParaEmpresa * formData.quantidadeFreelancers).toFixed(2)}
+                      </span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Data do trabalho *</label>
@@ -2729,13 +2902,21 @@ export default function Index() {
               <div className="glass rounded-2xl p-6 sticky top-24 shadow-xl">
                 <h3 className="font-black text-gray-900 mb-4">INFORMAÇÕES DA VAGA</h3>
                 <div className="space-y-4">
-                  {/* Remuneração */}
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200/50">
+                  {/* Remuneração com valores diferenciados */}
+                  <div className={`rounded-xl p-4 border ${
+                    userType === "empresa" 
+                      ? "bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200/50" 
+                      : userType === "freelancer"
+                        ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200/50"
+                        : "bg-gray-50 border-gray-200"
+                  }`}>
                     <p className="text-sm text-gray-600 mb-1">Remuneração</p>
-                    <p className="text-3xl font-black text-scalador-green">
-                      R$ {job.valorDiaria.toFixed(2)}
-                    </p>
-                    <p className="text-sm text-gray-500">por dia</p>
+                    <DisplayValor 
+                      valorBase={job.valorDiaria} 
+                      tipoUsuario={userType} 
+                      size="large"
+                      showDetails 
+                    />
                   </div>
 
                   <div className="flex items-center gap-3 pt-3 border-t border-gray-200">
