@@ -1335,7 +1335,7 @@ export default function Index() {
     return <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-6 sm:py-12">
         <div className="mb-8 sm:mb-12 text-center animate-fade-in">
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-black mb-3 sm:mb-4">
-            <span className="gradient-text">Vagas Disponíveis</span>
+            <span className="gradient-text-blue">Vagas Disponíveis</span>
           </h2>
           <p className="text-gray-600 text-base sm:text-xl font-medium">Encontre as melhores oportunidades 🚀</p>
         </div>
@@ -1536,7 +1536,7 @@ export default function Index() {
       return <div className="max-w-5xl mx-auto px-4 py-16">
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-5xl md:text-6xl font-black mb-6">
-              Abra portas para <span className="gradient-text">talentos excepcionais</span> ✨
+              Abra portas para <span className="gradient-text-blue">talentos excepcionais</span> ✨
             </h2>
             <p className="text-gray-600 text-2xl font-medium">
               Publique sua vaga e assista aos talentos se destacarem...
@@ -2976,7 +2976,7 @@ export default function Index() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h2 className="text-3xl sm:text-5xl font-black mb-2">
-                <span className="gradient-text">Minha Carteira</span> 💰
+                <span className="gradient-text-blue">Minha Carteira</span> 💰
               </h2>
               <p className="text-gray-600 text-base sm:text-lg font-medium">Gerencie seus ganhos e saques</p>
             </div>
@@ -3349,7 +3349,7 @@ export default function Index() {
     return <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-6 sm:py-12">
         <div className="mb-8 sm:mb-12 text-center animate-fade-in">
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-black mb-3 sm:mb-4">
-            <span className="gradient-text">Buscar Freelancers</span>
+            <span className="gradient-text-blue">Buscar Freelancers</span>
           </h2>
           <p className="text-gray-600 text-base sm:text-xl font-medium">Encontre profissionais de confiança 👥</p>
         </div>
@@ -3435,7 +3435,7 @@ export default function Index() {
         <div className="mb-8 sm:mb-12 text-center animate-fade-in">
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-black mb-3 sm:mb-4 flex items-center justify-center gap-3">
             <Heart className="w-10 sm:w-14 h-10 sm:h-14 text-pink-600" />
-            <span className="gradient-text">Favoritos</span>
+            <span className="gradient-text-blue">Favoritos</span>
           </h2>
           <p className="text-gray-600 text-base sm:text-xl font-medium">
             Seus freelancers favoritos ({freelancersFavoritos.length})
@@ -4460,7 +4460,7 @@ _Responda diretamente por este chat._`;
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h2 className="text-3xl sm:text-5xl font-black mb-2">
-                <span className="gradient-text">Calendário</span> 📅
+                <span className="gradient-text-blue">Calendário</span> 📅
               </h2>
               <p className="text-gray-600 text-base sm:text-lg font-medium">
                 Planeje suas contratações com base em feriados e datas de alta demanda
