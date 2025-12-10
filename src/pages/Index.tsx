@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useToast } from "@/hooks/use-toast";
 import scaladorLogo from "@/assets/scalador-logo.png";
 import { GlowMenu } from "@/components/ui/glow-menu";
+import { AnimatedSelect } from "@/components/ui/animated-select";
 
 // ===== TIPOS E INTERFACES =====
 type JobStatus = "aberta" | "aguardando_freelancer" | "em_deslocamento" | "em_andamento" | "concluida" | "cancelada";
@@ -1352,77 +1353,93 @@ export default function Index() {
               <div className="space-y-4 sm:space-y-5">
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Tipo de Vaga</label>
-                  <select className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-scalador-orange/30 focus:border-scalador-orange transition-all duration-300" value={filtros.tipo} onChange={e => setFiltros({
-                  ...filtros,
-                  tipo: e.target.value
-                })}>
-                    <option value="todos">Todos os tipos</option>
-                    <option value="freelance">⚡ Freelance</option>
-                    <option value="temporario">📅 Temporário</option>
-                  </select>
+                  <AnimatedSelect
+                    accentColor="orange"
+                    value={filtros.tipo}
+                    onChange={(value) => setFiltros({ ...filtros, tipo: value })}
+                    options={[
+                      { value: "todos", label: "Todos os tipos" },
+                      { value: "freelance", label: "Freelance", icon: "⚡" },
+                      { value: "temporario", label: "Temporário", icon: "📅" },
+                    ]}
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Bairro/Região</label>
-                  <select className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-scalador-orange/30 focus:border-scalador-orange transition-all duration-300" value={filtros.bairro} onChange={e => setFiltros({
-                  ...filtros,
-                  bairro: e.target.value
-                })}>
-                    <option value="todos">Todos os bairros</option>
-                    <option value="Asa Norte">🏙️ Asa Norte</option>
-                    <option value="Asa Sul">🏙️ Asa Sul</option>
-                    <option value="Águas Claras">💧 Águas Claras</option>
-                    <option value="Taguatinga">🏘️ Taguatinga</option>
-                    <option value="Ceilândia">🏘️ Ceilândia</option>
-                    <option value="Samambaia">🌿 Samambaia</option>
-                    <option value="Gama">🌳 Gama</option>
-                    <option value="Planaltina">🌾 Planaltina</option>
-                    <option value="Sobradinho">🏞️ Sobradinho</option>
-                    <option value="Brazlândia">🌲 Brazlândia</option>
-                    <option value="Santa Maria">⛪ Santa Maria</option>
-                    <option value="São Sebastião">🏡 São Sebastião</option>
-                    <option value="Recanto das Emas">🦜 Recanto das Emas</option>
-                    <option value="Lago Sul">🌊 Lago Sul</option>
-                    <option value="Lago Norte">🌊 Lago Norte</option>
-                    <option value="Riacho Fundo">🏞️ Riacho Fundo</option>
-                    <option value="Guará">🏘️ Guará</option>
-                    <option value="Cruzeiro">✝️ Cruzeiro</option>
-                    <option value="Sudoeste">🏙️ Sudoeste/Octogonal</option>
-                    <option value="Vicente Pires">🏡 Vicente Pires</option>
-                  </select>
+                  <AnimatedSelect
+                    accentColor="orange"
+                    value={filtros.bairro}
+                    onChange={(value) => setFiltros({ ...filtros, bairro: value })}
+                    options={[
+                      { value: "todos", label: "Todos os bairros" },
+                      { value: "Asa Norte", label: "Asa Norte", icon: "🏙️" },
+                      { value: "Asa Sul", label: "Asa Sul", icon: "🏙️" },
+                      { value: "Águas Claras", label: "Águas Claras", icon: "💧" },
+                      { value: "Taguatinga", label: "Taguatinga", icon: "🏘️" },
+                      { value: "Ceilândia", label: "Ceilândia", icon: "🏘️" },
+                      { value: "Samambaia", label: "Samambaia", icon: "🌿" },
+                      { value: "Gama", label: "Gama", icon: "🌳" },
+                      { value: "Planaltina", label: "Planaltina", icon: "🌾" },
+                      { value: "Sobradinho", label: "Sobradinho", icon: "🏞️" },
+                      { value: "Brazlândia", label: "Brazlândia", icon: "🌲" },
+                      { value: "Santa Maria", label: "Santa Maria", icon: "⛪" },
+                      { value: "São Sebastião", label: "São Sebastião", icon: "🏡" },
+                      { value: "Recanto das Emas", label: "Recanto das Emas", icon: "🦜" },
+                      { value: "Lago Sul", label: "Lago Sul", icon: "🌊" },
+                      { value: "Lago Norte", label: "Lago Norte", icon: "🌊" },
+                      { value: "Riacho Fundo", label: "Riacho Fundo", icon: "🏞️" },
+                      { value: "Guará", label: "Guará", icon: "🏘️" },
+                      { value: "Cruzeiro", label: "Cruzeiro", icon: "✝️" },
+                      { value: "Sudoeste", label: "Sudoeste/Octogonal", icon: "🏙️" },
+                      { value: "Vicente Pires", label: "Vicente Pires", icon: "🏡" },
+                    ]}
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Profissão</label>
-                  <select className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-scalador-orange/30 focus:border-scalador-orange transition-all duration-300">
-                    <option>Todas as profissões</option>
-                    <option>🧹 Auxiliar de serviços gerais</option>
-                    <option>🍽️ Garçom</option>
-                    <option>📋 Recepcionista</option>
-                  </select>
+                  <AnimatedSelect
+                    accentColor="orange"
+                    value={filtros.profissao || "todas"}
+                    onChange={(value) => setFiltros({ ...filtros, profissao: value })}
+                    options={[
+                      { value: "todas", label: "Todas as profissões" },
+                      { value: "auxiliar", label: "Auxiliar de serviços gerais", icon: "🧹" },
+                      { value: "garcom", label: "Garçom", icon: "🍽️" },
+                      { value: "recepcionista", label: "Recepcionista", icon: "📋" },
+                    ]}
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Experiência</label>
-                  <select className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-scalador-orange/30 focus:border-scalador-orange transition-all duration-300">
-                    <option>Todas</option>
-                    <option>⭐ Com experiência</option>
-                    <option>🌟 Sem experiência</option>
-                  </select>
+                  <AnimatedSelect
+                    accentColor="orange"
+                    value={filtros.experiencia || "todas"}
+                    onChange={(value) => setFiltros({ ...filtros, experiencia: value })}
+                    options={[
+                      { value: "todas", label: "Todas" },
+                      { value: "com", label: "Com experiência", icon: "⭐" },
+                      { value: "sem", label: "Sem experiência", icon: "🌟" },
+                    ]}
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Distância Máxima</label>
-                  <select className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-scalador-orange/30 focus:border-scalador-orange transition-all duration-300" value={filtros.distanciaMaxima} onChange={e => setFiltros({
-                  ...filtros,
-                  distanciaMaxima: e.target.value
-                })}>
-                    <option value="todas">Todas as distâncias</option>
-                    <option value="5">📍 Até 5km</option>
-                    <option value="10">📍 Até 10km</option>
-                    <option value="20">📍 Até 20km</option>
-                    <option value="30">📍 Até 30km</option>
-                  </select>
+                  <AnimatedSelect
+                    accentColor="orange"
+                    value={filtros.distanciaMaxima}
+                    onChange={(value) => setFiltros({ ...filtros, distanciaMaxima: value })}
+                    options={[
+                      { value: "todas", label: "Todas as distâncias" },
+                      { value: "5", label: "Até 5km", icon: "📍" },
+                      { value: "10", label: "Até 10km", icon: "📍" },
+                      { value: "20", label: "Até 20km", icon: "📍" },
+                      { value: "30", label: "Até 30km", icon: "📍" },
+                    ]}
+                  />
                 </div>
 
                 {/* Botão Aplicar para mobile */}
@@ -3370,27 +3387,31 @@ export default function Index() {
               <div className="space-y-4 sm:space-y-5">
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Disponibilidade</label>
-                  <select className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-purple-500/30 focus:border-purple-400 transition-all duration-300" value={filtrosFreelancers.disponivel} onChange={e => setFiltrosFreelancers({
-                  ...filtrosFreelancers,
-                  disponivel: e.target.value
-                })}>
-                    <option value="todos">Todos</option>
-                    <option value="sim">✅ Disponível</option>
-                    <option value="nao">⏸️ Indisponível</option>
-                  </select>
+                  <AnimatedSelect
+                    accentColor="purple"
+                    value={filtrosFreelancers.disponivel}
+                    onChange={(value) => setFiltrosFreelancers({ ...filtrosFreelancers, disponivel: value })}
+                    options={[
+                      { value: "todos", label: "Todos" },
+                      { value: "sim", label: "Disponível", icon: "✅" },
+                      { value: "nao", label: "Indisponível", icon: "⏸️" },
+                    ]}
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Avaliação Mínima</label>
-                  <select className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-purple-500/30 focus:border-purple-400 transition-all duration-300" value={filtrosFreelancers.avaliacao} onChange={e => setFiltrosFreelancers({
-                  ...filtrosFreelancers,
-                  avaliacao: e.target.value
-                })}>
-                    <option value="todas">Todas</option>
-                    <option value="4.5">⭐ 4.5+</option>
-                    <option value="4.0">⭐ 4.0+</option>
-                    <option value="3.5">⭐ 3.5+</option>
-                  </select>
+                  <AnimatedSelect
+                    accentColor="purple"
+                    value={filtrosFreelancers.avaliacao}
+                    onChange={(value) => setFiltrosFreelancers({ ...filtrosFreelancers, avaliacao: value })}
+                    options={[
+                      { value: "todas", label: "Todas" },
+                      { value: "4.5", label: "4.5+", icon: "⭐" },
+                      { value: "4.0", label: "4.0+", icon: "⭐" },
+                      { value: "3.5", label: "3.5+", icon: "⭐" },
+                    ]}
+                  />
                 </div>
               </div>
             </div>
