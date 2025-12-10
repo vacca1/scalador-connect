@@ -696,21 +696,21 @@ export default function Index() {
               navegarPara("freelancers");
               setShowMenu(false);
             }}
-            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
-            <Users className="w-5 h-5 text-purple-600 group-hover:scale-110 transition-transform" /> Buscar Freelancers
+            <Users className="w-5 h-5 text-scalador-orange group-hover:scale-110 transition-transform" /> Buscar Freelancers
           </button>
           <button
             onClick={() => {
               navegarPara("carteira");
               setShowMenu(false);
             }}
-            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group relative"
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group relative"
           >
-            <Heart className="w-5 h-5 text-pink-600 group-hover:scale-110 transition-transform" />
+            <Heart className="w-5 h-5 text-scalador-orange group-hover:scale-110 transition-transform" />
             Minha Carteira
             {carteiraFreelancers.length > 0 && (
-              <span className="absolute right-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+              <span className="absolute right-4 bg-gradient-to-r from-scalador-orange to-scalador-orange-light text-white text-xs font-bold px-2 py-0.5 rounded-full">
                 {carteiraFreelancers.length}
               </span>
             )}
@@ -765,15 +765,15 @@ export default function Index() {
               navegarPara("notificacoes");
               setShowMenu(false);
             }}
-            className="md:hidden w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+            className="md:hidden w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
-            <MessageSquare className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" /> Mensagens
+            <MessageSquare className="w-5 h-5 text-scalador-blue group-hover:scale-110 transition-transform" /> Mensagens
           </button>
           <button
             onClick={() => setShowMenu(false)}
-            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
-            <HelpCircle className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" /> Preciso de ajuda
+            <HelpCircle className="w-5 h-5 text-scalador-blue group-hover:scale-110 transition-transform" /> Preciso de ajuda
           </button>
           <hr className="my-2 border-gray-100" />
           <button
@@ -823,18 +823,18 @@ export default function Index() {
           </button>
           <button
             onClick={() => navegarPara("freelancers")}
-            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group"
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
-            <Users className="w-5 h-5 text-purple-600 group-hover:scale-110 transition-transform" /> Buscar Freelancers
+            <Users className="w-5 h-5 text-scalador-orange group-hover:scale-110 transition-transform" /> Buscar Freelancers
           </button>
           <button
             onClick={() => navegarPara("carteira")}
-            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group relative"
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group relative"
           >
-            <Heart className="w-5 h-5 text-pink-600 group-hover:scale-110 transition-transform" />
+            <Heart className="w-5 h-5 text-scalador-orange group-hover:scale-110 transition-transform" />
             Minha Carteira
             {carteiraFreelancers.length > 0 && (
-              <span className="absolute right-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+              <span className="absolute right-4 bg-gradient-to-r from-scalador-orange to-scalador-orange-light text-white text-xs font-bold px-2 py-0.5 rounded-full">
                 {carteiraFreelancers.length}
               </span>
             )}
@@ -871,15 +871,15 @@ export default function Index() {
           </button>
           <button
             onClick={() => navegarPara("notificacoes")}
-            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group"
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
-            <MessageSquare className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" /> Mensagens
+            <MessageSquare className="w-5 h-5 text-scalador-blue group-hover:scale-110 transition-transform" /> Mensagens
           </button>
           <button
             onClick={() => setShowMenu(false)}
-            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group"
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
-            <HelpCircle className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" /> Preciso de ajuda
+            <HelpCircle className="w-5 h-5 text-scalador-blue group-hover:scale-110 transition-transform" /> Preciso de ajuda
           </button>
           <hr className="my-2 border-gray-100" />
           <button
@@ -923,7 +923,7 @@ export default function Index() {
               <Heart className="w-4 h-4" />
               Minha Carteira
               {carteiraFreelancers.length > 0 && (
-                <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                <span className="bg-gradient-to-r from-scalador-orange to-scalador-orange-light text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   {carteiraFreelancers.length}
                 </span>
               )}
@@ -975,8 +975,8 @@ export default function Index() {
   );
 
   const Footer = () => (
-    <footer className="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white mt-16 sm:mt-32 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10"></div>
+    <footer className="bg-gradient-to-br from-gray-900 via-scalador-orange-dark/80 to-gray-900 text-white mt-16 sm:mt-32 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-r from-scalador-orange/10 to-amber-500/10"></div>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-12">
           <div>
@@ -987,25 +987,25 @@ export default function Index() {
                 className="h-12 sm:h-16 w-auto object-contain"
               />
             </div>
-            <p className="text-purple-200 text-xs sm:text-sm mb-2 font-medium">CNPJ: 41.264.266/0001-29</p>
-            <p className="text-purple-200 text-xs sm:text-sm leading-relaxed">
+            <p className="text-orange-100 text-xs sm:text-sm mb-2 font-medium">CNPJ: 41.264.266/0001-29</p>
+            <p className="text-orange-100 text-xs sm:text-sm leading-relaxed">
               Quadra Crs 516 Bloco B, 66 - Asa Sul, Brasília - DF
             </p>
-            <p className="text-purple-300 text-xs sm:text-sm mt-4 sm:mt-6 font-semibold">© 2025 Scalador. Todos os direitos reservados</p>
+            <p className="text-orange-200 text-xs sm:text-sm mt-4 sm:mt-6 font-semibold">© 2025 Scalador. Todos os direitos reservados</p>
           </div>
           <div>
             <h4 className="font-bold text-lg sm:text-xl mb-4 sm:mb-6 text-white">Contatos</h4>
-            <p className="text-purple-200 text-xs sm:text-sm mb-3 flex items-center gap-2 sm:gap-3 hover:text-white transition-colors cursor-pointer group">
+            <p className="text-orange-100 text-xs sm:text-sm mb-3 flex items-center gap-2 sm:gap-3 hover:text-white transition-colors cursor-pointer group">
               <Phone className="w-4 sm:w-5 h-4 sm:h-5 group-hover:scale-110 transition-transform flex-shrink-0" /> (11) 92089-3500
             </p>
-            <p className="text-purple-200 text-xs sm:text-sm flex items-center gap-2 sm:gap-3 hover:text-white transition-colors cursor-pointer group">
+            <p className="text-orange-100 text-xs sm:text-sm flex items-center gap-2 sm:gap-3 hover:text-white transition-colors cursor-pointer group">
               <span className="text-lg sm:text-xl group-hover:scale-110 transition-transform">📧</span> 
               <span className="break-all">contato.scalador@gmail.com</span>
             </p>
           </div>
           <div className="sm:col-span-2 md:col-span-1">
             <h4 className="font-bold text-lg sm:text-xl mb-4 sm:mb-6 text-white">Soluções</h4>
-            <ul className="space-y-2 sm:space-y-3 text-purple-200 text-xs sm:text-sm font-medium">
+            <ul className="space-y-2 sm:space-y-3 text-orange-100 text-xs sm:text-sm font-medium">
               <li>
                 <button
                   onClick={() => navegarPara("vagas")}
@@ -1023,20 +1023,20 @@ export default function Index() {
             <div className="flex gap-4 sm:gap-5 mt-4 sm:mt-6">
               <a
                 href="#"
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-purple-200 hover:text-white hover:scale-110 transition-all duration-300 shadow-lg"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-orange-100 hover:text-white hover:scale-110 transition-all duration-300 shadow-lg"
               >
                 Li
               </a>
               <a
                 href="#"
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-purple-200 hover:text-white hover:scale-110 transition-all duration-300 shadow-lg"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-orange-100 hover:text-white hover:scale-110 transition-all duration-300 shadow-lg"
               >
                 In
               </a>
             </div>
           </div>
         </div>
-        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-blue-700/30 text-center text-blue-300 text-xs sm:text-sm font-medium">
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-orange-400/30 text-center text-orange-200 text-xs sm:text-sm font-medium">
           desenvolvido com <span className="text-red-400 animate-pulse">🔥</span> por{" "}
           <span className="font-bold text-white">Konecta</span>
         </div>
@@ -1056,11 +1056,11 @@ export default function Index() {
       },
       em_deslocamento: {
         text: "Em Deslocamento",
-        color: "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/40 animate-pulse",
+        color: "bg-gradient-to-r from-scalador-orange to-amber-500 text-white shadow-lg shadow-orange-500/40 animate-pulse",
       },
       em_andamento: {
         text: "Em Andamento",
-        color: "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/40",
+        color: "bg-gradient-to-r from-scalador-blue to-cyan-500 text-white shadow-lg shadow-blue-500/40",
       },
       concluida: {
         text: "Concluída",
@@ -1074,19 +1074,19 @@ export default function Index() {
 
     return (
       <div
-        className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 cursor-pointer group hover:-translate-y-1 sm:hover:-translate-y-2 relative overflow-hidden"
+        className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 hover:shadow-2xl hover:shadow-orange-500/20 transition-all duration-500 cursor-pointer group hover:-translate-y-1 sm:hover:-translate-y-2 relative overflow-hidden"
         onClick={() => navegarPara("vaga-detalhes", job.id)}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-scalador-orange/5 to-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         <div className="relative flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
-          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl sm:rounded-2xl flex items-center justify-center text-2xl sm:text-3xl shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 flex-shrink-0">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-orange-100 to-amber-100 rounded-xl sm:rounded-2xl flex items-center justify-center text-2xl sm:text-3xl shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 flex-shrink-0">
             {job.logoEmpresa}
           </div>
           <div className="flex-1 w-full">
             <div className="flex items-start justify-between mb-2 sm:mb-3 gap-2">
               <div className="flex-1 min-w-0">
-                <p className="text-xs sm:text-sm font-semibold text-blue-600 mb-1">{job.empresa}</p>
-                <h3 className="text-lg sm:text-2xl font-black text-gray-900 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-cyan-500 group-hover:bg-clip-text transition-all duration-300 line-clamp-2">
+                <p className="text-xs sm:text-sm font-semibold text-scalador-orange mb-1">{job.empresa}</p>
+                <h3 className="text-lg sm:text-2xl font-black text-gray-900 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-scalador-orange group-hover:to-amber-500 group-hover:bg-clip-text transition-all duration-300 line-clamp-2">
                   {job.titulo}
                 </h3>
               </div>
@@ -1099,20 +1099,20 @@ export default function Index() {
             </p>
             <p className="text-gray-700 text-sm sm:text-base mb-4 sm:mb-6 line-clamp-2 leading-relaxed">{job.descricao}</p>
             <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
-              <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 text-blue-700 rounded-full text-xs sm:text-sm font-bold shadow-sm">
+              <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50 text-scalador-orange rounded-full text-xs sm:text-sm font-bold shadow-sm">
                 {job.tipo === "freelance" ? "⚡ Freelancer" : "📅 Temporário"}
               </span>
-              <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 text-blue-700 rounded-full text-xs sm:text-sm font-bold shadow-sm">
+              <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 text-scalador-blue rounded-full text-xs sm:text-sm font-bold shadow-sm">
                 👔 {job.profissao}
               </span>
-              <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50 text-orange-700 rounded-full text-xs sm:text-sm font-bold shadow-sm whitespace-nowrap">
+              <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50 text-scalador-orange rounded-full text-xs sm:text-sm font-bold shadow-sm whitespace-nowrap">
                 {job.experienciaNecessaria ? "⭐ Com experiência" : "🌟 Sem experiência"}
               </span>
             </div>
             <div className="flex flex-wrap gap-3 sm:gap-6 text-xs sm:text-sm text-gray-600 font-medium">
               <span className="flex items-center gap-1.5 sm:gap-2 group/item">
-                <MapPin className="w-4 sm:w-5 h-4 sm:h-5 text-blue-500 group-hover/item:scale-110 transition-transform flex-shrink-0" />
-                <span className="font-bold text-blue-700">{job.localizacao.bairro}</span>
+                <MapPin className="w-4 sm:w-5 h-4 sm:h-5 text-scalador-orange group-hover/item:scale-110 transition-transform flex-shrink-0" />
+                <span className="font-bold text-scalador-orange">{job.localizacao.bairro}</span>
                 <span className="text-gray-400">•</span>
                 <span className="text-gray-600">{job.localizacao.cidade}</span>
               </span>
@@ -1130,11 +1130,11 @@ export default function Index() {
                 </span>
               )}
               <span className="flex items-center gap-1.5 sm:gap-2 group/item whitespace-nowrap">
-                <Calendar className="w-4 sm:w-5 h-4 sm:h-5 text-blue-500 group-hover/item:scale-110 transition-transform flex-shrink-0" />
+                <Calendar className="w-4 sm:w-5 h-4 sm:h-5 text-scalador-blue group-hover/item:scale-110 transition-transform flex-shrink-0" />
                 {new Date(job.data).toLocaleDateString("pt-BR")}
               </span>
               <span className="flex items-center gap-1.5 sm:gap-2 group/item whitespace-nowrap">
-                <Clock className="w-4 sm:w-5 h-4 sm:h-5 text-orange-500 group-hover/item:scale-110 transition-transform flex-shrink-0" />
+                <Clock className="w-4 sm:w-5 h-4 sm:h-5 text-scalador-orange group-hover/item:scale-110 transition-transform flex-shrink-0" />
                 {job.horarioEntrada} - {job.horarioSaida}
               </span>
             </div>
@@ -1179,16 +1179,16 @@ export default function Index() {
         <div className="max-w-4xl mx-auto mb-6 sm:mb-10">
           <div className="flex gap-2 sm:gap-4">
             <div className="flex-1 relative group">
-              <Search className="absolute left-3 sm:left-5 top-1/2 transform -translate-y-1/2 text-blue-400 w-5 sm:w-6 h-5 sm:h-6 group-focus-within:scale-110 group-focus-within:text-blue-600 transition-all" />
+              <Search className="absolute left-3 sm:left-5 top-1/2 transform -translate-y-1/2 text-scalador-orange w-5 sm:w-6 h-5 sm:h-6 group-focus-within:scale-110 group-focus-within:text-scalador-orange-dark transition-all" />
               <input
                 type="text"
                 placeholder="Procure por trabalhos..."
-                className="w-full pl-10 sm:pl-14 pr-3 sm:pr-6 py-3 sm:py-5 glass rounded-xl sm:rounded-2xl text-sm sm:text-lg font-medium placeholder:text-gray-400 focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300"
+                className="w-full pl-10 sm:pl-14 pr-3 sm:pr-6 py-3 sm:py-5 glass rounded-xl sm:rounded-2xl text-sm sm:text-lg font-medium placeholder:text-gray-400 focus:ring-4 focus:ring-scalador-orange/30 focus:border-scalador-orange transition-all duration-300"
                 value={filtros.busca}
                 onChange={(e) => setFiltros({ ...filtros, busca: e.target.value })}
               />
             </div>
-            <button className="px-5 sm:px-10 py-3 sm:py-5 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-xl sm:rounded-2xl font-bold text-sm sm:text-lg shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-600/50 hover:scale-105 active:scale-95 transition-all duration-300 whitespace-nowrap">
+            <button className="px-5 sm:px-10 py-3 sm:py-5 bg-gradient-to-r from-scalador-orange via-scalador-orange to-scalador-orange-light bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-xl sm:rounded-2xl font-bold text-sm sm:text-lg shadow-xl shadow-orange-500/40 hover:shadow-2xl hover:shadow-orange-600/50 hover:scale-105 active:scale-95 transition-all duration-300 whitespace-nowrap">
               Buscar
             </button>
           </div>
@@ -1616,7 +1616,7 @@ export default function Index() {
                 id="experiencia"
                 checked={formData.experienciaNecessaria}
                 onChange={(e) => setFormData({ ...formData, experienciaNecessaria: e.target.checked })}
-                className="w-4 h-4 text-indigo-600 rounded"
+                className="w-4 h-4 text-scalador-orange rounded"
               />
               <label htmlFor="experiencia" className="text-sm text-gray-700">
                 Experiência necessária
@@ -1625,7 +1625,7 @@ export default function Index() {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="glass rounded-3xl p-8 sticky top-24 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
+            <div className="glass rounded-3xl p-8 sticky top-24 shadow-2xl hover:shadow-orange-500/20 transition-all duration-300">
               <h3 className="font-black text-gray-900 text-xl mb-6 flex items-center gap-2">
                 <Wallet className="w-6 h-6 text-green-600" /> Resumo do Investimento
               </h3>
@@ -1636,7 +1636,7 @@ export default function Index() {
                   <span className="font-black text-gray-900 text-lg">R$ {saldoAtual.toFixed(2)}</span>
                 </div>
 
-                <div className="flex justify-between items-center p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
+                <div className="flex justify-between items-center p-3 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl">
                   <span className="text-sm font-bold text-gray-600">Valor total:</span>
                   <span className="font-black text-gray-900 text-lg">R$ {valorTotal.toFixed(2)}</span>
                 </div>
@@ -1670,7 +1670,7 @@ export default function Index() {
               <button
                 onClick={handlePublicar}
                 disabled={!formData.titulo || !formData.valorDiaria || !formData.data}
-                className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-scalador-orange to-scalador-orange-light text-white py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-orange-500/40 hover:scale-[1.02] transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 Publicar Vaga
               </button>
