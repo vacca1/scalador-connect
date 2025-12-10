@@ -4729,7 +4729,7 @@ _Responda diretamente por este chat._`;
           </div>}
       </div>;
   };
-  return <div className="min-h-screen bg-background/80">
+  return <div className="min-h-screen">
       <Header />
       {showMenu && <MobileMenu />}
 

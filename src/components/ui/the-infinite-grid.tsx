@@ -45,18 +45,18 @@ export const InfiniteGridBackground = ({ children, className }: InfiniteGridBack
       ref={containerRef}
       onMouseMove={handleMouseMove}
       className={cn(
-        "relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-background via-background/95 to-orange-50/30 dark:to-scalador-orange/5",
+        "relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-white via-gray-50/95 to-orange-50/50 dark:from-background dark:via-background/95 dark:to-scalador-orange/10",
         className
       )}
     >
-      {/* Base grid layer - subtle */}
-      <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none">
+      {/* Base grid layer - more visible */}
+      <div className="fixed inset-0 z-0 opacity-[0.15] pointer-events-none">
         <GridPattern offsetX={gridOffsetX} offsetY={gridOffsetY} />
       </div>
       
       {/* Interactive grid layer - follows mouse */}
       <motion.div 
-        className="fixed inset-0 z-0 opacity-30 pointer-events-none"
+        className="fixed inset-0 z-0 opacity-60 pointer-events-none"
         style={{ maskImage, WebkitMaskImage: maskImage }}
       >
         <GridPattern offsetX={gridOffsetX} offsetY={gridOffsetY} />
@@ -89,13 +89,13 @@ const GridPattern = ({ offsetX, offsetY }: { offsetX: any, offsetY: any }) => {
           x={offsetX}
           y={offsetY}
         >
-          <path
-            d="M 40 0 L 0 0 0 40"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1"
-            className="text-scalador-orange/50" 
-          />
+        <path
+          d="M 40 0 L 0 0 0 40"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          className="text-scalador-orange" 
+        />
         </motion.pattern>
       </defs>
       <rect width="100%" height="100%" fill="url(#infinite-grid-pattern)" />
