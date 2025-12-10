@@ -159,6 +159,15 @@ interface Message {
   tipo: "texto" | "sistema" | "whatsapp";
 }
 
+// ===== INTERFACE AVALIAÇÃO DETALHADA =====
+interface AvaliacaoDetalhada {
+  pontualidade: number;      // 1-5
+  qualidadeTrabalho: number; // 1-5
+  comunicacao: number;       // 1-5
+  profissionalismo: number;  // 1-5
+  apresentacao: number;      // 1-5
+}
+
 interface Freelancer {
   id: string;
   nome: string;
@@ -178,6 +187,7 @@ interface Freelancer {
   valorHora: number;
   telefone: string;
   descricao: string;
+  avaliacaoDetalhada: AvaliacaoDetalhada;
   ultimosTrabalhos: {
     empresa: string;
     cargo: string;
@@ -371,6 +381,13 @@ const MOCK_FREELANCERS: Freelancer[] = [
     valorHora: 35.0,
     telefone: "(61) 98765-4321",
     descricao: "Profissional experiente em eventos corporativos e sociais",
+    avaliacaoDetalhada: {
+      pontualidade: 4.9,
+      qualidadeTrabalho: 4.8,
+      comunicacao: 4.7,
+      profissionalismo: 4.9,
+      apresentacao: 4.7,
+    },
     ultimosTrabalhos: [
       { empresa: "Restaurante Premium", cargo: "Garçom", avaliacao: 5, data: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
       { empresa: "Hotel Central", cargo: "Garçom", avaliacao: 4.8, data: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000) },
@@ -395,6 +412,13 @@ const MOCK_FREELANCERS: Freelancer[] = [
     valorHora: 28.0,
     telefone: "(61) 98111-2222",
     descricao: "Especialista em limpeza e organização de eventos",
+    avaliacaoDetalhada: {
+      pontualidade: 5.0,
+      qualidadeTrabalho: 4.9,
+      comunicacao: 4.8,
+      profissionalismo: 5.0,
+      apresentacao: 4.8,
+    },
     ultimosTrabalhos: [
       { empresa: "Scalador", cargo: "Auxiliar", avaliacao: 5, data: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) },
       { empresa: "Shopping Center", cargo: "Limpeza", avaliacao: 4.9, data: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000) },
@@ -419,6 +443,13 @@ const MOCK_FREELANCERS: Freelancer[] = [
     valorHora: 32.0,
     telefone: "(61) 98333-4444",
     descricao: "Recepcionista bilíngue com experiência em hotelaria",
+    avaliacaoDetalhada: {
+      pontualidade: 4.5,
+      qualidadeTrabalho: 4.8,
+      comunicacao: 4.9,
+      profissionalismo: 4.7,
+      apresentacao: 4.6,
+    },
     ultimosTrabalhos: [
       { empresa: "Hotel Central", cargo: "Recepcionista", avaliacao: 4.7, data: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
     ],
@@ -442,6 +473,13 @@ const MOCK_FREELANCERS: Freelancer[] = [
     valorHora: 45.0,
     telefone: "(61) 98555-6666",
     descricao: "Chef especializada em eventos e cozinha regional",
+    avaliacaoDetalhada: {
+      pontualidade: 5.0,
+      qualidadeTrabalho: 5.0,
+      comunicacao: 5.0,
+      profissionalismo: 5.0,
+      apresentacao: 5.0,
+    },
     ultimosTrabalhos: [
       { empresa: "Restaurante Gourmet", cargo: "Chef", avaliacao: 5, data: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
     ],
@@ -465,6 +503,13 @@ const MOCK_FREELANCERS: Freelancer[] = [
     valorHora: 38.0,
     telefone: "(61) 98777-8888",
     descricao: "Técnico completo para montagem e suporte de eventos",
+    avaliacaoDetalhada: {
+      pontualidade: 4.4,
+      qualidadeTrabalho: 4.7,
+      comunicacao: 4.5,
+      profissionalismo: 4.6,
+      apresentacao: 4.8,
+    },
     ultimosTrabalhos: [
       { empresa: "Eventos Premium", cargo: "Técnico", avaliacao: 4.6, data: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000) },
     ],
@@ -3492,6 +3537,63 @@ export default function Index() {
             <div className="mb-6">
               <h3 className="text-lg sm:text-xl font-black text-gray-900 mb-3">Sobre</h3>
               <p className="text-sm sm:text-base text-gray-700">{selectedFreelancer.descricao}</p>
+            </div>
+
+            {/* ===== AVALIAÇÕES DETALHADAS ===== */}
+            <div className="mb-6 p-4 sm:p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-100">
+              <h3 className="text-lg sm:text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
+                <Star className="w-5 h-5 text-yellow-500" />
+                Avaliações Detalhadas
+              </h3>
+              <div className="space-y-4">
+                {[
+                  { label: "Pontualidade", value: selectedFreelancer.avaliacaoDetalhada.pontualidade, icon: "⏰" },
+                  { label: "Qualidade do Trabalho", value: selectedFreelancer.avaliacaoDetalhada.qualidadeTrabalho, icon: "✨" },
+                  { label: "Comunicação", value: selectedFreelancer.avaliacaoDetalhada.comunicacao, icon: "💬" },
+                  { label: "Profissionalismo", value: selectedFreelancer.avaliacaoDetalhada.profissionalismo, icon: "👔" },
+                  { label: "Apresentação", value: selectedFreelancer.avaliacaoDetalhada.apresentacao, icon: "🎯" },
+                ].map((criterio) => (
+                  <div key={criterio.label}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                        <span>{criterio.icon}</span>
+                        {criterio.label}
+                      </span>
+                      <span className="text-sm font-black text-purple-600">{criterio.value.toFixed(1)}</span>
+                    </div>
+                    <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500"
+                        style={{ width: `${(criterio.value / 5) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Pontos de melhoria se algum critério < 4.5 */}
+              {(() => {
+                const criteriosBaixos = [
+                  { label: "Pontualidade", value: selectedFreelancer.avaliacaoDetalhada.pontualidade },
+                  { label: "Qualidade do Trabalho", value: selectedFreelancer.avaliacaoDetalhada.qualidadeTrabalho },
+                  { label: "Comunicação", value: selectedFreelancer.avaliacaoDetalhada.comunicacao },
+                  { label: "Profissionalismo", value: selectedFreelancer.avaliacaoDetalhada.profissionalismo },
+                  { label: "Apresentação", value: selectedFreelancer.avaliacaoDetalhada.apresentacao },
+                ].filter(c => c.value < 4.5);
+                
+                if (criteriosBaixos.length === 0) return null;
+                
+                return (
+                  <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                    <p className="text-xs font-bold text-amber-700 mb-2">📊 Pontos de Melhoria:</p>
+                    <ul className="text-xs text-amber-600 space-y-1">
+                      {criteriosBaixos.map(c => (
+                        <li key={c.label}>• {c.label} ({c.value.toFixed(1)})</li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })()}
             </div>
 
             <div className="mb-6">
