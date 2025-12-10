@@ -940,10 +940,19 @@ export default function Index() {
           </button>
           <button
             onClick={() => {
-              navegarPara("saldo");
+              navegarPara("calendario");
               setShowMenu(false);
             }}
-            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
+          >
+            <Calendar className="w-5 h-5 text-orange-600 group-hover:scale-110 transition-transform" /> Calendário
+          </button>
+          <button
+            onClick={() => {
+              navegarPara("pagamentos");
+              setShowMenu(false);
+            }}
+            className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group"
           >
             <Wallet className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" /> Minha Carteira
           </button>
@@ -4691,6 +4700,430 @@ _Responda diretamente por este chat._`;
     );
   };
 
+  // ===== FERIADOS NACIONAIS BRASILEIROS 2024/2025 =====
+  const FERIADOS_NACIONAIS = [
+    { data: "2024-01-01", nome: "Confraternização Universal", tipo: "feriado" },
+    { data: "2024-02-12", nome: "Carnaval", tipo: "feriado" },
+    { data: "2024-02-13", nome: "Carnaval", tipo: "feriado" },
+    { data: "2024-03-29", nome: "Sexta-feira Santa", tipo: "feriado" },
+    { data: "2024-04-21", nome: "Tiradentes", tipo: "feriado" },
+    { data: "2024-05-01", nome: "Dia do Trabalhador", tipo: "feriado" },
+    { data: "2024-05-30", nome: "Corpus Christi", tipo: "feriado" },
+    { data: "2024-09-07", nome: "Independência do Brasil", tipo: "feriado" },
+    { data: "2024-10-12", nome: "Nossa Sra. Aparecida", tipo: "feriado" },
+    { data: "2024-11-02", nome: "Finados", tipo: "feriado" },
+    { data: "2024-11-15", nome: "Proclamação da República", tipo: "feriado" },
+    { data: "2024-12-25", nome: "Natal", tipo: "feriado" },
+    { data: "2025-01-01", nome: "Confraternização Universal", tipo: "feriado" },
+    { data: "2025-03-03", nome: "Carnaval", tipo: "feriado" },
+    { data: "2025-03-04", nome: "Carnaval", tipo: "feriado" },
+    { data: "2025-04-18", nome: "Sexta-feira Santa", tipo: "feriado" },
+    { data: "2025-04-21", nome: "Tiradentes", tipo: "feriado" },
+    { data: "2025-05-01", nome: "Dia do Trabalhador", tipo: "feriado" },
+    { data: "2025-06-19", nome: "Corpus Christi", tipo: "feriado" },
+    { data: "2025-09-07", nome: "Independência do Brasil", tipo: "feriado" },
+    { data: "2025-10-12", nome: "Nossa Sra. Aparecida", tipo: "feriado" },
+    { data: "2025-11-02", nome: "Finados", tipo: "feriado" },
+    { data: "2025-11-15", nome: "Proclamação da República", tipo: "feriado" },
+    { data: "2025-12-25", nome: "Natal", tipo: "feriado" },
+  ];
+
+  const DATAS_ALTA_DEMANDA = [
+    { data: "2024-12-20", nome: "Véspera de Natal", tipo: "alta_demanda", motivo: "Eventos de confraternização" },
+    { data: "2024-12-21", nome: "Véspera de Natal", tipo: "alta_demanda", motivo: "Eventos de confraternização" },
+    { data: "2024-12-22", nome: "Véspera de Natal", tipo: "alta_demanda", motivo: "Eventos de confraternização" },
+    { data: "2024-12-23", nome: "Véspera de Natal", tipo: "alta_demanda", motivo: "Eventos de confraternização" },
+    { data: "2024-12-24", nome: "Véspera de Natal", tipo: "alta_demanda", motivo: "Eventos de confraternização" },
+    { data: "2024-12-31", nome: "Réveillon", tipo: "alta_demanda", motivo: "Festas de Ano Novo" },
+    { data: "2025-02-14", nome: "Valentine's Day", tipo: "alta_demanda", motivo: "Restaurantes e hotéis" },
+    { data: "2025-05-11", nome: "Dia das Mães", tipo: "alta_demanda", motivo: "Restaurantes lotados" },
+    { data: "2025-06-12", nome: "Dia dos Namorados", tipo: "alta_demanda", motivo: "Restaurantes e hotéis" },
+    { data: "2025-08-10", nome: "Dia dos Pais", tipo: "alta_demanda", motivo: "Restaurantes e comércio" },
+    { data: "2025-10-12", nome: "Dia das Crianças", tipo: "alta_demanda", motivo: "Eventos infantis" },
+    { data: "2025-11-28", nome: "Black Friday", tipo: "alta_demanda", motivo: "Comércio e logística" },
+    { data: "2025-11-29", nome: "Black Friday", tipo: "alta_demanda", motivo: "Comércio e logística" },
+    { data: "2025-12-20", nome: "Véspera de Natal", tipo: "alta_demanda", motivo: "Eventos de confraternização" },
+    { data: "2025-12-21", nome: "Véspera de Natal", tipo: "alta_demanda", motivo: "Eventos de confraternização" },
+    { data: "2025-12-22", nome: "Véspera de Natal", tipo: "alta_demanda", motivo: "Eventos de confraternização" },
+    { data: "2025-12-23", nome: "Véspera de Natal", tipo: "alta_demanda", motivo: "Eventos de confraternização" },
+    { data: "2025-12-24", nome: "Véspera de Natal", tipo: "alta_demanda", motivo: "Eventos de confraternização" },
+    { data: "2025-12-31", nome: "Réveillon", tipo: "alta_demanda", motivo: "Festas de Ano Novo" },
+  ];
+
+  // ===== PÁGINA CALENDÁRIO =====
+  const PaginaCalendario = () => {
+    const [mesAtual, setMesAtual] = useState(new Date());
+    const [diaSelecionado, setDiaSelecionado] = useState<Date | null>(null);
+
+    const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    const diasSemana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+    const primeiroDiaMes = new Date(mesAtual.getFullYear(), mesAtual.getMonth(), 1);
+    const ultimoDiaMes = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + 1, 0);
+    const diasNoMes = ultimoDiaMes.getDate();
+    const primeiroDiaSemana = primeiroDiaMes.getDay();
+
+    const formatarDataParaComparacao = (data: Date) => {
+      return `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}-${String(data.getDate()).padStart(2, "0")}`;
+    };
+
+    const getInfoDia = (dia: number) => {
+      const dataStr = formatarDataParaComparacao(new Date(mesAtual.getFullYear(), mesAtual.getMonth(), dia));
+      const feriado = FERIADOS_NACIONAIS.find(f => f.data === dataStr);
+      const altaDemanda = DATAS_ALTA_DEMANDA.find(d => d.data === dataStr);
+      const vagasNoDia = jobs.filter(j => j.data === dataStr);
+      return { feriado, altaDemanda, vagasNoDia };
+    };
+
+    const navegarMes = (direcao: number) => {
+      setMesAtual(new Date(mesAtual.getFullYear(), mesAtual.getMonth() + direcao, 1));
+    };
+
+    const hoje = new Date();
+    const ehHoje = (dia: number) => {
+      return dia === hoje.getDate() && mesAtual.getMonth() === hoje.getMonth() && mesAtual.getFullYear() === hoje.getFullYear();
+    };
+
+    // Próximas datas importantes
+    const proximasDatas = [...FERIADOS_NACIONAIS, ...DATAS_ALTA_DEMANDA]
+      .filter(d => new Date(d.data) >= hoje)
+      .sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime())
+      .slice(0, 6);
+
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
+        {/* Header */}
+        <div className="mb-8 sm:mb-12 animate-fade-in">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h2 className="text-3xl sm:text-5xl font-black mb-2">
+                <span className="gradient-text">Calendário</span> 📅
+              </h2>
+              <p className="text-gray-600 text-base sm:text-lg font-medium">
+                Planeje suas contratações com base em feriados e datas de alta demanda
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <span className="flex items-center gap-2 px-3 py-2 bg-red-100 text-red-700 rounded-xl text-sm font-bold border border-red-200">
+                <span className="w-3 h-3 bg-red-500 rounded-full"></span> Feriado
+              </span>
+              <span className="flex items-center gap-2 px-3 py-2 bg-orange-100 text-orange-700 rounded-xl text-sm font-bold border border-orange-200">
+                <span className="w-3 h-3 bg-orange-500 rounded-full"></span> Alta Demanda
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Calendário Principal */}
+          <div className="lg:col-span-2 glass rounded-3xl p-6 sm:p-8 animate-fade-in">
+            {/* Navegação do mês */}
+            <div className="flex items-center justify-between mb-6">
+              <button
+                onClick={() => navegarMes(-1)}
+                className="w-12 h-12 glass rounded-xl flex items-center justify-center hover:bg-orange-50 hover:text-orange-600 transition-all hover:scale-110"
+              >
+                <ChevronDown className="w-6 h-6 rotate-90" />
+              </button>
+              <h3 className="text-2xl sm:text-3xl font-black text-gray-900">
+                {meses[mesAtual.getMonth()]} {mesAtual.getFullYear()}
+              </h3>
+              <button
+                onClick={() => navegarMes(1)}
+                className="w-12 h-12 glass rounded-xl flex items-center justify-center hover:bg-orange-50 hover:text-orange-600 transition-all hover:scale-110"
+              >
+                <ChevronDown className="w-6 h-6 -rotate-90" />
+              </button>
+            </div>
+
+            {/* Dias da semana */}
+            <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2">
+              {diasSemana.map((dia) => (
+                <div key={dia} className="text-center py-2 text-sm font-bold text-gray-500">
+                  {dia}
+                </div>
+              ))}
+            </div>
+
+            {/* Dias do mês */}
+            <div className="grid grid-cols-7 gap-1 sm:gap-2">
+              {/* Dias vazios antes do primeiro dia */}
+              {Array.from({ length: primeiroDiaSemana }).map((_, idx) => (
+                <div key={`empty-${idx}`} className="aspect-square"></div>
+              ))}
+
+              {/* Dias do mês */}
+              {Array.from({ length: diasNoMes }).map((_, idx) => {
+                const dia = idx + 1;
+                const info = getInfoDia(dia);
+                const dataAtual = new Date(mesAtual.getFullYear(), mesAtual.getMonth(), dia);
+                const passado = dataAtual < new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+
+                return (
+                  <button
+                    key={dia}
+                    onClick={() => setDiaSelecionado(dataAtual)}
+                    className={`aspect-square rounded-xl sm:rounded-2xl flex flex-col items-center justify-center gap-0.5 transition-all duration-300 relative ${
+                      ehHoje(dia)
+                        ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105"
+                        : info.feriado
+                          ? "bg-gradient-to-br from-red-100 to-rose-100 border-2 border-red-300 hover:shadow-lg hover:shadow-red-500/20"
+                          : info.altaDemanda
+                            ? "bg-gradient-to-br from-orange-100 to-amber-100 border-2 border-orange-300 hover:shadow-lg hover:shadow-orange-500/20"
+                            : passado
+                              ? "bg-gray-50 text-gray-400"
+                              : "glass hover:bg-orange-50 hover:scale-105"
+                    }`}
+                  >
+                    <span className={`text-sm sm:text-lg font-bold ${passado && !ehHoje(dia) ? "text-gray-400" : ""}`}>
+                      {dia}
+                    </span>
+                    {/* Indicadores */}
+                    <div className="flex gap-0.5">
+                      {info.feriado && <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full"></span>}
+                      {info.altaDemanda && <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-orange-500 rounded-full"></span>}
+                      {info.vagasNoDia.length > 0 && (
+                        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full"></span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Legenda */}
+            <div className="flex flex-wrap gap-4 mt-6 pt-6 border-t border-gray-200">
+              <span className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                <span className="w-3 h-3 bg-red-500 rounded-full"></span> Feriado
+              </span>
+              <span className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                <span className="w-3 h-3 bg-orange-500 rounded-full"></span> Alta demanda
+              </span>
+              <span className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                <span className="w-3 h-3 bg-green-500 rounded-full"></span> Vagas publicadas
+              </span>
+              <span className="flex items-center gap-2 text-sm font-medium text-gray-600">
+                <span className="w-3 h-3 bg-blue-500 rounded-full"></span> Hoje
+              </span>
+            </div>
+          </div>
+
+          {/* Sidebar - Próximas datas importantes */}
+          <div className="space-y-6">
+            {/* Próximas datas */}
+            <div className="glass rounded-3xl p-6 animate-fade-in">
+              <h3 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-orange-500" /> Próximas Datas
+              </h3>
+              <div className="space-y-3">
+                {proximasDatas.map((data, idx) => {
+                  const dataObj = new Date(data.data);
+                  const diasAte = Math.ceil((dataObj.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
+                  return (
+                    <div
+                      key={`${data.data}-${idx}`}
+                      className={`p-4 rounded-2xl border-2 transition-all hover:scale-[1.02] ${
+                        data.tipo === "feriado"
+                          ? "bg-gradient-to-r from-red-50 to-rose-50 border-red-200"
+                          : "bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className={`font-bold text-sm ${data.tipo === "feriado" ? "text-red-700" : "text-orange-700"}`}>
+                            {data.nome}
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            {dataObj.toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "short" })}
+                          </p>
+                          {"motivo" in data && (
+                            <p className="text-xs text-gray-500 mt-1">💡 {(data as { motivo: string }).motivo}</p>
+                          )}
+                        </div>
+                        <span className={`px-2 py-1 rounded-lg text-xs font-bold ${
+                          diasAte <= 7
+                            ? "bg-red-100 text-red-700"
+                            : diasAte <= 30
+                              ? "bg-orange-100 text-orange-700"
+                              : "bg-gray-100 text-gray-700"
+                        }`}>
+                          {diasAte === 0 ? "Hoje" : diasAte === 1 ? "Amanhã" : `${diasAte} dias`}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Dica de planejamento */}
+            <div className="glass rounded-3xl p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 animate-fade-in">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                  <Zap className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-blue-800 mb-2">Dica de Planejamento</h4>
+                  <p className="text-sm text-blue-700">
+                    Datas de alta demanda costumam ter <strong>30% mais vagas</strong> e os freelancers são contratados mais rapidamente. 
+                    Publique suas vagas com <strong>antecedência de 3-5 dias</strong>.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Estatísticas do mês */}
+            <div className="glass rounded-3xl p-6 animate-fade-in">
+              <h3 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
+                <Activity className="w-5 h-5 text-purple-500" /> Este Mês
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-red-50 rounded-xl p-4 border border-red-200 text-center">
+                  <p className="text-2xl font-black text-red-600">
+                    {FERIADOS_NACIONAIS.filter(f => {
+                      const d = new Date(f.data);
+                      return d.getMonth() === mesAtual.getMonth() && d.getFullYear() === mesAtual.getFullYear();
+                    }).length}
+                  </p>
+                  <p className="text-xs font-bold text-red-700">Feriados</p>
+                </div>
+                <div className="bg-orange-50 rounded-xl p-4 border border-orange-200 text-center">
+                  <p className="text-2xl font-black text-orange-600">
+                    {DATAS_ALTA_DEMANDA.filter(d => {
+                      const dt = new Date(d.data);
+                      return dt.getMonth() === mesAtual.getMonth() && dt.getFullYear() === mesAtual.getFullYear();
+                    }).length}
+                  </p>
+                  <p className="text-xs font-bold text-orange-700">Alta Demanda</p>
+                </div>
+                <div className="bg-green-50 rounded-xl p-4 border border-green-200 text-center">
+                  <p className="text-2xl font-black text-green-600">
+                    {jobs.filter(j => {
+                      const d = new Date(j.data);
+                      return d.getMonth() === mesAtual.getMonth() && d.getFullYear() === mesAtual.getFullYear();
+                    }).length}
+                  </p>
+                  <p className="text-xs font-bold text-green-700">Vagas</p>
+                </div>
+                <div className="bg-purple-50 rounded-xl p-4 border border-purple-200 text-center">
+                  <p className="text-2xl font-black text-purple-600">
+                    {(() => {
+                      const diasUteis = Array.from({ length: diasNoMes }).filter((_, i) => {
+                        const d = new Date(mesAtual.getFullYear(), mesAtual.getMonth(), i + 1);
+                        const dataStr = formatarDataParaComparacao(d);
+                        return d.getDay() !== 0 && d.getDay() !== 6 && !FERIADOS_NACIONAIS.some(f => f.data === dataStr);
+                      }).length;
+                      return diasUteis;
+                    })()}
+                  </p>
+                  <p className="text-xs font-bold text-purple-700">Dias Úteis</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Modal de dia selecionado */}
+        {diaSelecionado && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+            <div className="glass rounded-3xl max-w-lg w-full p-8 animate-scale-in">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-2xl font-black text-gray-900">
+                    {diaSelecionado.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setDiaSelecionado(null)}
+                  className="w-10 h-10 glass rounded-xl flex items-center justify-center hover:bg-red-50 hover:text-red-600 transition-all"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {(() => {
+                const dataStr = formatarDataParaComparacao(diaSelecionado);
+                const feriado = FERIADOS_NACIONAIS.find(f => f.data === dataStr);
+                const altaDemanda = DATAS_ALTA_DEMANDA.find(d => d.data === dataStr);
+                const vagasNoDia = jobs.filter(j => j.data === dataStr);
+
+                return (
+                  <div className="space-y-4">
+                    {feriado && (
+                      <div className="p-4 bg-gradient-to-r from-red-50 to-rose-50 rounded-2xl border-2 border-red-200">
+                        <div className="flex items-center gap-3">
+                          <span className="text-3xl">🎉</span>
+                          <div>
+                            <p className="font-bold text-red-700">{feriado.nome}</p>
+                            <p className="text-sm text-red-600">Feriado Nacional</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {altaDemanda && (
+                      <div className="p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl border-2 border-orange-200">
+                        <div className="flex items-center gap-3">
+                          <span className="text-3xl">🔥</span>
+                          <div>
+                            <p className="font-bold text-orange-700">{altaDemanda.nome}</p>
+                            <p className="text-sm text-orange-600">{altaDemanda.motivo}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {vagasNoDia.length > 0 ? (
+                      <div className="space-y-3">
+                        <p className="font-bold text-gray-700">Vagas neste dia:</p>
+                        {vagasNoDia.map(vaga => (
+                          <button
+                            key={vaga.id}
+                            onClick={() => {
+                              setDiaSelecionado(null);
+                              setSelectedJob(vaga);
+                              setCurrentPage("vaga-detalhes");
+                            }}
+                            className="w-full p-4 glass rounded-2xl text-left hover:bg-orange-50 transition-all hover:scale-[1.02]"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="font-bold text-gray-900">{vaga.titulo}</p>
+                                <p className="text-sm text-gray-600">{vaga.empresa} • {vaga.horarioEntrada} - {vaga.horarioSaida}</p>
+                              </div>
+                              <span className="text-lg font-black text-green-600">R$ {vaga.valorDiaria}</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-6">
+                        <p className="text-gray-500 mb-4">Nenhuma vaga publicada para este dia</p>
+                        <button
+                          onClick={() => {
+                            setDiaSelecionado(null);
+                            navegarPara("publicar");
+                          }}
+                          className="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl font-bold shadow-lg shadow-orange-500/30 hover:scale-105 transition-all"
+                        >
+                          + Publicar Vaga
+                        </button>
+                      </div>
+                    )}
+
+                    {!feriado && !altaDemanda && vagasNoDia.length === 0 && (
+                      <p className="text-center text-gray-400 py-4">Dia comum sem eventos especiais</p>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -4705,6 +5138,7 @@ _Responda diretamente por este chat._`;
         {currentPage === "vaga-detalhes" && <PaginaVagaDetalhes />}
         {currentPage === "notificacoes" && <PaginaNotificacoes />}
         {currentPage === "pagamentos" && <PaginaPagamentos />}
+        {currentPage === "calendario" && <PaginaCalendario />}
       </main>
 
       <Footer />
