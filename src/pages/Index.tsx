@@ -1065,18 +1065,6 @@ export default function Index() {
           </div>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Toggle de tipo de usuário (para demonstração) */}
-          <div className="hidden lg:flex items-center gap-1 bg-white/60 backdrop-blur-sm rounded-xl p-1 border border-gray-200/50">
-            <button onClick={() => setUserType("freelancer")} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${userType === "freelancer" ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg" : "text-gray-600 hover:bg-gray-100"}`}>
-              Freelancer
-            </button>
-            <button onClick={() => setUserType("empresa")} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${userType === "empresa" ? "bg-gradient-to-r from-scalador-orange to-amber-500 text-white shadow-lg" : "text-gray-600 hover:bg-gray-100"}`}>
-              Empresa
-            </button>
-            <button onClick={() => setUserType("visitante")} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${userType === "visitante" ? "bg-gradient-to-r from-gray-500 to-gray-600 text-white shadow-lg" : "text-gray-600 hover:bg-gray-100"}`}>
-              Visitante
-            </button>
-          </div>
           <button className="p-2 sm:p-3 hover:bg-white/40 rounded-xl transition-all duration-300 hidden md:block hover:scale-105 backdrop-blur-sm">
             <MessageSquare className="w-4 sm:w-5 h-4 sm:h-5 text-gray-800" />
           </button>
