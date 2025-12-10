@@ -45,7 +45,7 @@ export const InfiniteGridBackground = ({ children, className }: InfiniteGridBack
       ref={containerRef}
       onMouseMove={handleMouseMove}
       className={cn(
-        "relative min-h-screen w-full overflow-hidden",
+        "relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-background via-background/95 to-orange-50/30 dark:to-scalador-orange/5",
         className
       )}
     >
