@@ -1126,7 +1126,7 @@ export default function Index() {
               className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm flex items-center gap-2"
             >
               <Heart className="w-4 h-4" />
-              Minha Carteira
+              Favoritos
               {carteiraFreelancers.length > 0 && (
                 <span className="bg-gradient-to-r from-scalador-orange to-scalador-orange-light text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   {carteiraFreelancers.length}
