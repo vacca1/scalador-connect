@@ -914,7 +914,7 @@ export default function Index() {
               onClick={() => navegarPara("freelancers")}
               className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm"
             >
-              Freelancers
+              Buscar Freelancers
             </button>
             <button
               onClick={() => navegarPara("carteira")}
@@ -1194,39 +1194,20 @@ export default function Index() {
           </div>
         </div>
 
-        {/* Layout: Vagas à esquerda + Filtros à direita */}
+        {/* Layout: Filtros à ESQUERDA + Vagas à direita */}
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
-          {/* Lista de Vagas - Ocupa o espaço restante */}
-          <div className="flex-1 min-w-0">
-            {jobsFiltrados.length === 0 ? (
-              <div className="text-center py-12 sm:py-20 glass rounded-2xl sm:rounded-3xl">
-                <div className="text-4xl sm:text-6xl mb-4 animate-float">🔍</div>
-                <p className="text-gray-600 text-lg sm:text-xl font-semibold mb-2">Nenhuma vaga encontrada</p>
-                <p className="text-gray-500 text-sm sm:text-base">Tente ajustar os filtros selecionados</p>
-              </div>
-            ) : (
-              <div className="space-y-3 sm:space-y-6">
-                {jobsFiltrados.map((job, idx) => (
-                  <div key={job.id} className="animate-slide-up" style={{ animationDelay: `${idx * 0.1}s` }}>
-                    <JobCard job={job} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Sidebar de Filtros - Flutuante e fixo à direita */}
-          <aside className="lg:w-80 flex-shrink-0">
-            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 lg:sticky lg:top-24">
+          {/* Sidebar de Filtros - FIXO à ESQUERDA */}
+          <aside className="lg:w-80 flex-shrink-0 order-2 lg:order-1">
+            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-orange-500/20 transition-all duration-300 lg:sticky lg:top-24">
               <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <h3 className="font-black text-gray-900 text-lg sm:text-xl flex items-center gap-2">
-                  <Filter className="w-4 sm:w-5 h-4 sm:h-5 text-blue-600" /> Filtros
+                  <Filter className="w-4 sm:w-5 h-4 sm:h-5 text-scalador-orange" /> Filtros
                 </h3>
                 <button
                   onClick={() =>
                     setFiltros({ busca: "", tipo: "todos", profissao: "todas", bairro: "todos", estado: "todos", experiencia: "todas", distanciaMaxima: "todas" })
                   }
-                  className="text-xs sm:text-sm font-bold text-blue-600 hover:text-cyan-600 hover:scale-110 transition-all"
+                  className="text-xs sm:text-sm font-bold text-scalador-orange hover:text-scalador-orange-dark hover:scale-110 transition-all"
                 >
                   Limpar
                 </button>
@@ -1236,7 +1217,7 @@ export default function Index() {
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Tipo de Vaga</label>
                   <select
-                    className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300"
+                    className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-scalador-orange/30 focus:border-scalador-orange transition-all duration-300"
                     value={filtros.tipo}
                     onChange={(e) => setFiltros({ ...filtros, tipo: e.target.value })}
                   >
@@ -1249,7 +1230,7 @@ export default function Index() {
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Bairro/Região</label>
                   <select
-                    className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300"
+                    className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-scalador-orange/30 focus:border-scalador-orange transition-all duration-300"
                     value={filtros.bairro}
                     onChange={(e) => setFiltros({ ...filtros, bairro: e.target.value })}
                   >
@@ -1279,7 +1260,7 @@ export default function Index() {
 
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Profissão</label>
-                  <select className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300">
+                  <select className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-scalador-orange/30 focus:border-scalador-orange transition-all duration-300">
                     <option>Todas as profissões</option>
                     <option>🧹 Auxiliar de serviços gerais</option>
                     <option>🍽️ Garçom</option>
@@ -1289,7 +1270,7 @@ export default function Index() {
 
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Experiência</label>
-                  <select className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300">
+                  <select className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-scalador-orange/30 focus:border-scalador-orange transition-all duration-300">
                     <option>Todas</option>
                     <option>⭐ Com experiência</option>
                     <option>🌟 Sem experiência</option>
@@ -1299,7 +1280,7 @@ export default function Index() {
                 <div>
                   <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Distância Máxima</label>
                   <select
-                    className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300"
+                    className="w-full p-3 sm:p-4 glass rounded-xl font-medium text-sm sm:text-base focus:ring-4 focus:ring-scalador-orange/30 focus:border-scalador-orange transition-all duration-300"
                     value={filtros.distanciaMaxima}
                     onChange={(e) => setFiltros({ ...filtros, distanciaMaxima: e.target.value })}
                   >
@@ -1310,9 +1291,33 @@ export default function Index() {
                     <option value="30">📍 Até 30km</option>
                   </select>
                 </div>
+
+                {/* Botão Aplicar para mobile */}
+                <button className="w-full lg:hidden px-6 py-3 bg-gradient-to-r from-scalador-orange to-scalador-orange-light text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all">
+                  Aplicar Filtros
+                </button>
               </div>
             </div>
           </aside>
+
+          {/* Lista de Vagas - Ocupa o espaço restante */}
+          <div className="flex-1 min-w-0 order-1 lg:order-2">
+            {jobsFiltrados.length === 0 ? (
+              <div className="text-center py-12 sm:py-20 glass rounded-2xl sm:rounded-3xl">
+                <div className="text-4xl sm:text-6xl mb-4 animate-float">🔍</div>
+                <p className="text-gray-600 text-lg sm:text-xl font-semibold mb-2">Nenhuma vaga encontrada</p>
+                <p className="text-gray-500 text-sm sm:text-base">Tente ajustar os filtros selecionados</p>
+              </div>
+            ) : (
+              <div className="space-y-3 sm:space-y-6">
+                {jobsFiltrados.map((job, idx) => (
+                  <div key={job.id} className="animate-slide-up" style={{ animationDelay: `${idx * 0.1}s` }}>
+                    <JobCard job={job} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
