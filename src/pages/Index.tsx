@@ -3358,17 +3358,8 @@ export default function Index() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
-          <div className="flex-1 min-w-0">
-            {freelancersFiltrados.length === 0 ? <div className="text-center py-12 sm:py-20 glass rounded-2xl sm:rounded-3xl">
-                <div className="text-4xl sm:text-6xl mb-4 animate-float">🔍</div>
-                <p className="text-gray-600 text-lg sm:text-xl font-semibold mb-2">Nenhum freelancer encontrado</p>
-                <p className="text-gray-500 text-sm sm:text-base">Tente ajustar os filtros</p>
-              </div> : <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                {freelancersFiltrados.map((freelancer, idx) => <FreelancerCard key={freelancer.id} freelancer={freelancer} delay={idx * 0.1} />)}
-              </div>}
-          </div>
-
-          <aside className="lg:w-80 flex-shrink-0">
+          {/* Sidebar de Filtros - ESQUERDA */}
+          <aside className="lg:w-80 flex-shrink-0 order-2 lg:order-1">
             <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 lg:sticky lg:top-24">
               <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <h3 className="font-black text-gray-900 text-lg sm:text-xl flex items-center gap-2">
@@ -3416,6 +3407,17 @@ export default function Index() {
               </div>
             </div>
           </aside>
+
+          {/* Lista de Freelancers - DIREITA */}
+          <div className="flex-1 min-w-0 order-1 lg:order-2">
+            {freelancersFiltrados.length === 0 ? <div className="text-center py-12 sm:py-20 glass rounded-2xl sm:rounded-3xl">
+                <div className="text-4xl sm:text-6xl mb-4 animate-float">🔍</div>
+                <p className="text-gray-600 text-lg sm:text-xl font-semibold mb-2">Nenhum freelancer encontrado</p>
+                <p className="text-gray-500 text-sm sm:text-base">Tente ajustar os filtros</p>
+              </div> : <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                {freelancersFiltrados.map((freelancer, idx) => <FreelancerCard key={freelancer.id} freelancer={freelancer} delay={idx * 0.1} />)}
+              </div>}
+          </div>
         </div>
       </div>;
   };
