@@ -3,6 +3,7 @@ import { Briefcase, Clock, MapPin, Calendar, DollarSign, User, Bell, MessageSqua
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import scaladorLogo from "@/assets/scalador-logo.png";
+import { GlowMenu } from "@/components/ui/glow-menu";
 
 // ===== TIPOS E INTERFACES =====
 type JobStatus = "aberta" | "aguardando_freelancer" | "em_deslocamento" | "em_andamento" | "concluida" | "cancelada";
@@ -1059,27 +1060,9 @@ export default function Index() {
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
         <div className="flex items-center gap-4 sm:gap-10">
           <img src={scaladorLogo} alt="Scalador" className="h-8 sm:h-10 cursor-pointer hover:scale-105 transition-transform duration-300" onClick={() => navegarPara("vagas")} />
-          <nav className="hidden md:flex gap-8">
-            <button onClick={() => navegarPara("vagas")} className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm">
-              Vagas
-            </button>
-            <button onClick={() => navegarPara("freelancers")} className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm">
-              Buscar Freelancers
-            </button>
-            <button onClick={() => navegarPara("carteira")} className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm flex items-center gap-2">
-              <Heart className="w-4 h-4" />
-              Favoritos
-              {carteiraFreelancers.length > 0 && <span className="bg-gradient-to-r from-scalador-orange to-scalador-orange-light text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                  {carteiraFreelancers.length}
-                </span>}
-            </button>
-            <button onClick={() => navegarPara("minhas-vagas")} className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm">
-              Minhas Vagas
-            </button>
-            <button onClick={() => navegarPara("publicar")} className="relative text-gray-900 hover:text-blue-600 font-semibold transition-all duration-300 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-gradient-to-r after:from-blue-600 after:to-blue-400 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left backdrop-blur-sm">
-              Publicar Vaga
-            </button>
-          </nav>
+          <div className="hidden md:block">
+            <GlowMenu navegarPara={navegarPara} paginaAtual={currentPage} carteiraCount={carteiraFreelancers.length} />
+          </div>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Toggle de tipo de usuário (para demonstração) */}
