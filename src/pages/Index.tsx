@@ -168,6 +168,7 @@ interface Freelancer {
   totalTrabalhos: number;
   experiencia: string;
   localizacao: {
+    bairro: string;
     cidade: string;
     estado: string;
     coordenadas: { lat: number; lng: number };
@@ -360,9 +361,10 @@ const MOCK_FREELANCERS: Freelancer[] = [
     totalTrabalhos: 127,
     experiencia: "5 anos",
     localizacao: { 
+      bairro: "Asa Sul",
       cidade: "Brasília", 
       estado: "DF",
-      coordenadas: { lat: -15.7801, lng: -47.9292 } // Asa Sul
+      coordenadas: { lat: -15.7801, lng: -47.9292 }
     },
     habilidades: ["Eventos", "Atendimento VIP", "Buffet"],
     disponivel: true,
@@ -383,9 +385,10 @@ const MOCK_FREELANCERS: Freelancer[] = [
     totalTrabalhos: 203,
     experiencia: "8 anos",
     localizacao: { 
+      bairro: "Taguatinga",
       cidade: "Brasília", 
       estado: "DF",
-      coordenadas: { lat: -15.8270, lng: -48.0501 } // Taguatinga
+      coordenadas: { lat: -15.8270, lng: -48.0501 }
     },
     habilidades: ["Limpeza Pesada", "Organização", "Eventos"],
     disponivel: true,
@@ -406,9 +409,10 @@ const MOCK_FREELANCERS: Freelancer[] = [
     totalTrabalhos: 85,
     experiencia: "3 anos",
     localizacao: { 
+      bairro: "Asa Norte",
       cidade: "Brasília", 
       estado: "DF",
-      coordenadas: { lat: -15.7217, lng: -47.8870 } // Asa Norte
+      coordenadas: { lat: -15.7217, lng: -47.8870 }
     },
     habilidades: ["Atendimento", "Inglês fluente", "Informática"],
     disponivel: true,
@@ -428,9 +432,10 @@ const MOCK_FREELANCERS: Freelancer[] = [
     totalTrabalhos: 156,
     experiencia: "10 anos",
     localizacao: { 
+      bairro: "Ceilândia",
       cidade: "Brasília", 
       estado: "DF",
-      coordenadas: { lat: -15.8930, lng: -48.0591 } // Ceilândia
+      coordenadas: { lat: -15.8930, lng: -48.0591 }
     },
     habilidades: ["Cozinha Brasileira", "Eventos", "Buffet"],
     disponivel: false,
@@ -450,9 +455,10 @@ const MOCK_FREELANCERS: Freelancer[] = [
     totalTrabalhos: 94,
     experiencia: "4 anos",
     localizacao: { 
+      bairro: "Águas Claras",
       cidade: "Brasília", 
       estado: "DF",
-      coordenadas: { lat: -15.8398, lng: -48.0226 } // Águas Claras
+      coordenadas: { lat: -15.8398, lng: -48.0226 }
     },
     habilidades: ["Montagem", "Som e Luz", "Elétrica"],
     disponivel: true,
@@ -3418,11 +3424,17 @@ export default function Index() {
             ))}
           </div>
 
-          <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-            <div>
-              <p className="text-xs text-gray-500">Valor/hora</p>
-              <p className="text-xl sm:text-2xl font-black gradient-text-green">R$ {freelancer.valorHora}</p>
-            </div>
+          {/* Localização com bairro em destaque */}
+          <div className="flex items-center gap-2 mb-4 text-gray-600">
+            <MapPin className="w-4 h-4 text-scalador-orange" />
+            <span className="text-sm">
+              <span className="font-bold text-scalador-orange">{freelancer.localizacao.bairro}</span>
+              {" • "}
+              {freelancer.localizacao.cidade}/{freelancer.localizacao.estado}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-end pt-3 border-t border-gray-200">
             <div className="flex gap-2">
               <button
                 onClick={() => setSelectedFreelancer(freelancer)}
