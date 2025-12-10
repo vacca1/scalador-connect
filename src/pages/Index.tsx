@@ -3228,56 +3228,480 @@ export default function Index() {
     );
   };
 
+  // ===== MOCK DATA PARA CARTEIRA =====
+  const [transacoesCarteira] = useState([
+    { id: "t1", tipo: "entrada", descricao: "Pagamento - Garçom para Evento", empresa: "Restaurante Premium", valor: 200, data: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), status: "concluido" },
+    { id: "t2", tipo: "entrada", descricao: "Pagamento - Auxiliar de Serviços", empresa: "Scalador", valor: 160, data: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), status: "concluido" },
+    { id: "t3", tipo: "saida", descricao: "Saque para conta bancária", empresa: "PIX", valor: 150, data: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), status: "concluido" },
+    { id: "t4", tipo: "entrada", descricao: "Pagamento - Recepcionista", empresa: "Hotel Central", valor: 150, data: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), status: "concluido" },
+    { id: "t5", tipo: "entrada", descricao: "Bônus de indicação", empresa: "Scalador", valor: 50, data: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), status: "concluido" },
+    { id: "t6", tipo: "saida", descricao: "Saque para conta bancária", empresa: "PIX", valor: 200, data: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000), status: "concluido" },
+    { id: "t7", tipo: "pendente", descricao: "Pagamento aguardando liberação", empresa: "Evento VIP", valor: 250, data: new Date(Date.now() - 0.5 * 24 * 60 * 60 * 1000), status: "pendente" },
+  ]);
+
+  const [ganhosMensais] = useState([
+    { mes: "Jul", valor: 850 },
+    { mes: "Ago", valor: 1200 },
+    { mes: "Set", valor: 980 },
+    { mes: "Out", valor: 1450 },
+    { mes: "Nov", valor: 1680 },
+    { mes: "Dez", valor: 560 },
+  ]);
+
   const PaginaPagamentos = () => {
-    const [valor, setValor] = useState(0);
+    const [abaAtiva, setAbaAtiva] = useState<"visao-geral" | "historico" | "sacar">("visao-geral");
+    const [valorSaque, setValorSaque] = useState(0);
+    const [chavePix, setChavePix] = useState("");
+    const [tipoChavePix, setTipoChavePix] = useState<"cpf" | "email" | "telefone" | "aleatoria">("cpf");
+    const [modalSaqueConfirmacao, setModalSaqueConfirmacao] = useState(false);
+
+    // Calcular estatísticas
+    const totalEntradas = transacoesCarteira.filter(t => t.tipo === "entrada" && t.status === "concluido").reduce((acc, t) => acc + t.valor, 0);
+    const totalSaidas = transacoesCarteira.filter(t => t.tipo === "saida" && t.status === "concluido").reduce((acc, t) => acc + t.valor, 0);
+    const valorPendente = transacoesCarteira.filter(t => t.status === "pendente").reduce((acc, t) => acc + t.valor, 0);
+    const totalTrabalhosMes = transacoesCarteira.filter(t => t.tipo === "entrada" && t.status === "concluido").length;
+    const maxGanho = Math.max(...ganhosMensais.map(g => g.valor));
+
+    const formatarData = (data: Date) => {
+      const hoje = new Date();
+      const diff = Math.floor((hoje.getTime() - data.getTime()) / (1000 * 60 * 60 * 24));
+      if (diff === 0) return "Hoje";
+      if (diff === 1) return "Ontem";
+      if (diff < 7) return `${diff} dias atrás`;
+      return data.toLocaleDateString("pt-BR");
+    };
 
     return (
-      <div className="max-w-2xl mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Pague seus freelancers de <span className="text-indigo-600">forma segura</span>
-          </h2>
-          <p className="text-gray-600 text-lg">Pague seus freelancers de forma segura e rápida, sem burocracia.</p>
-        </div>
-
-        <div className="bg-white rounded-lg border border-gray-200 p-8">
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Valor</label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg">R$</span>
-              <input
-                type="number"
-                step="0.01"
-                placeholder="00,00"
-                className="w-full pl-12 pr-4 py-4 text-2xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                value={valor || ""}
-                onChange={(e) => setValor(parseFloat(e.target.value) || 0)}
-              />
+      <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
+        {/* Header */}
+        <div className="mb-8 sm:mb-12 animate-fade-in">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h2 className="text-3xl sm:text-5xl font-black mb-2">
+                <span className="gradient-text">Minha Carteira</span> 💰
+              </h2>
+              <p className="text-gray-600 text-base sm:text-lg font-medium">Gerencie seus ganhos e saques</p>
             </div>
-            <p className="text-sm text-gray-500 mt-2">
-              Esse valor multiplicará pela quantidade de freelancers escolhidos.
-            </p>
+            <div className="flex gap-2">
+              {(["visao-geral", "historico", "sacar"] as const).map((aba) => (
+                <button
+                  key={aba}
+                  onClick={() => setAbaAtiva(aba)}
+                  className={`px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-300 ${
+                    abaAtiva === aba
+                      ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30"
+                      : "glass hover:bg-orange-50"
+                  }`}
+                >
+                  {aba === "visao-geral" ? "Visão Geral" : aba === "historico" ? "Histórico" : "Sacar"}
+                </button>
+              ))}
+            </div>
           </div>
-
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-            <p className="text-sm text-green-800">
-              💰 Saldo disponível: <strong>R$ {saldoAtual.toFixed(2)}</strong>
-            </p>
-          </div>
-
-          <button
-            disabled={valor === 0 || valor > saldoAtual}
-            onClick={() => {
-              setSaldoAtual((prev) => prev - valor);
-              simularEnvioWhatsApp("pagamento", "Freelancers", { valor });
-              setValor(0);
-              navegarPara("minhas-vagas");
-            }}
-            className="w-full py-4 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-lg"
-          >
-            Continuar
-          </button>
         </div>
+
+        {/* Cards de Saldo */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+          {/* Saldo Disponível */}
+          <div className="glass rounded-3xl p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 hover:shadow-xl hover:shadow-green-500/20 transition-all duration-300 hover:scale-[1.02]">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Wallet className="w-6 h-6 text-white" />
+              </div>
+              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold border border-green-200">
+                Disponível
+              </span>
+            </div>
+            <p className="text-sm text-gray-600 font-medium mb-1">Saldo Disponível</p>
+            <p className="text-3xl sm:text-4xl font-black text-green-600">
+              R$ {saldoAtual.toFixed(2).replace(".", ",")}
+            </p>
+          </div>
+
+          {/* Valor Pendente */}
+          <div className="glass rounded-3xl p-6 bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-amber-200 hover:shadow-xl hover:shadow-amber-500/20 transition-all duration-300 hover:scale-[1.02]">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Clock className="w-6 h-6 text-white" />
+              </div>
+              <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold border border-amber-200">
+                Pendente
+              </span>
+            </div>
+            <p className="text-sm text-gray-600 font-medium mb-1">A Liberar</p>
+            <p className="text-3xl sm:text-4xl font-black text-amber-600">
+              R$ {valorPendente.toFixed(2).replace(".", ",")}
+            </p>
+          </div>
+
+          {/* Total Ganho no Mês */}
+          <div className="glass rounded-3xl p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300 hover:scale-[1.02]">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                <TrendingUp className="w-6 h-6 text-white" />
+              </div>
+              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold border border-blue-200">
+                Este mês
+              </span>
+            </div>
+            <p className="text-sm text-gray-600 font-medium mb-1">Ganhos do Mês</p>
+            <p className="text-3xl sm:text-4xl font-black text-blue-600">
+              R$ {ganhosMensais[ganhosMensais.length - 1].valor.toFixed(2).replace(".", ",")}
+            </p>
+          </div>
+
+          {/* Trabalhos no Mês */}
+          <div className="glass rounded-3xl p-6 bg-gradient-to-br from-purple-50 to-violet-50 border-2 border-purple-200 hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-300 hover:scale-[1.02]">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Briefcase className="w-6 h-6 text-white" />
+              </div>
+              <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold border border-purple-200">
+                Trabalhos
+              </span>
+            </div>
+            <p className="text-sm text-gray-600 font-medium mb-1">Trabalhos Pagos</p>
+            <p className="text-3xl sm:text-4xl font-black text-purple-600">
+              {totalTrabalhosMes}
+            </p>
+          </div>
+        </div>
+
+        {/* Conteúdo da Aba */}
+        {abaAtiva === "visao-geral" && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in">
+            {/* Gráfico de Ganhos */}
+            <div className="lg:col-span-2 glass rounded-3xl p-6 sm:p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-black text-gray-900">Ganhos Mensais</h3>
+                <span className="text-sm text-gray-500 font-medium">Últimos 6 meses</span>
+              </div>
+              <div className="h-64 flex items-end justify-between gap-2 sm:gap-4">
+                {ganhosMensais.map((mes, idx) => (
+                  <div key={mes.mes} className="flex-1 flex flex-col items-center gap-2">
+                    <span className="text-xs sm:text-sm font-bold text-gray-700">
+                      R$ {mes.valor}
+                    </span>
+                    <div
+                      className={`w-full rounded-t-xl transition-all duration-500 hover:opacity-80 ${
+                        idx === ganhosMensais.length - 1
+                          ? "bg-gradient-to-t from-orange-500 to-amber-400 shadow-lg shadow-orange-500/30"
+                          : "bg-gradient-to-t from-gray-300 to-gray-200"
+                      }`}
+                      style={{
+                        height: `${(mes.valor / maxGanho) * 180}px`,
+                        animationDelay: `${idx * 0.1}s`,
+                      }}
+                    />
+                    <span className="text-xs sm:text-sm font-bold text-gray-600">{mes.mes}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Resumo Rápido */}
+            <div className="glass rounded-3xl p-6 sm:p-8">
+              <h3 className="text-xl font-black text-gray-900 mb-6">Resumo</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl border border-green-200">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                      <ArrowRight className="w-5 h-5 text-white rotate-[-45deg]" />
+                    </div>
+                    <span className="font-bold text-gray-700">Total Recebido</span>
+                  </div>
+                  <span className="font-black text-green-600">R$ {totalEntradas.toFixed(2)}</span>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-red-50 rounded-xl border border-red-200">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
+                      <ArrowRight className="w-5 h-5 text-white rotate-[135deg]" />
+                    </div>
+                    <span className="font-bold text-gray-700">Total Sacado</span>
+                  </div>
+                  <span className="font-black text-red-600">R$ {totalSaidas.toFixed(2)}</span>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border border-blue-200">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                      <Activity className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="font-bold text-gray-700">Média/Trabalho</span>
+                  </div>
+                  <span className="font-black text-blue-600">R$ {(totalEntradas / totalTrabalhosMes).toFixed(2)}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setAbaAtiva("sacar")}
+                className="w-full mt-6 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-2xl font-black text-lg shadow-xl shadow-orange-500/30 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300"
+              >
+                💸 Sacar Agora
+              </button>
+            </div>
+          </div>
+        )}
+
+        {abaAtiva === "historico" && (
+          <div className="glass rounded-3xl p-6 sm:p-8 animate-fade-in">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-black text-gray-900">Histórico de Transações</h3>
+              <span className="text-sm text-gray-500 font-medium">{transacoesCarteira.length} transações</span>
+            </div>
+            <div className="space-y-3">
+              {transacoesCarteira.map((transacao, idx) => (
+                <div
+                  key={transacao.id}
+                  className={`flex items-center justify-between p-4 sm:p-5 rounded-2xl border-2 transition-all duration-300 hover:scale-[1.01] ${
+                    transacao.tipo === "entrada"
+                      ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 hover:shadow-lg hover:shadow-green-500/10"
+                      : transacao.tipo === "saida"
+                        ? "bg-gradient-to-r from-red-50 to-rose-50 border-red-200 hover:shadow-lg hover:shadow-red-500/10"
+                        : "bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200 hover:shadow-lg hover:shadow-amber-500/10"
+                  }`}
+                  style={{ animationDelay: `${idx * 0.05}s` }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lg ${
+                        transacao.tipo === "entrada"
+                          ? "bg-gradient-to-br from-green-500 to-emerald-600"
+                          : transacao.tipo === "saida"
+                            ? "bg-gradient-to-br from-red-500 to-rose-600"
+                            : "bg-gradient-to-br from-amber-500 to-yellow-600"
+                      }`}
+                    >
+                      {transacao.tipo === "entrada" ? (
+                        <ArrowRight className="w-6 h-6 text-white rotate-[-45deg]" />
+                      ) : transacao.tipo === "saida" ? (
+                        <ArrowRight className="w-6 h-6 text-white rotate-[135deg]" />
+                      ) : (
+                        <Clock className="w-6 h-6 text-white" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900 text-sm sm:text-base">{transacao.descricao}</p>
+                      <p className="text-xs sm:text-sm text-gray-500">
+                        {transacao.empresa} • {formatarData(transacao.data)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p
+                      className={`font-black text-lg sm:text-xl ${
+                        transacao.tipo === "entrada"
+                          ? "text-green-600"
+                          : transacao.tipo === "saida"
+                            ? "text-red-600"
+                            : "text-amber-600"
+                      }`}
+                    >
+                      {transacao.tipo === "saida" ? "-" : "+"}R$ {transacao.valor.toFixed(2)}
+                    </p>
+                    <span
+                      className={`text-xs font-bold px-2 py-1 rounded-full ${
+                        transacao.status === "concluido"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-amber-100 text-amber-700"
+                      }`}
+                    >
+                      {transacao.status === "concluido" ? "Concluído" : "Pendente"}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {abaAtiva === "sacar" && (
+          <div className="max-w-2xl mx-auto animate-fade-in">
+            <div className="glass rounded-3xl p-6 sm:p-8">
+              <div className="text-center mb-8">
+                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-orange-500 to-amber-500 rounded-3xl flex items-center justify-center shadow-xl shadow-orange-500/30 mb-4">
+                  <DollarSign className="w-10 h-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-black text-gray-900 mb-2">Sacar Dinheiro</h3>
+                <p className="text-gray-600">Transfira seu saldo para sua conta bancária via PIX</p>
+              </div>
+
+              {/* Saldo disponível */}
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-5 mb-6">
+                <div className="flex items-center justify-between">
+                  <span className="text-green-700 font-bold">Saldo Disponível</span>
+                  <span className="text-2xl font-black text-green-600">R$ {saldoAtual.toFixed(2)}</span>
+                </div>
+              </div>
+
+              {/* Valor do saque */}
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-700 mb-2">Valor do Saque</label>
+                <div className="relative">
+                  <span className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl font-bold">R$</span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="10"
+                    max={saldoAtual}
+                    placeholder="0,00"
+                    className="w-full pl-16 pr-6 py-5 text-3xl font-black border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-orange-500/30 focus:border-orange-400 transition-all"
+                    value={valorSaque || ""}
+                    onChange={(e) => setValorSaque(parseFloat(e.target.value) || 0)}
+                  />
+                </div>
+                <div className="flex gap-2 mt-3">
+                  {[50, 100, 200, saldoAtual].map((valor) => (
+                    <button
+                      key={valor}
+                      onClick={() => setValorSaque(valor)}
+                      className={`flex-1 py-2 rounded-xl font-bold text-sm border-2 transition-all ${
+                        valorSaque === valor
+                          ? "bg-orange-500 text-white border-orange-500"
+                          : "bg-white text-gray-700 border-gray-200 hover:border-orange-300"
+                      }`}
+                    >
+                      {valor === saldoAtual ? "Tudo" : `R$ ${valor}`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tipo de chave PIX */}
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-700 mb-2">Tipo de Chave PIX</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {(["cpf", "email", "telefone", "aleatoria"] as const).map((tipo) => (
+                    <button
+                      key={tipo}
+                      onClick={() => setTipoChavePix(tipo)}
+                      className={`py-3 rounded-xl font-bold text-xs sm:text-sm border-2 transition-all ${
+                        tipoChavePix === tipo
+                          ? "bg-orange-500 text-white border-orange-500"
+                          : "bg-white text-gray-700 border-gray-200 hover:border-orange-300"
+                      }`}
+                    >
+                      {tipo === "cpf" ? "CPF" : tipo === "email" ? "E-mail" : tipo === "telefone" ? "Telefone" : "Aleatória"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Chave PIX */}
+              <div className="mb-8">
+                <label className="block text-sm font-bold text-gray-700 mb-2">Chave PIX</label>
+                <input
+                  type="text"
+                  placeholder={
+                    tipoChavePix === "cpf"
+                      ? "000.000.000-00"
+                      : tipoChavePix === "email"
+                        ? "seu@email.com"
+                        : tipoChavePix === "telefone"
+                          ? "(00) 00000-0000"
+                          : "Chave aleatória"
+                  }
+                  className="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-orange-500/30 focus:border-orange-400 transition-all"
+                  value={chavePix}
+                  onChange={(e) => setChavePix(e.target.value)}
+                />
+              </div>
+
+              {/* Resumo */}
+              {valorSaque > 0 && (
+                <div className="bg-gray-50 rounded-2xl p-5 mb-6 border-2 border-gray-200">
+                  <h4 className="font-bold text-gray-700 mb-3">Resumo do Saque</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Valor solicitado</span>
+                      <span className="font-bold">R$ {valorSaque.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span>Taxa de transferência</span>
+                      <span className="font-bold">Grátis</span>
+                    </div>
+                    <div className="border-t border-gray-300 pt-2 mt-2 flex justify-between">
+                      <span className="font-bold text-gray-900">Você receberá</span>
+                      <span className="font-black text-xl text-green-600">R$ {valorSaque.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Botão de saque */}
+              <button
+                disabled={valorSaque < 10 || valorSaque > saldoAtual || !chavePix}
+                onClick={() => setModalSaqueConfirmacao(true)}
+                className="w-full py-5 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-2xl font-black text-xl shadow-xl shadow-orange-500/30 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 disabled:from-gray-300 disabled:to-gray-400 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100"
+              >
+                💸 Solicitar Saque
+              </button>
+
+              <p className="text-center text-xs text-gray-500 mt-4">
+                O valor será transferido em até 1 hora útil • Valor mínimo: R$ 10,00
+              </p>
+            </div>
+
+            {/* Modal de Confirmação */}
+            {modalSaqueConfirmacao && (
+              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+                <div className="glass rounded-3xl max-w-md w-full p-8 animate-scale-in">
+                  <div className="text-center mb-6">
+                    <div className="w-20 h-20 mx-auto bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl flex items-center justify-center shadow-xl mb-4">
+                      <CheckCircle className="w-10 h-10 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-black text-gray-900 mb-2">Confirmar Saque</h3>
+                    <p className="text-gray-600">Revise os dados antes de confirmar</p>
+                  </div>
+
+                  <div className="bg-gray-50 rounded-2xl p-5 mb-6 space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Valor</span>
+                      <span className="font-black text-xl text-green-600">R$ {valorSaque.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Chave PIX</span>
+                      <span className="font-bold text-gray-900">{chavePix}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Tipo</span>
+                      <span className="font-bold text-gray-900 capitalize">{tipoChavePix}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => setModalSaqueConfirmacao(false)}
+                      className="flex-1 py-4 glass rounded-2xl font-bold text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSaldoAtual((prev) => prev - valorSaque);
+                        setModalSaqueConfirmacao(false);
+                        setValorSaque(0);
+                        setChavePix("");
+                        simularEnvioWhatsApp("pagamento", "Você", {
+                          valor: valorSaque,
+                          vaga: "Saque PIX",
+                          empresa: "Scalador",
+                        });
+                        toast({
+                          title: "✅ Saque Solicitado!",
+                          description: `R$ ${valorSaque.toFixed(2)} será transferido para sua conta.`,
+                        });
+                        setAbaAtiva("historico");
+                      }}
+                      className="flex-1 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-black shadow-xl shadow-green-500/30 hover:scale-[1.02] transition-all"
+                    >
+                      Confirmar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     );
   };
