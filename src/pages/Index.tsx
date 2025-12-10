@@ -3852,180 +3852,415 @@ export default function Index() {
     );
   };
 
-  // ===== COMPONENTE MODAL WHATSAPP =====
+  // ===== TIPOS DE MENSAGEM WHATSAPP =====
+  type WhatsAppMessageType = 
+    | "nova_vaga" 
+    | "confirmacao_empresa" 
+    | "confirmacao_freelancer"
+    | "checkin_freelancer" 
+    | "checkin_confirmado" 
+    | "cancelamento" 
+    | "pagamento"
+    | "mensagem_empresa"
+    | "convite_direto"
+    | "lembrete_vaga"
+    | "avaliacao_solicitada"
+    | "problema_relatado";
+
+  // Helper para configuração de cada tipo de mensagem
+  const getWhatsAppConfig = (tipo: string) => {
+    const configs: Record<string, { icon: string; cor: string; titulo: string; corBadge: string }> = {
+      nova_vaga: { icon: "🎯", cor: "from-orange-500 to-amber-600", titulo: "Nova Vaga Disponível", corBadge: "bg-orange-100 text-orange-700 border-orange-300" },
+      confirmacao_empresa: { icon: "✅", cor: "from-green-500 to-emerald-600", titulo: "Vaga Confirmada", corBadge: "bg-green-100 text-green-700 border-green-300" },
+      confirmacao_freelancer: { icon: "🎉", cor: "from-purple-500 to-violet-600", titulo: "Freelancer Aceitou", corBadge: "bg-purple-100 text-purple-700 border-purple-300" },
+      checkin_freelancer: { icon: "📍", cor: "from-blue-500 to-indigo-600", titulo: "Freelancer Chegou", corBadge: "bg-blue-100 text-blue-700 border-blue-300" },
+      checkin_confirmado: { icon: "✅", cor: "from-teal-500 to-cyan-600", titulo: "Check-in Confirmado", corBadge: "bg-teal-100 text-teal-700 border-teal-300" },
+      cancelamento: { icon: "❌", cor: "from-red-500 to-rose-600", titulo: "Cancelamento", corBadge: "bg-red-100 text-red-700 border-red-300" },
+      pagamento: { icon: "💰", cor: "from-emerald-500 to-green-600", titulo: "Pagamento Realizado", corBadge: "bg-emerald-100 text-emerald-700 border-emerald-300" },
+      mensagem_empresa: { icon: "💬", cor: "from-gray-500 to-slate-600", titulo: "Mensagem", corBadge: "bg-gray-100 text-gray-700 border-gray-300" },
+      convite_direto: { icon: "🎁", cor: "from-pink-500 to-rose-600", titulo: "Convite Especial", corBadge: "bg-pink-100 text-pink-700 border-pink-300" },
+      lembrete_vaga: { icon: "⏰", cor: "from-amber-500 to-yellow-600", titulo: "Lembrete de Vaga", corBadge: "bg-amber-100 text-amber-700 border-amber-300" },
+      avaliacao_solicitada: { icon: "⭐", cor: "from-yellow-500 to-orange-600", titulo: "Avaliação Solicitada", corBadge: "bg-yellow-100 text-yellow-700 border-yellow-300" },
+      problema_relatado: { icon: "⚠️", cor: "from-orange-600 to-red-600", titulo: "Problema Relatado", corBadge: "bg-orange-100 text-orange-700 border-orange-300" },
+    };
+    return configs[tipo] || { icon: "📱", cor: "from-green-500 to-emerald-600", titulo: "Mensagem WhatsApp", corBadge: "bg-green-100 text-green-700 border-green-300" };
+  };
+
+  // ===== COMPONENTE MODAL WHATSAPP MELHORADO =====
   const ModalWhatsApp = () => {
     if (!modalWhatsApp.isOpen) return null;
 
-    const getMensagemWhatsApp = () => {
-      const { tipo, conteudo } = modalWhatsApp;
+    const config = getWhatsAppConfig(modalWhatsApp.tipo);
+    const { tipo, conteudo } = modalWhatsApp;
 
+    // Gerar links de localização
+    const getLocationLinks = () => {
+      if (!conteudo?.coordenadas && !conteudo?.endereco && !conteudo?.local) return null;
+      
+      const mapsLink = conteudo.coordenadas
+        ? `https://www.google.com/maps?q=${conteudo.coordenadas.lat},${conteudo.coordenadas.lng}`
+        : `https://www.google.com/maps/search/${encodeURIComponent(conteudo.endereco || conteudo.local || "")}`;
+      const wazeLink = conteudo.coordenadas
+        ? `https://waze.com/ul?ll=${conteudo.coordenadas.lat},${conteudo.coordenadas.lng}&navigate=yes`
+        : `https://waze.com/ul?q=${encodeURIComponent(conteudo.endereco || conteudo.local || "")}&navigate=yes`;
+
+      return { mapsLink, wazeLink };
+    };
+
+    const locationLinks = getLocationLinks();
+
+    const getMensagemWhatsApp = () => {
       switch (tipo) {
         case "convite_direto":
-          return `🎯 *CONVITE ESPECIAL*
+          return `🎁 *CONVITE ESPECIAL*
 
-Olá ${conteudo.freelancer}!
+Olá ${conteudo?.freelancer || ""}!
 
-A empresa ${jobs.find((j) => j.empresa === "Scalador")?.empresa || "Scalador"} gostaria de convidar você para uma vaga!
+A empresa *${conteudo?.empresa || "Scalador"}* gostaria de convidar você para uma vaga exclusiva!
 
-Entre em contato pelo número: ${conteudo.telefone}
+📋 *${conteudo?.vaga || "Nova oportunidade"}*
+💰 Valor: R$ ${conteudo?.valor || "A combinar"}/dia
+📅 Data: ${conteudo?.data ? new Date(conteudo.data).toLocaleDateString("pt-BR") : "A definir"}
+
+📞 Entre em contato: ${conteudo?.telefone || ""}
 
 Estamos ansiosos para trabalhar com você! 🤝`;
 
         case "nova_vaga":
-          const mapsLink = conteudo.coordenadas
-            ? `https://www.google.com/maps?q=${conteudo.coordenadas.lat},${conteudo.coordenadas.lng}`
-            : `https://www.google.com/maps/search/${encodeURIComponent(conteudo.endereco || conteudo.local)}`;
-          const wazeLink = conteudo.coordenadas
-            ? `https://waze.com/ul?ll=${conteudo.coordenadas.lat},${conteudo.coordenadas.lng}&navigate=yes`
-            : `https://waze.com/ul?q=${encodeURIComponent(conteudo.endereco || conteudo.local)}&navigate=yes`;
-
           return `🎯 *NOVA VAGA DISPONÍVEL*
 
-📋 *${conteudo.titulo}*
+📋 *${conteudo?.titulo || "Vaga"}*
+🏢 Empresa: *${conteudo?.empresa || "Scalador"}*
 
-💰 Valor: R$ ${conteudo.valor}/dia
-📍 Local: ${conteudo.local}
-📅 Data: ${new Date(conteudo.data).toLocaleDateString("pt-BR")}
-⏰ Horário: ${conteudo.horario}
-${conteudo.vestimenta ? `👔 Vestimenta: ${conteudo.vestimenta}` : ""}
+💰 Valor: *R$ ${conteudo?.valor || 0}/dia*
+📍 Local: ${conteudo?.bairro ? `${conteudo.bairro}, ` : ""}${conteudo?.local || ""}
+📅 Data: ${conteudo?.data ? new Date(conteudo.data).toLocaleDateString("pt-BR") : ""}
+⏰ Horário: ${conteudo?.horario || ""}
+${conteudo?.vestimenta ? `👔 Vestimenta: ${conteudo.vestimenta}` : ""}
 
-🗺️ *LOCALIZAÇÃO:*
-📍 Google Maps: ${mapsLink}
-🚗 Waze: ${wazeLink}
+${locationLinks ? `🗺️ *COMO CHEGAR:*
+📍 Google Maps: ${locationLinks.mapsLink}
+🚗 Waze: ${locationLinks.wazeLink}` : ""}
 
-Para aceitar esta vaga, responda com *SIM* ou clique no link abaixo.
+Para *ACEITAR* esta vaga, responda com *SIM*.
 
-_⏱️ Tempo médio de chegada: 2:30h - 3:00h_
-_Após aceitar, você terá 2:30h para chegar._`;
+_⏱️ Após aceitar, você terá 2:30h para chegar._
+_❌ Cancelamentos frequentes afetam sua reputação._`;
 
         case "confirmacao_empresa":
-          return `✅ *VAGA CONFIRMADA*
+          return `✅ *PARABÉNS! VOCÊ FOI SELECIONADO!*
 
-Olá ${conteudo.status === "aprovado" ? modalWhatsApp.destinatario : ""},
+Olá *${conteudo?.freelancer || modalWhatsApp.destinatario}*,
 
-A empresa *confirmou* sua candidatura! 
+A empresa *${conteudo?.empresa || ""}* confirmou sua candidatura para:
 
-🚗 *Você pode se deslocar agora.*
+📋 *${conteudo?.vaga || ""}*
+📅 Data: ${conteudo?.data ? new Date(conteudo.data).toLocaleDateString("pt-BR") : ""}
+⏰ Horário: ${conteudo?.horario || ""}
+📍 Local: ${conteudo?.local || ""}
 
-⏰ Você tem *2:30h* para chegar no local.
+🚗 *Você pode se deslocar agora!*
 
-📍 Endereço será enviado em breve.`;
+⏰ Tempo máximo para chegada: *2:30h*
+📍 Ao chegar, faça seu *CHECK-IN* no app.
 
-        case "checkin_freelancer":
-          return `📍 *FREELANCER CHEGOU*
+${locationLinks ? `🗺️ *NAVEGUE ATÉ O LOCAL:*
+📍 Google Maps: ${locationLinks.mapsLink}
+🚗 Waze: ${locationLinks.wazeLink}` : ""}
 
-O freelancer *${conteudo.freelancer}* confirmou chegada no local.
-
-Por favor, confirme o check-in para iniciar o trabalho.`;
-
-        case "checkin_confirmado":
-          return `✅ *CHECK-IN CONFIRMADO*
-
-Olá ${modalWhatsApp.destinatario},
-
-A empresa confirmou sua chegada!
-
-🎉 Você pode iniciar o trabalho.
-
-Boa sorte!`;
-
-        case "cancelamento":
-          return `❌ *VAGA CANCELADA*
-
-Infelizmente a empresa solicitou outro profissional para esta vaga.
-
-Não se preocupe, você receberá novas oportunidades em breve!`;
-
-        case "pagamento":
-          return `💰 *PAGAMENTO RECEBIDO*
-
-Você recebeu um pagamento de *R$ ${conteudo.valor.toFixed(2)}*
-
-O valor já está disponível em sua carteira.`;
-
-        case "mensagem_empresa":
-          return conteudo.texto || "Mensagem da empresa";
+Boa sorte! 🍀`;
 
         case "confirmacao_freelancer":
           return `🎉 *FREELANCER ACEITOU SUA VAGA!*
 
-O freelancer *${conteudo.freelancer}* aceitou sua vaga:
+O freelancer *${conteudo?.freelancer || ""}* aceitou trabalhar em:
 
-📋 ${conteudo.vaga}
+📋 *${conteudo?.vaga || ""}*
+📅 ${conteudo?.data ? new Date(conteudo.data).toLocaleDateString("pt-BR") : ""}
 
-⏱️ Ele está se deslocando e chegará em aproximadamente 2:30h.
+👤 *Dados do Freelancer:*
+⭐ Avaliação: ${conteudo?.rating || "N/A"}
+📞 Telefone: ${conteudo?.telefone || ""}
+📍 Localização: ${conteudo?.bairro || ""}
 
-Você tem 20 minutos para cancelar caso necessário.`;
+🚗 *Status:* Em deslocamento
+⏱️ Previsão de chegada: ~2:30h
+
+⚠️ *Você tem 20 minutos para cancelar* sem penalidades.
+
+Acompanhe pelo aplicativo! 📱`;
+
+        case "checkin_freelancer":
+          return `📍 *FREELANCER CHEGOU!*
+
+O freelancer *${conteudo?.freelancer || ""}* confirmou chegada no local.
+
+📋 Vaga: *${conteudo?.vaga || ""}*
+⏰ Horário de chegada: ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+
+✅ *Por favor, confirme o check-in* para liberar o início do trabalho.
+
+_O freelancer aguarda sua confirmação._`;
+
+        case "checkin_confirmado":
+          return `✅ *CHECK-IN CONFIRMADO!*
+
+Olá *${conteudo?.freelancer || modalWhatsApp.destinatario}*,
+
+A empresa *${conteudo?.empresa || ""}* confirmou sua chegada!
+
+📋 Vaga: *${conteudo?.vaga || ""}*
+⏰ Início: ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+⏰ Término previsto: ${conteudo?.horarioSaida || ""}
+
+🎉 *Você pode iniciar o trabalho!*
+
+Dicas:
+• Siga as orientações do responsável
+• Mantenha o celular acessível
+• Em caso de problemas, entre em contato
+
+Boa sorte! 🍀`;
+
+        case "cancelamento":
+          return `❌ *VAGA CANCELADA*
+
+${conteudo?.canceladoPor === "empresa" 
+  ? `Infelizmente, a empresa cancelou sua participação na vaga.
+
+📋 *${conteudo?.vaga || ""}*
+
+${conteudo?.motivo ? `📝 Motivo: ${conteudo.motivo}` : ""}
+
+Não se preocupe! Novas oportunidades surgirão em breve. 💪`
+  : `Você cancelou sua participação na vaga:
+
+📋 *${conteudo?.vaga || ""}*
+
+⚠️ *Atenção:* Cancelamentos frequentes afetam sua reputação e visibilidade para empresas.`
+}`;
+
+        case "pagamento":
+          return `💰 *PAGAMENTO RECEBIDO!*
+
+Parabéns! Seu pagamento foi processado com sucesso.
+
+💵 *Valor: R$ ${conteudo?.valor?.toFixed(2) || "0.00"}*
+
+📋 Referente à vaga: *${conteudo?.vaga || ""}*
+🏢 Empresa: ${conteudo?.empresa || ""}
+📅 Data do trabalho: ${conteudo?.dataTrabalho ? new Date(conteudo.dataTrabalho).toLocaleDateString("pt-BR") : ""}
+
+💳 O valor já está disponível em sua carteira Scalador.
+
+Para sacar, acesse: Pagamentos → Sacar
+
+Obrigado por usar o Scalador! 🧡`;
+
+        case "lembrete_vaga":
+          return `⏰ *LEMBRETE: VAGA AMANHÃ!*
+
+Olá *${conteudo?.freelancer || modalWhatsApp.destinatario}*,
+
+Lembre-se que você tem uma vaga confirmada para amanhã:
+
+📋 *${conteudo?.vaga || ""}*
+🏢 Empresa: ${conteudo?.empresa || ""}
+📅 Data: ${conteudo?.data ? new Date(conteudo.data).toLocaleDateString("pt-BR") : ""}
+⏰ Entrada: ${conteudo?.horarioEntrada || ""}
+📍 Local: ${conteudo?.local || ""}
+
+${locationLinks ? `🗺️ *SALVE O ENDEREÇO:*
+📍 Google Maps: ${locationLinks.mapsLink}
+🚗 Waze: ${locationLinks.wazeLink}` : ""}
+
+👔 Vestimenta: ${conteudo?.vestimenta || ""}
+
+_Chegue com 15 minutos de antecedência!_ ⏰`;
+
+        case "avaliacao_solicitada":
+          return `⭐ *AVALIE SEU TRABALHO!*
+
+Olá!
+
+${conteudo?.paraEmpresa 
+  ? `Como foi trabalhar com o freelancer *${conteudo?.freelancer || ""}*?`
+  : `Como foi sua experiência com a empresa *${conteudo?.empresa || ""}*?`
+}
+
+📋 Vaga: *${conteudo?.vaga || ""}*
+📅 Data: ${conteudo?.data ? new Date(conteudo.data).toLocaleDateString("pt-BR") : ""}
+
+Sua avaliação ajuda a melhorar a plataforma e auxilia outros usuários!
+
+🔗 Avalie agora no app Scalador.
+
+_Avaliações são anônimas e construtivas._ 🙏`;
+
+        case "problema_relatado":
+          return `⚠️ *PROBLEMA RELATADO*
+
+Um problema foi reportado:
+
+📋 Vaga: *${conteudo?.vaga || ""}*
+📅 Data: ${conteudo?.data ? new Date(conteudo.data).toLocaleDateString("pt-BR") : ""}
+${conteudo?.freelancer ? `👤 Freelancer: ${conteudo.freelancer}` : ""}
+${conteudo?.empresa ? `🏢 Empresa: ${conteudo.empresa}` : ""}
+
+📝 *Descrição:*
+${conteudo?.problema || "Problema não especificado"}
+
+Nossa equipe está analisando e entrará em contato em breve.
+
+_Agradecemos sua paciência._ 🙏`;
+
+        case "mensagem_empresa":
+          return `💬 *MENSAGEM DA EMPRESA*
+
+🏢 De: *${conteudo?.empresa || "Empresa"}*
+
+${conteudo?.texto || ""}
+
+---
+_Responda diretamente por este chat._`;
 
         default:
-          return conteudo.mensagem || "Mensagem enviada";
+          return conteudo?.mensagem || "Mensagem enviada via Scalador";
       }
     };
 
+    const mensagem = getMensagemWhatsApp();
+
     return (
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-        <div className="glass rounded-3xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-green-500/40">
-                <Phone className="w-8 h-8" />
+      <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+        <div className="bg-white/95 backdrop-blur-xl rounded-3xl max-w-2xl w-full shadow-2xl animate-scale-in border border-white/20 overflow-hidden">
+          {/* Header com gradiente do tipo */}
+          <div className={`bg-gradient-to-r ${config.cor} p-6`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+                  {config.icon}
+                </div>
+                <div className="text-white">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-black text-xl">{config.titulo}</h3>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${config.corBadge} border`}>
+                      WhatsApp
+                    </span>
+                  </div>
+                  <p className="text-white/80 text-sm font-medium">
+                    Para: <span className="font-bold text-white">{modalWhatsApp.destinatario}</span>
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setModalWhatsApp({ ...modalWhatsApp, isOpen: false })}
+                className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl text-white transition-all duration-300 flex items-center justify-center hover:scale-110"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Conteúdo */}
+          <div className="p-6 max-h-[60vh] overflow-y-auto">
+            {/* Balão de mensagem estilo WhatsApp */}
+            <div className="bg-[#dcf8c6] rounded-2xl rounded-tl-md p-5 shadow-md border border-green-200 relative">
+              <div className="absolute -top-1 -left-1 w-4 h-4 bg-[#dcf8c6] border-l border-t border-green-200 transform rotate-45"></div>
+              <pre className="text-sm text-gray-800 whitespace-pre-wrap font-sans leading-relaxed">
+                {mensagem}
+              </pre>
+              <div className="flex items-center justify-end gap-1 mt-3 text-xs text-gray-500">
+                <span>{new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>
+                <CheckCircle className="w-4 h-4 text-blue-500" />
+              </div>
+            </div>
+
+            {/* Links de localização clicáveis */}
+            {locationLinks && (
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <a
+                  href={locationLinks.mapsLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border border-blue-200 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group"
+                >
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white shadow-md group-hover:shadow-lg transition-all">
+                    <MapPin className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-blue-800 text-sm">Google Maps</p>
+                    <p className="text-xs text-blue-600">Abrir navegação</p>
+                  </div>
+                  <Navigation className="w-4 h-4 text-blue-500 ml-auto" />
+                </a>
+                <a
+                  href={locationLinks.wazeLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-4 bg-gradient-to-r from-cyan-50 to-cyan-100 rounded-xl border border-cyan-200 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group"
+                >
+                  <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-teal-600 rounded-lg flex items-center justify-center text-white shadow-md group-hover:shadow-lg transition-all">
+                    <Navigation className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-cyan-800 text-sm">Waze</p>
+                    <p className="text-xs text-cyan-600">Navegar agora</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-cyan-500 ml-auto" />
+                </a>
+              </div>
+            )}
+
+            {/* Info sobre simulação */}
+            <div className="mt-4 bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-200 rounded-xl p-4 flex items-start gap-3">
+              <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center text-gray-600 flex-shrink-0">
+                <AlertCircle className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="font-black text-gray-900 text-2xl">WhatsApp</h3>
-                <p className="text-sm text-gray-600 font-medium">
-                  Para: <span className="font-bold text-green-600">{modalWhatsApp.destinatario}</span>
+                <p className="text-xs text-gray-600 font-medium">
+                  <span className="font-bold text-gray-700">Simulação:</span> Em produção, esta mensagem seria enviada automaticamente via WhatsApp Business API.
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => setModalWhatsApp({ ...modalWhatsApp, isOpen: false })}
-              className="w-12 h-12 hover:bg-red-50 rounded-xl text-gray-400 hover:text-red-600 transition-all duration-300 flex items-center justify-center hover:scale-110"
-            >
-              <X className="w-7 h-7" />
-            </button>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 mb-6 border-l-4 border-green-500 shadow-lg">
-            <pre className="text-sm text-gray-800 whitespace-pre-wrap font-sans leading-relaxed">
-              {getMensagemWhatsApp()}
-            </pre>
-          </div>
+          {/* Footer com ações */}
+          <div className="p-6 bg-gray-50 border-t border-gray-100">
+            <div className="flex gap-4">
+              <button
+                onClick={() => setModalWhatsApp({ ...modalWhatsApp, isOpen: false })}
+                className="flex-1 px-6 py-4 bg-white border-2 border-gray-200 rounded-2xl hover:bg-gray-50 hover:border-gray-300 font-bold text-gray-700 transition-all duration-300 hover:scale-[1.02]"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  console.log("📱 ENVIANDO WHATSAPP:", modalWhatsApp);
 
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-4 mb-8">
-            <p className="text-xs text-blue-800 font-semibold flex items-center gap-2">
-              <span className="text-lg">ℹ️</span> Esta é uma simulação. Em produção, esta mensagem seria enviada via
-              WhatsApp API.
-            </p>
-          </div>
+                  // Criar notificação de enviado
+                  const notifEnviada: Notification = {
+                    id: `n${Date.now()}`,
+                    tipo: "sistema",
+                    titulo: "WhatsApp enviado",
+                    mensagem: `Mensagem de ${config.titulo.toLowerCase()} enviada para ${modalWhatsApp.destinatario}`,
+                    timestamp: new Date(),
+                    lida: false,
+                  };
+                  setNotifications((prev) => [notifEnviada, ...prev]);
 
-          <div className="flex gap-4">
-            <button
-              onClick={() => setModalWhatsApp({ ...modalWhatsApp, isOpen: false })}
-              className="flex-1 px-6 py-4 glass rounded-2xl hover:bg-red-50 font-bold text-gray-700 hover:text-red-600 transition-all duration-300 hover:scale-105"
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={() => {
-                console.log("📱 ENVIANDO WHATSAPP:", modalWhatsApp);
+                  toast({
+                    title: "✅ WhatsApp Enviado",
+                    description: `Mensagem enviada para ${modalWhatsApp.destinatario}`,
+                  });
 
-                // Criar notificação de enviado
-                const notifEnviada: Notification = {
-                  id: `n${Date.now()}`,
-                  tipo: "sistema",
-                  titulo: "WhatsApp enviado",
-                  mensagem: `Mensagem enviada com sucesso para ${modalWhatsApp.destinatario}`,
-                  timestamp: new Date(),
-                  lida: false,
-                };
-                setNotifications((prev) => [notifEnviada, ...prev]);
-
-                setModalWhatsApp({ ...modalWhatsApp, isOpen: false });
-              }}
-              className="flex-1 px-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-green-500/40 hover:shadow-2xl hover:shadow-green-600/50 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3"
-            >
-              <Send className="w-5 h-5" /> Enviar WhatsApp
-            </button>
+                  setModalWhatsApp({ ...modalWhatsApp, isOpen: false });
+                }}
+                className={`flex-1 px-6 py-4 bg-gradient-to-r ${config.cor} text-white rounded-2xl font-black text-lg shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3`}
+              >
+                <Send className="w-5 h-5" /> Enviar WhatsApp
+              </button>
+            </div>
           </div>
         </div>
       </div>
