@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Briefcase, Clock, MapPin, Calendar, DollarSign, User, Bell, MessageSquare, Menu, Search, X, Plus, Check, TrendingUp, Users, Activity, ArrowRight, Phone, Navigation, AlertCircle, CheckCircle, XCircle, Timer, Send, Star, Edit, Settings, HelpCircle, LogOut, Filter, ChevronDown, Home, Wallet, FileText, Heart, UserPlus, Award, Zap, Lock } from "lucide-react";
+import { Briefcase, Clock, MapPin, Calendar, DollarSign, User, Bell, MessageSquare, Menu, Search, X, Plus, Check, TrendingUp, Users, Activity, ArrowRight, Phone, Navigation, AlertCircle, CheckCircle, XCircle, Timer, Send, Star, Edit, Settings, HelpCircle, LogOut, Filter, ChevronDown, Home, Wallet, FileText, Heart, UserPlus, Award, Zap, Lock, CreditCard, QrCode, Building, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
 import scaladorLogo from "@/assets/scalador-logo.png";
 import { GlowMenu } from "@/components/ui/glow-menu";
@@ -957,7 +958,7 @@ export default function Index() {
           <button onClick={() => {
           navegarPara("pagamentos");
           setShowMenu(false);
-        }} className="md:hidden w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
+        }} className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
             <FileText className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Pagamentos
           </button>
           <button onClick={() => {
@@ -981,7 +982,7 @@ export default function Index() {
           <button onClick={() => {
           navegarPara("notificacoes");
           setShowMenu(false);
-        }} className="md:hidden w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
+        }} className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
             <MessageSquare className="w-5 h-5 text-scalador-blue group-hover:scale-110 transition-transform" /> Mensagens
           </button>
           <button onClick={() => setShowMenu(false)} className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
@@ -1334,12 +1335,124 @@ export default function Index() {
 
         {/* Layout: Filtros à ESQUERDA + Vagas à direita */}
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
-          {/* Sidebar de Filtros - FIXO à ESQUERDA */}
-          <aside className="lg:w-80 flex-shrink-0 order-2 lg:order-1 lg:sticky lg:top-24 lg:self-start">
-            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-orange-500/20 transition-all duration-300 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
-              <div className="flex items-center justify-between mb-4 sm:mb-6">
-                <h3 className="font-black text-gray-900 text-lg sm:text-xl flex items-center gap-2">
-                  <Filter className="w-4 sm:w-5 h-4 sm:h-5 text-scalador-orange" /> Filtros
+          {/* Botão de Filtros Mobile */}
+          <div className="lg:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <button className="w-full px-6 py-4 glass rounded-2xl font-bold text-gray-900 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all border-2 border-scalador-orange/30">
+                  <Filter className="w-5 h-5 text-scalador-orange" />
+                  <span>Filtrar Vagas</span>
+                  <ChevronDown className="w-5 h-5 text-scalador-orange" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl">
+                <SheetHeader className="pb-4 border-b">
+                  <SheetTitle className="text-xl font-black text-gray-900 flex items-center gap-2">
+                    <Filter className="w-5 h-5 text-scalador-orange" /> Filtros
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="py-6 space-y-5 overflow-y-auto max-h-[calc(85vh-150px)]">
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-3">Tipo de vaga</label>
+                    <AnimatedSelect
+                      accentColor="orange"
+                      value={filtros.tipo}
+                      onChange={(value) => setFiltros({ ...filtros, tipo: value })}
+                      options={[
+                        { value: "todos", label: "Todos os tipos" },
+                        { value: "freelance", label: "Freelancer", icon: "⚡" },
+                        { value: "clt", label: "CLT", icon: "💼" },
+                      ]}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-3">Bairro/Região</label>
+                    <AnimatedSelect
+                      accentColor="orange"
+                      value={filtros.bairro}
+                      onChange={(value) => setFiltros({ ...filtros, bairro: value })}
+                      options={[
+                        { value: "todos", label: "Todos os bairros" },
+                        { value: "Asa Norte", label: "Asa Norte", icon: "🏙️" },
+                        { value: "Asa Sul", label: "Asa Sul", icon: "🏙️" },
+                        { value: "Águas Claras", label: "Águas Claras", icon: "💧" },
+                        { value: "Taguatinga", label: "Taguatinga", icon: "🏘️" },
+                        { value: "Ceilândia", label: "Ceilândia", icon: "🏘️" },
+                      ]}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-3">Profissão</label>
+                    <AnimatedSelect
+                      accentColor="orange"
+                      value={filtros.profissao || "todas"}
+                      onChange={(value) => setFiltros({ ...filtros, profissao: value })}
+                      options={[
+                        { value: "todas", label: "Todas as profissões" },
+                        { value: "auxiliar", label: "Auxiliar de serviços gerais", icon: "🧹" },
+                        { value: "garcom", label: "Garçom", icon: "🍽️" },
+                        { value: "recepcionista", label: "Recepcionista", icon: "📋" },
+                      ]}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-3">Experiência</label>
+                    <AnimatedSelect
+                      accentColor="orange"
+                      value={filtros.experiencia || "todas"}
+                      onChange={(value) => setFiltros({ ...filtros, experiencia: value })}
+                      options={[
+                        { value: "todas", label: "Todas" },
+                        { value: "com", label: "Com experiência", icon: "⭐" },
+                        { value: "sem", label: "Sem experiência", icon: "🌟" },
+                      ]}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-3">Distância Máxima</label>
+                    <AnimatedSelect
+                      accentColor="orange"
+                      value={filtros.distanciaMaxima}
+                      onChange={(value) => setFiltros({ ...filtros, distanciaMaxima: value })}
+                      options={[
+                        { value: "todas", label: "Todas as distâncias" },
+                        { value: "5", label: "Até 5km", icon: "📍" },
+                        { value: "10", label: "Até 10km", icon: "📍" },
+                        { value: "20", label: "Até 20km", icon: "📍" },
+                        { value: "30", label: "Até 30km", icon: "📍" },
+                      ]}
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-3 pt-4 border-t">
+                  <button 
+                    onClick={() => setFiltros({
+                      busca: "",
+                      tipo: "todos",
+                      profissao: "todas",
+                      bairro: "todos",
+                      estado: "todos",
+                      experiencia: "todas",
+                      distanciaMaxima: "todas"
+                    })} 
+                    className="flex-1 px-6 py-3 glass rounded-xl font-bold text-gray-700 hover:bg-gray-100 transition-all"
+                  >
+                    Limpar
+                  </button>
+                  <button className="flex-1 px-6 py-3 bg-gradient-to-r from-scalador-orange to-scalador-orange-light text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all">
+                    Aplicar Filtros
+                  </button>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          {/* Sidebar de Filtros - FIXO à ESQUERDA (Desktop only) */}
+          <aside className="hidden lg:block lg:w-80 flex-shrink-0 lg:sticky lg:top-24 lg:self-start">
+            <div className="glass rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:shadow-orange-500/20 transition-all duration-300 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-black text-gray-900 text-xl flex items-center gap-2">
+                  <Filter className="w-5 h-5 text-scalador-orange" /> Filtros
                 </h3>
                 <button onClick={() => setFiltros({
                 busca: "",
@@ -1349,14 +1462,14 @@ export default function Index() {
                 estado: "todos",
                 experiencia: "todas",
                 distanciaMaxima: "todas"
-              })} className="text-xs sm:text-sm font-bold text-scalador-orange hover:text-scalador-orange-dark hover:scale-110 transition-all">
+              })} className="text-sm font-bold text-scalador-orange hover:text-scalador-orange-dark hover:scale-110 transition-all">
                   Limpar
                 </button>
               </div>
 
-              <div className="space-y-4 sm:space-y-5">
+              <div className="space-y-5">
                 <div>
-                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Tipo de vaga</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Tipo de vaga</label>
                   <AnimatedSelect
                     accentColor="orange"
                     value={filtros.tipo}
@@ -1370,7 +1483,7 @@ export default function Index() {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Bairro/Região</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Bairro/Região</label>
                   <AnimatedSelect
                     accentColor="orange"
                     value={filtros.bairro}
@@ -1402,7 +1515,7 @@ export default function Index() {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Profissão</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Profissão</label>
                   <AnimatedSelect
                     accentColor="orange"
                     value={filtros.profissao || "todas"}
@@ -1417,7 +1530,7 @@ export default function Index() {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Experiência</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Experiência</label>
                   <AnimatedSelect
                     accentColor="orange"
                     value={filtros.experiencia || "todas"}
@@ -1431,7 +1544,7 @@ export default function Index() {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Distância Máxima</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Distância Máxima</label>
                   <AnimatedSelect
                     accentColor="orange"
                     value={filtros.distanciaMaxima}
@@ -1445,11 +1558,6 @@ export default function Index() {
                     ]}
                   />
                 </div>
-
-                {/* Botão Aplicar para mobile */}
-                <button className="w-full lg:hidden px-6 py-3 bg-gradient-to-r from-scalador-orange to-scalador-orange-light text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all">
-                  Aplicar Filtros
-                </button>
               </div>
             </div>
           </aside>
@@ -3240,26 +3348,91 @@ export default function Index() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
-          {/* Sidebar de Filtros - ESQUERDA */}
-          <aside className="lg:w-80 flex-shrink-0 order-2 lg:order-1 lg:sticky lg:top-24 lg:self-start">
-            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
-              <div className="flex items-center justify-between mb-4 sm:mb-6">
-                <h3 className="font-black text-gray-900 text-lg sm:text-xl flex items-center gap-2">
-                  <Filter className="w-4 sm:w-5 h-4 sm:h-5 text-purple-600" /> Filtros
+          {/* Botão de Filtros Mobile */}
+          <div className="lg:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <button className="w-full px-6 py-4 glass rounded-2xl font-bold text-gray-900 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all border-2 border-purple-500/30">
+                  <Filter className="w-5 h-5 text-purple-600" />
+                  <span>Filtrar Freelancers</span>
+                  <ChevronDown className="w-5 h-5 text-purple-600" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="bottom" className="h-[70vh] rounded-t-3xl">
+                <SheetHeader className="pb-4 border-b">
+                  <SheetTitle className="text-xl font-black text-gray-900 flex items-center gap-2">
+                    <Filter className="w-5 h-5 text-purple-600" /> Filtros
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="py-6 space-y-5 overflow-y-auto max-h-[calc(70vh-150px)]">
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-3">Disponibilidade</label>
+                    <AnimatedSelect
+                      accentColor="purple"
+                      value={filtrosFreelancers.disponivel}
+                      onChange={(value) => setFiltrosFreelancers({ ...filtrosFreelancers, disponivel: value })}
+                      options={[
+                        { value: "todos", label: "Todos" },
+                        { value: "sim", label: "Disponível", icon: "✅" },
+                        { value: "nao", label: "Indisponível", icon: "⏸️" },
+                      ]}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-3">Avaliação Mínima</label>
+                    <AnimatedSelect
+                      accentColor="purple"
+                      value={filtrosFreelancers.avaliacao}
+                      onChange={(value) => setFiltrosFreelancers({ ...filtrosFreelancers, avaliacao: value })}
+                      options={[
+                        { value: "todas", label: "Todas" },
+                        { value: "4.5", label: "4.5+", icon: "⭐" },
+                        { value: "4.0", label: "4.0+", icon: "⭐" },
+                        { value: "3.5", label: "3.5+", icon: "⭐" },
+                      ]}
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-3 pt-4 border-t">
+                  <button 
+                    onClick={() => setFiltrosFreelancers({
+                      busca: "",
+                      profissao: "todas",
+                      disponivel: "todos",
+                      avaliacao: "todas"
+                    })} 
+                    className="flex-1 px-6 py-3 glass rounded-xl font-bold text-gray-700 hover:bg-gray-100 transition-all"
+                  >
+                    Limpar
+                  </button>
+                  <button className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all">
+                    Aplicar Filtros
+                  </button>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          {/* Sidebar de Filtros - ESQUERDA (Desktop only) */}
+          <aside className="hidden lg:block lg:w-80 flex-shrink-0 lg:sticky lg:top-24 lg:self-start">
+            <div className="glass rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-black text-gray-900 text-xl flex items-center gap-2">
+                  <Filter className="w-5 h-5 text-purple-600" /> Filtros
                 </h3>
                 <button onClick={() => setFiltrosFreelancers({
                 busca: "",
                 profissao: "todas",
                 disponivel: "todos",
                 avaliacao: "todas"
-              })} className="text-xs sm:text-sm font-bold text-purple-600 hover:text-pink-600 hover:scale-110 transition-all">
+              })} className="text-sm font-bold text-purple-600 hover:text-pink-600 hover:scale-110 transition-all">
                   Limpar
                 </button>
               </div>
 
-              <div className="space-y-4 sm:space-y-5">
+              <div className="space-y-5">
                 <div>
-                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Disponibilidade</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Disponibilidade</label>
                   <AnimatedSelect
                     accentColor="purple"
                     value={filtrosFreelancers.disponivel}
@@ -3273,7 +3446,7 @@ export default function Index() {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Avaliação Mínima</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Avaliação Mínima</label>
                   <AnimatedSelect
                     accentColor="purple"
                     value={filtrosFreelancers.avaliacao}
@@ -4605,6 +4778,302 @@ _Responda diretamente por este chat._`;
           </div>}
       </div>;
   };
+
+  // ===== PÁGINA CARTEIRA VIRTUAL (SALDO) =====
+  const PaginaCarteiraVirtual = () => {
+    const [modalCredito, setModalCredito] = useState<"pix" | "cartao" | "pospago" | null>(null);
+    const [valorRecarga, setValorRecarga] = useState("");
+    const { toast } = useToast();
+
+    const saldoDisponivel = 1250.00;
+    const limitePosPago = 5000.00;
+    const limiteUsado = 850.00;
+
+    const historicoCreditos = [
+      { id: "c1", tipo: "entrada", metodo: "PIX", valor: 500, data: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), status: "concluido" },
+      { id: "c2", tipo: "saida", metodo: "Pagamento Vaga", valor: 352, data: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), status: "concluido" },
+      { id: "c3", tipo: "entrada", metodo: "Cartão", valor: 1000, data: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), status: "concluido" },
+      { id: "c4", tipo: "saida", metodo: "Pagamento Vaga", valor: 165, data: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), status: "concluido" },
+      { id: "c5", tipo: "entrada", metodo: "Pós-Pago", valor: 267, data: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), status: "pendente" },
+    ];
+
+    const handleRecarga = () => {
+      if (!valorRecarga || parseFloat(valorRecarga) <= 0) {
+        toast({
+          title: "Valor inválido",
+          description: "Digite um valor válido para recarga",
+          variant: "destructive"
+        });
+        return;
+      }
+      toast({
+        title: "Recarga iniciada! 🎉",
+        description: `Processando recarga de R$ ${parseFloat(valorRecarga).toFixed(2).replace(".", ",")}`,
+      });
+      setModalCredito(null);
+      setValorRecarga("");
+    };
+
+    return <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
+      {/* Header */}
+      <div className="mb-8 sm:mb-12 animate-fade-in">
+        <h2 className="text-3xl sm:text-5xl font-black mb-2">
+          <span className="gradient-text-blue">Carteira Virtual</span> 💳
+        </h2>
+        <p className="text-gray-600 text-base sm:text-lg font-medium">
+          Gerencie seu saldo e faça recargas para contratar freelancers
+        </p>
+      </div>
+
+      {/* Cards de Saldo */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+        {/* Saldo Disponível */}
+        <div className="glass rounded-3xl p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 hover:shadow-xl hover:shadow-green-500/20 transition-all duration-300 hover:scale-[1.02]">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+              <Wallet className="w-7 h-7 text-white" />
+            </div>
+            <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold border border-green-200">
+              Disponível
+            </span>
+          </div>
+          <p className="text-sm text-gray-600 font-medium mb-1">Saldo Atual</p>
+          <p className="text-3xl sm:text-4xl font-black text-green-600">
+            R$ {saldoDisponivel.toFixed(2).replace(".", ",")}
+          </p>
+        </div>
+
+        {/* Limite Pós-Pago */}
+        <div className="glass rounded-3xl p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300 hover:scale-[1.02]">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+              <CreditCard className="w-7 h-7 text-white" />
+            </div>
+            <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold border border-blue-200">
+              Pós-Pago
+            </span>
+          </div>
+          <p className="text-sm text-gray-600 font-medium mb-1">Limite Disponível</p>
+          <p className="text-3xl sm:text-4xl font-black text-blue-600">
+            R$ {(limitePosPago - limiteUsado).toFixed(2).replace(".", ",")}
+          </p>
+          <div className="mt-3">
+            <div className="flex justify-between text-xs text-gray-500 mb-1">
+              <span>Usado: R$ {limiteUsado.toFixed(2).replace(".", ",")}</span>
+              <span>Total: R$ {limitePosPago.toFixed(2).replace(".", ",")}</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500" 
+                style={{ width: `${(limiteUsado / limitePosPago) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Taxa de Serviço */}
+        <div className="glass rounded-3xl p-6 bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-200 hover:shadow-xl hover:shadow-orange-500/20 transition-all duration-300 hover:scale-[1.02]">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
+              <TrendingUp className="w-7 h-7 text-white" />
+            </div>
+            <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold border border-orange-200">
+              Taxa
+            </span>
+          </div>
+          <p className="text-sm text-gray-600 font-medium mb-1">Taxa de Serviço</p>
+          <p className="text-3xl sm:text-4xl font-black text-orange-600">9,9%</p>
+          <p className="text-xs text-gray-500 mt-2">Pós-pago: 15%</p>
+        </div>
+      </div>
+
+      {/* Opções de Recarga */}
+      <div className="glass rounded-3xl p-6 sm:p-8 mb-8 animate-fade-in">
+        <h3 className="text-xl sm:text-2xl font-black text-gray-900 mb-6 flex items-center gap-2">
+          <Plus className="w-6 h-6 text-green-500" /> Adicionar Créditos
+        </h3>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* PIX */}
+          <button 
+            onClick={() => setModalCredito("pix")}
+            className="p-6 glass rounded-2xl border-2 border-green-200 hover:border-green-400 hover:bg-green-50 transition-all duration-300 hover:scale-[1.02] group"
+          >
+            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
+              <QrCode className="w-8 h-8 text-white" />
+            </div>
+            <h4 className="font-bold text-gray-900 text-lg mb-1">PIX</h4>
+            <p className="text-sm text-gray-600">Instantâneo • Sem taxa</p>
+            <span className="inline-block mt-3 px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-bold">
+              Recomendado
+            </span>
+          </button>
+
+          {/* Cartão */}
+          <button 
+            onClick={() => setModalCredito("cartao")}
+            className="p-6 glass rounded-2xl border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 hover:scale-[1.02] group"
+          >
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
+              <CreditCard className="w-8 h-8 text-white" />
+            </div>
+            <h4 className="font-bold text-gray-900 text-lg mb-1">Cartão de Crédito</h4>
+            <p className="text-sm text-gray-600">Até 12x • Taxa de 2,99%</p>
+            <span className="inline-block mt-3 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-bold">
+              Parcelado
+            </span>
+          </button>
+
+          {/* Pós-Pago */}
+          <button 
+            onClick={() => setModalCredito("pospago")}
+            className="p-6 glass rounded-2xl border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-50 transition-all duration-300 hover:scale-[1.02] group"
+          >
+            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
+              <Building className="w-8 h-8 text-white" />
+            </div>
+            <h4 className="font-bold text-gray-900 text-lg mb-1">Pós-Pago</h4>
+            <p className="text-sm text-gray-600">Fature no final • Taxa de 15%</p>
+            <span className="inline-block mt-3 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-bold">
+              Empresas
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* Histórico de Créditos */}
+      <div className="glass rounded-3xl p-6 sm:p-8 animate-fade-in">
+        <h3 className="text-xl sm:text-2xl font-black text-gray-900 mb-6 flex items-center gap-2">
+          <FileText className="w-6 h-6 text-blue-500" /> Histórico de Transações
+        </h3>
+        
+        <div className="space-y-3">
+          {historicoCreditos.map(transacao => (
+            <div 
+              key={transacao.id}
+              className={`p-4 rounded-2xl border-2 flex items-center justify-between transition-all hover:scale-[1.01] ${
+                transacao.tipo === "entrada" 
+                  ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200" 
+                  : "bg-gradient-to-r from-red-50 to-rose-50 border-red-200"
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                  transacao.tipo === "entrada" 
+                    ? "bg-green-100" 
+                    : "bg-red-100"
+                }`}>
+                  {transacao.tipo === "entrada" 
+                    ? <ArrowDownRight className="w-6 h-6 text-green-600" />
+                    : <ArrowUpRight className="w-6 h-6 text-red-600" />
+                  }
+                </div>
+                <div>
+                  <p className="font-bold text-gray-900">{transacao.metodo}</p>
+                  <p className="text-sm text-gray-500">
+                    {transacao.data.toLocaleDateString("pt-BR")}
+                    {transacao.status === "pendente" && (
+                      <span className="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold">
+                        Pendente
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+              <p className={`text-xl font-black ${
+                transacao.tipo === "entrada" ? "text-green-600" : "text-red-600"
+              }`}>
+                {transacao.tipo === "entrada" ? "+" : "-"} R$ {transacao.valor.toFixed(2).replace(".", ",")}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Modal de Recarga */}
+      <Dialog open={modalCredito !== null} onOpenChange={() => setModalCredito(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-black flex items-center gap-2">
+              {modalCredito === "pix" && <><QrCode className="w-6 h-6 text-green-500" /> Recarga via PIX</>}
+              {modalCredito === "cartao" && <><CreditCard className="w-6 h-6 text-blue-500" /> Recarga via Cartão</>}
+              {modalCredito === "pospago" && <><Building className="w-6 h-6 text-purple-500" /> Usar Pós-Pago</>}
+            </DialogTitle>
+            <DialogDescription>
+              {modalCredito === "pix" && "Adicione créditos instantaneamente sem taxa"}
+              {modalCredito === "cartao" && "Parcele em até 12x com taxa de 2,99%"}
+              {modalCredito === "pospago" && "Use agora e pague no final do mês (taxa 15%)"}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">Valor da recarga</label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">R$</span>
+                <input 
+                  type="number"
+                  value={valorRecarga}
+                  onChange={(e) => setValorRecarga(e.target.value)}
+                  placeholder="0,00"
+                  className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 focus:border-green-400 focus:ring-4 focus:ring-green-100 text-xl font-bold transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Valores sugeridos */}
+            <div className="flex flex-wrap gap-2">
+              {[100, 250, 500, 1000].map(valor => (
+                <button
+                  key={valor}
+                  onClick={() => setValorRecarga(valor.toString())}
+                  className="px-4 py-2 glass rounded-xl font-bold text-gray-700 hover:bg-green-50 hover:text-green-700 transition-all"
+                >
+                  R$ {valor}
+                </button>
+              ))}
+            </div>
+
+            {modalCredito === "pix" && (
+              <div className="p-4 bg-green-50 rounded-xl border border-green-200">
+                <p className="text-sm text-green-700 font-medium">
+                  💡 Após confirmar, você receberá um QR Code para pagamento instantâneo
+                </p>
+              </div>
+            )}
+
+            {modalCredito === "pospago" && (
+              <div className="p-4 bg-purple-50 rounded-xl border border-purple-200">
+                <p className="text-sm text-purple-700 font-medium">
+                  💡 Limite disponível: R$ {(limitePosPago - limiteUsado).toFixed(2).replace(".", ",")}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-3">
+            <button 
+              onClick={() => setModalCredito(null)}
+              className="flex-1 px-6 py-3 glass rounded-xl font-bold text-gray-700 hover:bg-gray-100 transition-all"
+            >
+              Cancelar
+            </button>
+            <button 
+              onClick={handleRecarga}
+              className={`flex-1 px-6 py-3 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all ${
+                modalCredito === "pix" ? "bg-gradient-to-r from-green-500 to-emerald-600" :
+                modalCredito === "cartao" ? "bg-gradient-to-r from-blue-500 to-indigo-600" :
+                "bg-gradient-to-r from-purple-500 to-pink-600"
+              }`}
+            >
+              Confirmar
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>;
+  };
+
   return <div className="min-h-screen">
       <Header />
       {showMenu && <MobileMenu />}
@@ -4619,6 +5088,7 @@ _Responda diretamente por este chat._`;
         {currentPage === "notificacoes" && <PaginaNotificacoes />}
         {currentPage === "pagamentos" && <PaginaPagamentos />}
         {currentPage === "calendario" && <PaginaCalendario />}
+        {currentPage === "saldo" && <PaginaCarteiraVirtual />}
       </main>
 
       <Footer />
