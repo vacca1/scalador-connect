@@ -8,7 +8,7 @@ import { AnimatedSelect } from "@/components/ui/animated-select";
 
 // ===== TIPOS E INTERFACES =====
 type JobStatus = "aberta" | "aguardando_freelancer" | "em_deslocamento" | "em_andamento" | "concluida" | "cancelada";
-type JobType = "freelance" | "temporario";
+type JobType = "freelance" | "clt";
 type UserType = "empresa" | "freelancer" | "visitante";
 interface FAQ {
   pergunta: string;
@@ -314,9 +314,9 @@ const MOCK_JOBS: Job[] = [{
   titulo: "Recepcionista",
   empresa: "Hotel Central",
   logoEmpresa: "🏨",
-  tipo: "temporario",
+  tipo: "clt",
   profissao: "Recepcionista",
-  descricao: "Vaga temporária para cobertura de férias",
+  descricao: "Vaga CLT para cobertura de férias",
   atividades: ["Atendimento ao cliente", "Check-in e check-out", "Gestão de reservas"],
   valorDiaria: 150.0,
   valorTotal: 150.0,
@@ -930,14 +930,14 @@ export default function Index() {
           navegarPara("freelancers");
           setShowMenu(false);
         }} className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
-            <Users className="w-5 h-5 text-scalador-orange group-hover:scale-110 transition-transform" /> Buscar Freelancers
+            <Users className="w-5 h-5 text-scalador-orange group-hover:scale-110 transition-transform" /> <span className="whitespace-nowrap">Buscar freelancers</span>
           </button>
           <button onClick={() => {
           navegarPara("carteira");
           setShowMenu(false);
         }} className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group relative">
             <Heart className="w-5 h-5 text-scalador-orange group-hover:scale-110 transition-transform" />
-            Minha Carteira
+            <span className="whitespace-nowrap">Minha carteira</span>
             {carteiraFreelancers.length > 0 && <span className="absolute right-4 bg-gradient-to-r from-scalador-orange to-scalador-orange-light text-white text-xs font-bold px-2 py-0.5 rounded-full">
                 {carteiraFreelancers.length}
               </span>}
@@ -946,13 +946,13 @@ export default function Index() {
           navegarPara("publicar");
           setShowMenu(false);
         }} className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
-            <Plus className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Publicar vaga
+            <Plus className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> <span className="whitespace-nowrap">Publicar vaga</span>
           </button>
           <button onClick={() => {
           navegarPara("minhas-vagas");
           setShowMenu(false);
         }} className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
-            <Briefcase className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Minhas Vagas
+            <Briefcase className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> <span className="whitespace-nowrap">Minhas vagas</span>
           </button>
           <button onClick={() => {
           navegarPara("pagamentos");
@@ -1020,20 +1020,20 @@ export default function Index() {
             <Home className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Vagas
           </button>
           <button onClick={() => navegarPara("freelancers")} className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
-            <Users className="w-5 h-5 text-scalador-orange group-hover:scale-110 transition-transform" /> Buscar Freelancers
+            <Users className="w-5 h-5 text-scalador-orange group-hover:scale-110 transition-transform" /> <span className="whitespace-nowrap">Buscar freelancers</span>
           </button>
           <button onClick={() => navegarPara("carteira")} className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group relative">
             <Heart className="w-5 h-5 text-scalador-orange group-hover:scale-110 transition-transform" />
-            Minha Carteira
+            <span className="whitespace-nowrap">Minha carteira</span>
             {carteiraFreelancers.length > 0 && <span className="absolute right-4 bg-gradient-to-r from-scalador-orange to-scalador-orange-light text-white text-xs font-bold px-2 py-0.5 rounded-full">
                 {carteiraFreelancers.length}
               </span>}
           </button>
           <button onClick={() => navegarPara("publicar")} className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group">
-            <Plus className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Publicar vaga
+            <Plus className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> <span className="whitespace-nowrap">Publicar vaga</span>
           </button>
           <button onClick={() => navegarPara("minhas-vagas")} className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group">
-            <Briefcase className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Minhas Vagas
+            <Briefcase className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> <span className="whitespace-nowrap">Minhas vagas</span>
           </button>
           <button onClick={() => navegarPara("pagamentos")} className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duração-300 group">
             <FileText className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" /> Pagamentos
@@ -1045,7 +1045,7 @@ export default function Index() {
             <Settings className="w-5 h-5 text-orange-600 group-hover:scale-110 transition-transform" /> Configurações
           </button>
           <button onClick={() => navegarPara("notificacoes")} className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
-            <MessageSquare className="w-5 h-5 text-scalador-blue group-hover:scale-110 transition-transform" /> Mensagens
+            <Bell className="w-5 h-5 text-scalador-blue group-hover:scale-110 transition-transform" /> Notificações
           </button>
           <button onClick={() => setShowMenu(false)} className="w-full px-4 sm:px-6 py-3 text-left hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 flex items-center gap-3 text-gray-700 font-medium transition-all duration-300 group">
             <HelpCircle className="w-5 h-5 text-scalador-blue group-hover:scale-110 transition-transform" /> Preciso de ajuda
@@ -1252,8 +1252,12 @@ export default function Index() {
             </div>
             <p className="text-gray-700 text-sm sm:text-base mb-4 sm:mb-6 line-clamp-2 leading-relaxed">{job.descricao}</p>
             <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
-              <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50 text-scalador-orange rounded-full text-xs sm:text-sm font-bold shadow-sm">
-                {job.tipo === "freelance" ? "⚡ Freelancer" : "📅 Temporário"}
+              <span className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-sm ${
+                job.tipo === "freelance" 
+                  ? "bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300 text-amber-700" 
+                  : "bg-gradient-to-r from-indigo-100 to-purple-100 border border-indigo-300 text-indigo-700"
+              }`}>
+                {job.tipo === "freelance" ? "⚡ Freelancer" : "💼 CLT"}
               </span>
               <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 text-scalador-blue rounded-full text-xs sm:text-sm font-bold shadow-sm">
                 👔 {job.profissao}
@@ -1307,7 +1311,7 @@ export default function Index() {
     return <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-6 sm:py-12">
         <div className="mb-8 sm:mb-12 text-center animate-fade-in">
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-black mb-3 sm:mb-4">
-            <span className="gradient-text-blue">Vagas Disponíveis</span>
+            <span className="gradient-text-blue">Vagas disponíveis</span>
           </h2>
           <p className="text-gray-600 text-base sm:text-xl font-medium">Encontre as melhores oportunidades 🚀</p>
         </div>
@@ -1332,7 +1336,7 @@ export default function Index() {
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
           {/* Sidebar de Filtros - FIXO à ESQUERDA */}
           <aside className="lg:w-80 flex-shrink-0 order-2 lg:order-1">
-            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-orange-500/20 transition-all duration-300 lg:sticky lg:top-24">
+            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-orange-500/20 transition-all duration-300 sticky top-20 h-fit max-h-[calc(100vh-100px)] overflow-y-auto">
               <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <h3 className="font-black text-gray-900 text-lg sm:text-xl flex items-center gap-2">
                   <Filter className="w-4 sm:w-5 h-4 sm:h-5 text-scalador-orange" /> Filtros
@@ -1352,15 +1356,15 @@ export default function Index() {
 
               <div className="space-y-4 sm:space-y-5">
                 <div>
-                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Tipo de Vaga</label>
+                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2 sm:mb-3">Tipo de vaga</label>
                   <AnimatedSelect
                     accentColor="orange"
                     value={filtros.tipo}
                     onChange={(value) => setFiltros({ ...filtros, tipo: value })}
                     options={[
                       { value: "todos", label: "Todos os tipos" },
-                      { value: "freelance", label: "Freelance", icon: "⚡" },
-                      { value: "temporario", label: "Temporário", icon: "📅" },
+                      { value: "freelance", label: "Freelancer", icon: "⚡" },
+                      { value: "clt", label: "CLT", icon: "💼" },
                     ]}
                   />
                 </div>
@@ -1539,38 +1543,38 @@ export default function Index() {
             <button onClick={() => {
             setTipoVaga("freelance");
             setStep(2);
-          }} className="glass rounded-3xl p-10 hover:shadow-2xl hover:shadow-blue-500/30 transition-all duration-500 text-left group relative overflow-hidden hover:-translate-y-2">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          }} className="glass rounded-3xl p-10 hover:shadow-2xl hover:shadow-amber-500/30 transition-all duration-500 text-left group relative overflow-hidden hover:-translate-y-2">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
-                  <Briefcase className="w-8 h-8 text-blue-600" />
+                <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
+                  <Zap className="w-8 h-8 text-amber-600" />
                 </div>
-                <h3 className="text-2xl font-black text-gray-900 mb-4">⚡ Freelance</h3>
+                <h3 className="text-2xl font-black text-gray-900 mb-4">⚡ Freelancer</h3>
                 <p className="text-gray-600 leading-relaxed font-medium mb-6">
                   Freelancers são profissionais temporários que oferecem à empresas a flexibilidade de contratar
                   talentos sem necessidade de vínculo trabalhista.
                 </p>
-                <div className="flex items-center text-blue-600 font-bold group-hover:gap-3 gap-2 transition-all">
+                <div className="flex items-center text-amber-600 font-bold group-hover:gap-3 gap-2 transition-all">
                   Selecionar <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             </button>
 
             <button onClick={() => {
-            setTipoVaga("temporario");
+            setTipoVaga("clt");
             setStep(2);
-          }} className="glass rounded-3xl p-10 hover:shadow-2xl hover:shadow-blue-500/30 transition-all duration-500 text-left group relative overflow-hidden hover:-translate-y-2">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          }} className="glass rounded-3xl p-10 hover:shadow-2xl hover:shadow-indigo-500/30 transition-all duration-500 text-left group relative overflow-hidden hover:-translate-y-2">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
-                  <Clock className="w-8 h-8 text-blue-600" />
+                <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
+                  <Briefcase className="w-8 h-8 text-indigo-600" />
                 </div>
-                <h3 className="text-2xl font-black text-gray-900 mb-4">📅 Vaga temporária</h3>
+                <h3 className="text-2xl font-black text-gray-900 mb-4">💼 Vaga CLT</h3>
                 <p className="text-gray-600 leading-relaxed font-medium mb-6">
-                  Vagas temporárias são posições de curto prazo que envolve a contratação de um funcionário por um
-                  período definido de tempo.
+                  Vagas CLT são posições com vínculo empregatício formal, oferecendo benefícios trabalhistas e 
+                  estabilidade ao funcionário.
                 </p>
-                <div className="flex items-center text-blue-600 font-bold group-hover:gap-3 gap-2 transition-all">
+                <div className="flex items-center text-indigo-600 font-bold group-hover:gap-3 gap-2 transition-all">
                   Selecionar <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
@@ -2938,18 +2942,14 @@ export default function Index() {
     valor: 560
   }]);
   const PaginaPagamentos = () => {
-    const [abaAtiva, setAbaAtiva] = useState<"visao-geral" | "historico" | "sacar">("visao-geral");
-    const [valorSaque, setValorSaque] = useState(0);
-    const [chavePix, setChavePix] = useState("");
-    const [tipoChavePix, setTipoChavePix] = useState<"cpf" | "email" | "telefone" | "aleatoria">("cpf");
-    const [modalSaqueConfirmacao, setModalSaqueConfirmacao] = useState(false);
+    const [abaAtiva, setAbaAtiva] = useState<"visao-geral" | "historico">("visao-geral");
 
     // Calcular estatísticas
     const totalEntradas = transacoesCarteira.filter(t => t.tipo === "entrada" && t.status === "concluido").reduce((acc, t) => acc + t.valor, 0);
-    const totalSaidas = transacoesCarteira.filter(t => t.tipo === "saida" && t.status === "concluido").reduce((acc, t) => acc + t.valor, 0);
     const valorPendente = transacoesCarteira.filter(t => t.status === "pendente").reduce((acc, t) => acc + t.valor, 0);
     const totalTrabalhosMes = transacoesCarteira.filter(t => t.tipo === "entrada" && t.status === "concluido").length;
     const maxGanho = Math.max(...ganhosMensais.map(g => g.valor));
+    const mediaPorTrabalho = totalTrabalhosMes > 0 ? totalEntradas / totalTrabalhosMes : 0;
     const formatarData = (data: Date) => {
       const hoje = new Date();
       const diff = Math.floor((hoje.getTime() - data.getTime()) / (1000 * 60 * 60 * 24));
@@ -2964,14 +2964,29 @@ export default function Index() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h2 className="text-3xl sm:text-5xl font-black mb-2">
-                <span className="gradient-text-blue">Minha Carteira</span> 💰
+                <span className="gradient-text-blue">Seus ganhos</span> 💰
               </h2>
-              <p className="text-gray-600 text-base sm:text-lg font-medium">Gerencie seus ganhos e saques</p>
+              <p className="text-gray-600 text-base sm:text-lg font-medium">Você recebe automaticamente após cada trabalho concluído</p>
             </div>
             <div className="flex gap-2">
-              {(["visao-geral", "historico", "sacar"] as const).map(aba => <button key={aba} onClick={() => setAbaAtiva(aba)} className={`px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-300 ${abaAtiva === aba ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30" : "glass hover:bg-orange-50"}`}>
-                  {aba === "visao-geral" ? "Visão Geral" : aba === "historico" ? "Histórico" : "Sacar"}
+              {(["visao-geral", "historico"] as const).map(aba => <button key={aba} onClick={() => setAbaAtiva(aba)} className={`px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-300 whitespace-nowrap ${abaAtiva === aba ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg shadow-green-500/30" : "glass hover:bg-green-50"}`}>
+                  {aba === "visao-geral" ? "Visão geral" : "Histórico"}
                 </button>)}
+            </div>
+          </div>
+        </div>
+
+        {/* Info: Pagamento automático */}
+        <div className="glass rounded-2xl p-4 sm:p-5 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 mb-8 animate-fade-in">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+              <Zap className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h4 className="font-bold text-blue-800 mb-1">💡 Pagamento automático</h4>
+              <p className="text-sm text-blue-700">
+                Você recebe diretamente em sua conta após cada trabalho concluído. Não é necessário solicitar saque - o pagamento é processado automaticamente!
+              </p>
             </div>
           </div>
         </div>
@@ -3078,14 +3093,14 @@ export default function Index() {
                   </div>
                   <span className="font-black text-green-600">R$ {totalEntradas.toFixed(2)}</span>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-red-50 rounded-xl border border-red-200">
+                <div className="flex items-center justify-between p-4 bg-purple-50 rounded-xl border border-purple-200">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
-                      <ArrowRight className="w-5 h-5 text-white rotate-[135deg]" />
+                    <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-white" />
                     </div>
-                    <span className="font-bold text-gray-700">Total Sacado</span>
+                    <span className="font-bold text-gray-700">Próximo pagamento</span>
                   </div>
-                  <span className="font-black text-red-600">R$ {totalSaidas.toFixed(2)}</span>
+                  <span className="font-black text-purple-600">R$ {valorPendente.toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border border-blue-200">
                   <div className="flex items-center gap-3">
@@ -3094,13 +3109,9 @@ export default function Index() {
                     </div>
                     <span className="font-bold text-gray-700">Média/Trabalho</span>
                   </div>
-                  <span className="font-black text-blue-600">R$ {(totalEntradas / totalTrabalhosMes).toFixed(2)}</span>
+                  <span className="font-black text-blue-600">R$ {mediaPorTrabalho.toFixed(2)}</span>
                 </div>
               </div>
-
-              <button onClick={() => setAbaAtiva("sacar")} className="w-full mt-6 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-2xl font-black text-lg shadow-xl shadow-orange-500/30 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300">
-                💸 Sacar Agora
-              </button>
             </div>
           </div>}
 
@@ -3136,135 +3147,6 @@ export default function Index() {
             </div>
           </div>}
 
-        {abaAtiva === "sacar" && <div className="max-w-2xl mx-auto animate-fade-in">
-            <div className="glass rounded-3xl p-6 sm:p-8">
-              <div className="text-center mb-8">
-                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-orange-500 to-amber-500 rounded-3xl flex items-center justify-center shadow-xl shadow-orange-500/30 mb-4">
-                  <DollarSign className="w-10 h-10 text-white" />
-                </div>
-                <h3 className="text-2xl font-black text-gray-900 mb-2">Sacar Dinheiro</h3>
-                <p className="text-gray-600">Transfira seu saldo para sua conta bancária via PIX</p>
-              </div>
-
-              {/* Saldo disponível */}
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-5 mb-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-green-700 font-bold">Saldo Disponível</span>
-                  <span className="text-2xl font-black text-green-600">R$ {saldoAtual.toFixed(2)}</span>
-                </div>
-              </div>
-
-              {/* Valor do saque */}
-              <div className="mb-6">
-                <label className="block text-sm font-bold text-gray-700 mb-2">Valor do Saque</label>
-                <div className="relative">
-                  <span className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl font-bold">R$</span>
-                  <input type="number" step="0.01" min="10" max={saldoAtual} placeholder="0,00" className="w-full pl-16 pr-6 py-5 text-3xl font-black border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-orange-500/30 focus:border-orange-400 transition-all" value={valorSaque || ""} onChange={e => setValorSaque(parseFloat(e.target.value) || 0)} />
-                </div>
-                <div className="flex gap-2 mt-3">
-                  {[50, 100, 200, saldoAtual].map(valor => <button key={valor} onClick={() => setValorSaque(valor)} className={`flex-1 py-2 rounded-xl font-bold text-sm border-2 transition-all ${valorSaque === valor ? "bg-orange-500 text-white border-orange-500" : "bg-white text-gray-700 border-gray-200 hover:border-orange-300"}`}>
-                      {valor === saldoAtual ? "Tudo" : `R$ ${valor}`}
-                    </button>)}
-                </div>
-              </div>
-
-              {/* Tipo de chave PIX */}
-              <div className="mb-6">
-                <label className="block text-sm font-bold text-gray-700 mb-2">Tipo de Chave PIX</label>
-                <div className="grid grid-cols-4 gap-2">
-                  {(["cpf", "email", "telefone", "aleatoria"] as const).map(tipo => <button key={tipo} onClick={() => setTipoChavePix(tipo)} className={`py-3 rounded-xl font-bold text-xs sm:text-sm border-2 transition-all ${tipoChavePix === tipo ? "bg-orange-500 text-white border-orange-500" : "bg-white text-gray-700 border-gray-200 hover:border-orange-300"}`}>
-                      {tipo === "cpf" ? "CPF" : tipo === "email" ? "E-mail" : tipo === "telefone" ? "Telefone" : "Aleatória"}
-                    </button>)}
-                </div>
-              </div>
-
-              {/* Chave PIX */}
-              <div className="mb-8">
-                <label className="block text-sm font-bold text-gray-700 mb-2">Chave PIX</label>
-                <input type="text" placeholder={tipoChavePix === "cpf" ? "000.000.000-00" : tipoChavePix === "email" ? "seu@email.com" : tipoChavePix === "telefone" ? "(00) 00000-0000" : "Chave aleatória"} className="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-orange-500/30 focus:border-orange-400 transition-all" value={chavePix} onChange={e => setChavePix(e.target.value)} />
-              </div>
-
-              {/* Resumo */}
-              {valorSaque > 0 && <div className="bg-gray-50 rounded-2xl p-5 mb-6 border-2 border-gray-200">
-                  <h4 className="font-bold text-gray-700 mb-3">Resumo do Saque</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Valor solicitado</span>
-                      <span className="font-bold">R$ {valorSaque.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm text-green-600">
-                      <span>Taxa de transferência</span>
-                      <span className="font-bold">Grátis</span>
-                    </div>
-                    <div className="border-t border-gray-300 pt-2 mt-2 flex justify-between">
-                      <span className="font-bold text-gray-900">Você receberá</span>
-                      <span className="font-black text-xl text-green-600">R$ {valorSaque.toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>}
-
-              {/* Botão de saque */}
-              <button disabled={valorSaque < 10 || valorSaque > saldoAtual || !chavePix} onClick={() => setModalSaqueConfirmacao(true)} className="w-full py-5 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-2xl font-black text-xl shadow-xl shadow-orange-500/30 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 disabled:from-gray-300 disabled:to-gray-400 disabled:shadow-none disabled:cursor-not-allowed disabled:scale-100">
-                💸 Solicitar Saque
-              </button>
-
-              <p className="text-center text-xs text-gray-500 mt-4">
-                O valor será transferido em até 1 hora útil • Valor mínimo: R$ 10,00
-              </p>
-            </div>
-
-            {/* Modal de Confirmação */}
-            {modalSaqueConfirmacao && <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-                <div className="glass rounded-3xl max-w-md w-full p-8 animate-scale-in">
-                  <div className="text-center mb-6">
-                    <div className="w-20 h-20 mx-auto bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl flex items-center justify-center shadow-xl mb-4">
-                      <CheckCircle className="w-10 h-10 text-white" />
-                    </div>
-                    <h3 className="text-2xl font-black text-gray-900 mb-2">Confirmar Saque</h3>
-                    <p className="text-gray-600">Revise os dados antes de confirmar</p>
-                  </div>
-
-                  <div className="bg-gray-50 rounded-2xl p-5 mb-6 space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Valor</span>
-                      <span className="font-black text-xl text-green-600">R$ {valorSaque.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Chave PIX</span>
-                      <span className="font-bold text-gray-900">{chavePix}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Tipo</span>
-                      <span className="font-bold text-gray-900 capitalize">{tipoChavePix}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-4">
-                    <button onClick={() => setModalSaqueConfirmacao(false)} className="flex-1 py-4 glass rounded-2xl font-bold text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all">
-                      Cancelar
-                    </button>
-                    <button onClick={() => {
-                setSaldoAtual(prev => prev - valorSaque);
-                setModalSaqueConfirmacao(false);
-                setValorSaque(0);
-                setChavePix("");
-                simularEnvioWhatsApp("pagamento", "Você", {
-                  valor: valorSaque,
-                  vaga: "Saque PIX",
-                  empresa: "Scalador"
-                });
-                toast({
-                  title: "✅ Saque Solicitado!",
-                  description: `R$ ${valorSaque.toFixed(2)} será transferido para sua conta.`
-                });
-                setAbaAtiva("historico");
-              }} className="flex-1 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-black shadow-xl shadow-green-500/30 hover:scale-[1.02] transition-all">
-                      Confirmar
-                    </button>
-                  </div>
-                </div>
-              </div>}
-          </div>}
       </div>;
   };
 
@@ -3337,7 +3219,7 @@ export default function Index() {
     return <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-6 sm:py-12">
         <div className="mb-8 sm:mb-12 text-center animate-fade-in">
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-black mb-3 sm:mb-4">
-            <span className="gradient-text-blue">Buscar Freelancers</span>
+            <span className="gradient-text-blue">Buscar freelancers</span>
           </h2>
           <p className="text-gray-600 text-base sm:text-xl font-medium">Encontre profissionais de confiança 👥</p>
         </div>
@@ -3360,7 +3242,7 @@ export default function Index() {
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
           {/* Sidebar de Filtros - ESQUERDA */}
           <aside className="lg:w-80 flex-shrink-0 order-2 lg:order-1">
-            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 lg:sticky lg:top-24">
+            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 sticky top-20 h-fit max-h-[calc(100vh-100px)] overflow-y-auto">
               <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <h3 className="font-black text-gray-900 text-lg sm:text-xl flex items-center gap-2">
                   <Filter className="w-4 sm:w-5 h-4 sm:h-5 text-purple-600" /> Filtros
