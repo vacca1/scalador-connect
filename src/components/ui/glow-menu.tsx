@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { motion } from "framer-motion"
-import { Home, Users, Heart, Briefcase, Plus } from "lucide-react"
+import { Home, Users, Heart, Briefcase, Plus, Wallet } from "lucide-react"
 
 interface MenuItem {
   icon: React.ReactNode
@@ -35,11 +35,18 @@ const menuItems: MenuItem[] = [
     iconColor: "text-pink-500",
   },
   {
+    icon: <Wallet className="h-5 w-5" />,
+    label: "Pagamentos",
+    key: "saldo",
+    gradient: "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
+    iconColor: "text-green-500",
+  },
+  {
     icon: <Briefcase className="h-5 w-5" />,
     label: "Minhas vagas",
     key: "minhas-vagas",
-    gradient: "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
-    iconColor: "text-green-500",
+    gradient: "radial-gradient(circle, rgba(139,92,246,0.15) 0%, rgba(124,58,237,0.06) 50%, rgba(109,40,217,0) 100%)",
+    iconColor: "text-violet-500",
   },
   {
     icon: <Plus className="h-5 w-5" />,
