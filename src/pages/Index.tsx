@@ -1336,7 +1336,7 @@ export default function Index() {
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
           {/* Sidebar de Filtros - FIXO à ESQUERDA */}
           <aside className="lg:w-80 flex-shrink-0 order-2 lg:order-1 lg:sticky lg:top-24 lg:self-start">
-            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-orange-500/20 transition-all duration-300 max-h-[calc(100vh-120px)] overflow-y-auto">
+            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-orange-500/20 transition-all duration-300 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
               <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <h3 className="font-black text-gray-900 text-lg sm:text-xl flex items-center gap-2">
                   <Filter className="w-4 sm:w-5 h-4 sm:h-5 text-scalador-orange" /> Filtros
@@ -3242,7 +3242,7 @@ export default function Index() {
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
           {/* Sidebar de Filtros - ESQUERDA */}
           <aside className="lg:w-80 flex-shrink-0 order-2 lg:order-1 lg:sticky lg:top-24 lg:self-start">
-            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 max-h-[calc(100vh-120px)] overflow-y-auto">
+            <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
               <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <h3 className="font-black text-gray-900 text-lg sm:text-xl flex items-center gap-2">
                   <Filter className="w-4 sm:w-5 h-4 sm:h-5 text-purple-600" /> Filtros
