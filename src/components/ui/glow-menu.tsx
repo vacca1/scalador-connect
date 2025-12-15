@@ -36,7 +36,7 @@ const menuItems: MenuItem[] = [
   },
   {
     icon: <Briefcase className="h-5 w-5" />,
-    label: "Minhas Vagas",
+    label: "Minhas vagas",
     key: "minhas-vagas",
     gradient: "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
     iconColor: "text-green-500",
@@ -137,7 +137,7 @@ export function GlowMenu({ navegarPara, paginaAtual, carteiraCount = 0 }: GlowMe
                 <span className={`transition-colors duration-300 ${paginaAtual === item.key ? item.iconColor : ""}`}>
                   {item.icon}
                 </span>
-                <span className="text-sm font-medium">{item.label}</span>
+                <span className="text-sm font-medium whitespace-nowrap">{item.label}</span>
                 {item.key === "carteira" && carteiraCount > 0 && (
                   <span className="bg-gradient-to-r from-scalador-orange to-scalador-orange-light text-white text-xs font-bold px-2 py-0.5 rounded-full">
                     {carteiraCount}
@@ -153,7 +153,7 @@ export function GlowMenu({ navegarPara, paginaAtual, carteiraCount = 0 }: GlowMe
                 <span className={`transition-colors duration-300 ${item.iconColor}`}>
                   {item.icon}
                 </span>
-                <span className="text-sm font-medium">{item.label}</span>
+                <span className="text-sm font-medium whitespace-nowrap">{item.label}</span>
                 {item.key === "carteira" && carteiraCount > 0 && (
                   <span className="bg-gradient-to-r from-scalador-orange to-scalador-orange-light text-white text-xs font-bold px-2 py-0.5 rounded-full">
                     {carteiraCount}
