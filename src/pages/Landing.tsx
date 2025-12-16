@@ -38,18 +38,18 @@ const benefits = [
 ];
 
 const stats = [
-  { value: "+1400", label: "Vagas abertas agora", icon: Briefcase },
-  { value: "+1000", label: "Empresas parceiras", icon: Building2 },
+  { value: "+5.000", label: "Vagas abertas no Brasil", icon: Briefcase },
+  { value: "+3.000", label: "Empresas parceiras", icon: Building2 },
   { value: "+5 milhões", label: "De oportunidades geradas", icon: Users },
   { value: "+500 milhões", label: "De renda gerada (GMV)", icon: DollarSign },
 ];
 
 const faqs = [
-  { question: "Como funciona o Scalador?", answer: "O Scalador conecta freelancers qualificados com empresas que precisam de profissionais para trabalhos temporários. Basta criar seu perfil e começar a receber ofertas." },
+  { question: "Como funciona o Scalador?", answer: "O Scalador conecta freelancers qualificados com empresas que precisam de profissionais para trabalhos temporários em todo o Brasil. Basta criar seu perfil e começar a receber ofertas." },
   { question: "Quanto custa usar a plataforma?", answer: "Para freelancers, a plataforma é 100% gratuita. Empresas pagam uma taxa de serviço de 9,9% sobre o valor das diárias." },
   { question: "Quanto tempo leva para conseguir um trabalho?", answer: "A maioria dos freelancers consegue seu primeiro trabalho em menos de 48 horas após completar o perfil." },
   { question: "Como recebo meu pagamento?", answer: "Os pagamentos são processados diretamente pela plataforma e transferidos para sua conta em até 24 horas após a conclusão do trabalho." },
-  { question: "Posso trabalhar em qualquer região de Brasília?", answer: "Sim! Temos vagas em todas as regiões administrativas de Brasília." },
+  { question: "Em quais cidades o Scalador está disponível?", answer: "O Scalador está presente em todas as capitais e principais cidades do Brasil, com expansão contínua para novas regiões." },
 ];
 
 export default function Landing() {
@@ -121,10 +121,10 @@ export default function Landing() {
             <p className="text-sm text-muted-foreground"><span className="font-semibold text-foreground">+5 milhões</span> de oportunidades geradas</p>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight mb-6">Com o Scalador você consegue <span className="text-primary">vagas de trabalho</span> nos melhores estabelecimentos de Brasília</h1>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight mb-6">Com o Scalador você consegue <span className="text-primary">vagas de trabalho</span> nos melhores estabelecimentos do Brasil</h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-10">Encontre seu próximo trabalho em menos de <span className="font-semibold text-foreground">5 minutos!</span></p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" onClick={() => navigate("/freelancer")} className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25"><Briefcase className="mr-2 h-5 w-5" />Ver Vagas (+1400)</Button>
+              <Button size="lg" onClick={() => navigate("/freelancer")} className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25"><Briefcase className="mr-2 h-5 w-5" />Ver Vagas (+5.000)</Button>
               <Button size="lg" variant="outline" onClick={() => navigate("/login")} className="text-lg px-8 py-6 border-primary/30 hover:bg-primary/10 backdrop-blur-sm bg-background/50"><Users className="mr-2 h-5 w-5" />Quero Trabalhar</Button>
             </div>
           </motion.div>
@@ -138,8 +138,8 @@ export default function Landing() {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Encontre seu próximo trabalho em mais de <span className="text-primary">1000 estabelecimentos</span></h2>
-            <p className="text-lg text-muted-foreground">Vagas em todas as regiões de Brasília, perto de você</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Encontre seu próximo trabalho em mais de <span className="text-primary">3.000 estabelecimentos</span></h2>
+            <p className="text-lg text-muted-foreground">Vagas em todo o Brasil, perto de você</p>
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/50 bg-card/50 backdrop-blur-sm">
             <div className="aspect-[16/9] md:aspect-[21/9] relative">
@@ -157,21 +157,21 @@ export default function Landing() {
                     stroke="hsl(var(--primary))"
                     strokeWidth="2"
                   />
-                  {/* Brasília marker */}
-                  <circle cx="450" cy="280" r="12" fill="hsl(var(--primary))" className="animate-pulse" />
-                  <circle cx="450" cy="280" r="20" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.5" />
-                  <circle cx="450" cy="280" r="30" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.3" />
                 </svg>
               </div>
               
-              {/* Map Pins */}
+              {/* Map Pins - Major Brazilian Cities */}
               <div className="absolute inset-0">
                 {[
-                  { top: "35%", left: "40%", label: "Asa Norte", jobs: 234 },
-                  { top: "45%", left: "45%", label: "Asa Sul", jobs: 189 },
-                  { top: "50%", left: "30%", label: "Taguatinga", jobs: 156 },
-                  { top: "40%", left: "60%", label: "Lago Sul", jobs: 98 },
-                  { top: "55%", left: "55%", label: "Águas Claras", jobs: 142 },
+                  { top: "25%", left: "70%", label: "Fortaleza", jobs: 342 },
+                  { top: "35%", left: "75%", label: "Recife", jobs: 289 },
+                  { top: "45%", left: "72%", label: "Salvador", jobs: 456 },
+                  { top: "55%", left: "55%", label: "Brasília", jobs: 523 },
+                  { top: "60%", left: "65%", label: "Belo Horizonte", jobs: 634 },
+                  { top: "68%", left: "60%", label: "São Paulo", jobs: 1247 },
+                  { top: "72%", left: "55%", label: "Rio de Janeiro", jobs: 876 },
+                  { top: "78%", left: "50%", label: "Curitiba", jobs: 398 },
+                  { top: "82%", left: "45%", label: "Porto Alegre", jobs: 312 },
                 ].map((pin, i) => (
                   <motion.div
                     key={i}
@@ -206,7 +206,7 @@ export default function Landing() {
         <div className="container mx-auto px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Empresas que confiam no Scalador</h2>
-            <p className="text-lg text-muted-foreground">Mais de 1000 estabelecimentos parceiros em Brasília</p>
+            <p className="text-lg text-muted-foreground">Mais de 3.000 estabelecimentos parceiros em todo o Brasil</p>
           </motion.div>
           <div className="mx-auto my-5 h-px max-w-sm bg-border [mask-image:linear-gradient(to_right,transparent,black,transparent)]" />
           <div className="bg-card/50 backdrop-blur-sm rounded-2xl border border-border/50 py-8">
@@ -221,9 +221,9 @@ export default function Landing() {
         <div className="container mx-auto px-4 relative z-10">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center max-w-3xl mx-auto bg-card/60 backdrop-blur-xl rounded-3xl p-12 border border-border/50 shadow-2xl">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Não perca mais tempo no caminho para o trabalho!</h2>
-            <p className="text-lg text-muted-foreground mb-8">Complete seu perfil em menos de 5 minutos e encontre a vaga mais perto da sua casa.</p>
+            <p className="text-lg text-muted-foreground mb-8">Complete seu perfil em menos de 5 minutos e encontre a vaga mais perto de você, em qualquer cidade do Brasil.</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" onClick={() => navigate("/freelancer")} className="text-lg px-8 py-6 bg-primary hover:bg-primary/90">Ver Vagas (+1400)</Button>
+              <Button size="lg" onClick={() => navigate("/freelancer")} className="text-lg px-8 py-6 bg-primary hover:bg-primary/90">Ver Vagas (+5.000)</Button>
               <Button size="lg" variant="outline" onClick={() => navigate("/login")} className="text-lg px-8 py-6">Quero Trabalhar</Button>
             </div>
           </motion.div>
@@ -318,11 +318,11 @@ export default function Landing() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,white/10,transparent_40%)]" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">Temos mais de 1400 vagas te esperando!</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">Temos mais de 5.000 vagas em todo o Brasil te esperando!</h2>
             <p className="text-lg text-primary-foreground/80 mb-10">Cadastre-se grátis no Scalador e aguarde seus convites de entrevista.</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" onClick={() => navigate("/login")} className="text-lg px-8 py-6 bg-white text-primary hover:bg-white/90">Quero Trabalhar</Button>
-              <Button size="lg" variant="outline" onClick={() => navigate("/freelancer")} className="text-lg px-8 py-6 border-white text-white hover:bg-white/10">Ver Vagas (+1400)</Button>
+              <Button size="lg" variant="outline" onClick={() => navigate("/freelancer")} className="text-lg px-8 py-6 border-white text-white hover:bg-white/10">Ver Vagas (+5.000)</Button>
             </div>
           </motion.div>
         </div>
