@@ -7,6 +7,7 @@ import { LogoCloud } from "@/components/ui/logo-cloud";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { InfiniteGridBackground } from "@/components/ui/the-infinite-grid";
 import { MenuBar } from "@/components/ui/menu-bar";
+import { BrazilMap } from "@/components/BrazilMap";
 import scaladorLogo from "@/assets/scalador-logo.png";
 import logoFF from "@/assets/logos/ff.png";
 import logoAbrasel from "@/assets/logos/abrasel.png";
@@ -193,60 +194,8 @@ export default function Landing() {
             <p className="text-lg text-muted-foreground">Vagas em todo o Brasil, perto de você</p>
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/50 bg-card/50 backdrop-blur-sm">
-            <div className="aspect-[16/9] md:aspect-[21/9] relative">
-              {/* Brazil Map SVG */}
-              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
-                <svg viewBox="0 0 800 600" className="w-full h-full max-w-4xl opacity-30">
-                  <path 
-                    d="M320,80 L380,60 L450,70 L520,90 L580,100 L620,130 L650,180 L680,250 L700,320 L690,400 L650,450 L600,480 L520,500 L440,510 L360,490 L300,450 L250,400 L220,340 L200,280 L190,220 L200,160 L240,110 L280,90 Z"
-                    fill="hsl(var(--primary))"
-                    opacity="0.3"
-                  />
-                  <path 
-                    d="M320,80 L380,60 L450,70 L520,90 L580,100 L620,130 L650,180 L680,250 L700,320 L690,400 L650,450 L600,480 L520,500 L440,510 L360,490 L300,450 L250,400 L220,340 L200,280 L190,220 L200,160 L240,110 L280,90 Z"
-                    fill="none"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth="2"
-                  />
-                </svg>
-              </div>
-              
-              {/* Map Pins - Major Brazilian Cities */}
-              <div className="absolute inset-0">
-                {[
-                  { top: "25%", left: "70%", label: "Fortaleza", jobs: 342 },
-                  { top: "35%", left: "75%", label: "Recife", jobs: 289 },
-                  { top: "45%", left: "72%", label: "Salvador", jobs: 456 },
-                  { top: "55%", left: "55%", label: "Brasília", jobs: 523 },
-                  { top: "60%", left: "65%", label: "Belo Horizonte", jobs: 634 },
-                  { top: "68%", left: "60%", label: "São Paulo", jobs: 1247 },
-                  { top: "72%", left: "55%", label: "Rio de Janeiro", jobs: 876 },
-                  { top: "78%", left: "50%", label: "Curitiba", jobs: 398 },
-                  { top: "82%", left: "45%", label: "Porto Alegre", jobs: 312 },
-                ].map((pin, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, scale: 0 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 + 0.15 * i, type: "spring" }}
-                    className="absolute cursor-pointer group"
-                    style={{ top: pin.top, left: pin.left }}
-                  >
-                    <div className="bg-background/95 backdrop-blur-sm rounded-xl px-4 py-3 shadow-xl border border-primary/20 transform -translate-x-1/2 group-hover:scale-110 transition-transform">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-primary" />
-                        <span className="font-semibold text-sm">{pin.label}</span>
-                      </div>
-                      <div className="flex items-center gap-1 mt-1">
-                        <Briefcase className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">{pin.jobs} vagas</span>
-                      </div>
-                    </div>
-                    <div className="w-3 h-3 bg-primary rounded-full mx-auto mt-1 animate-pulse" />
-                  </motion.div>
-                ))}
-              </div>
+            <div className="aspect-[16/9] md:aspect-[21/9] relative bg-gradient-to-br from-primary/5 to-primary/10">
+              <BrazilMap />
             </div>
           </motion.div>
         </div>
