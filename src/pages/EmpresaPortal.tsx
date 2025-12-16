@@ -663,7 +663,7 @@ const MOCK_FREELANCERS: Freelancer[] = [{
 }];
 
 // ===== COMPONENTE PRINCIPAL =====
-export default function Index() {
+export default function EmpresaPortal() {
   const [currentPage, setCurrentPage] = useState("vagas");
   const [jobs, setJobs] = useState<Job[]>(MOCK_JOBS);
   const [notifications, setNotifications] = useState<Notification[]>([]);
