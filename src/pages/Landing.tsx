@@ -5,6 +5,7 @@ import { Menu, X, MapPin, Briefcase, Users, Building2, DollarSign, Clock, FileTe
 import { Button } from "@/components/ui/button";
 import { LogoCloud } from "@/components/ui/logo-cloud";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { InfiniteGridBackground } from "@/components/ui/the-infinite-grid";
 import scaladorLogo from "@/assets/scalador-logo.png";
 import logoFF from "@/assets/logos/ff.png";
 import logoAbrasel from "@/assets/logos/abrasel.png";
@@ -68,24 +69,39 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
-      <motion.header initial={{ y: -100 }} animate={{ y: 0 }} className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-background/95 backdrop-blur-lg shadow-lg border-b border-border/50" : "bg-gradient-to-b from-primary/10 to-transparent"}`}>
+    <InfiniteGridBackground className="min-h-screen">
+      {/* Header with Glassmorphism */}
+      <motion.header 
+        initial={{ y: -100 }} 
+        animate={{ y: 0 }} 
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled 
+            ? "bg-background/70 backdrop-blur-xl shadow-lg border-b border-border/50" 
+            : "bg-background/30 backdrop-blur-md"
+        }`}
+      >
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/"><img src={scaladorLogo} alt="Scalador" className="h-10 w-auto" /></Link>
           <nav className="hidden md:flex items-center gap-6">
             {["beneficios", "parceiros", "depoimentos", "faq"].map((id) => (
-              <button key={id} onClick={() => scrollToSection(id)} className="text-foreground/80 hover:text-primary transition-colors font-medium capitalize">{id === "faq" ? "FAQ" : id}</button>
+              <button 
+                key={id} 
+                onClick={() => scrollToSection(id)} 
+                className="text-foreground/80 hover:text-primary transition-colors font-medium capitalize px-3 py-2 rounded-lg hover:bg-primary/10"
+              >
+                {id === "faq" ? "FAQ" : id}
+              </button>
             ))}
           </nav>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate("/login")} className="hidden md:flex">Entrar</Button>
-            <Button onClick={() => navigate("/login")} className="bg-primary hover:bg-primary/90">Começar Agora</Button>
+            <Button variant="ghost" onClick={() => navigate("/login")} className="hidden md:flex backdrop-blur-sm bg-background/50 hover:bg-background/70">Entrar</Button>
+            <Button onClick={() => navigate("/login")} className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25">Começar Agora</Button>
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 text-foreground">{mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}</button>
           </div>
         </div>
         <AnimatePresence>
           {mobileMenuOpen && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="md:hidden bg-background border-t border-border">
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="md:hidden bg-background/90 backdrop-blur-xl border-t border-border">
               <nav className="container mx-auto px-4 py-4 flex flex-col gap-3">
                 {["beneficios", "parceiros", "depoimentos", "faq"].map((id) => (
                   <button key={id} onClick={() => scrollToSection(id)} className="text-left py-2 text-foreground/80 hover:text-primary capitalize">{id === "faq" ? "FAQ" : id}</button>
@@ -97,9 +113,8 @@ export default function Landing() {
         </AnimatePresence>
       </motion.header>
 
+      {/* Hero Section */}
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[150%] h-[500px] bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.15),transparent_70%)]" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex items-center justify-center gap-3 mb-8">
             <div className="flex -space-x-3">{[1, 2, 3, 4].map((i) => (<div key={i} className="w-10 h-10 rounded-full border-2 border-background overflow-hidden"><img src={`https://i.pravatar.cc/40?img=${i + 10}`} alt="" className="w-full h-full object-cover" /></div>))}</div>
@@ -110,7 +125,7 @@ export default function Landing() {
             <p className="text-xl md:text-2xl text-muted-foreground mb-10">Encontre seu próximo trabalho em menos de <span className="font-semibold text-foreground">5 minutos!</span></p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" onClick={() => navigate("/freelancer")} className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25"><Briefcase className="mr-2 h-5 w-5" />Ver Vagas (+1400)</Button>
-              <Button size="lg" variant="outline" onClick={() => navigate("/login")} className="text-lg px-8 py-6 border-primary/30 hover:bg-primary/10"><Users className="mr-2 h-5 w-5" />Quero Trabalhar</Button>
+              <Button size="lg" variant="outline" onClick={() => navigate("/login")} className="text-lg px-8 py-6 border-primary/30 hover:bg-primary/10 backdrop-blur-sm bg-background/50"><Users className="mr-2 h-5 w-5" />Quero Trabalhar</Button>
             </div>
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="flex justify-center mt-16">
@@ -119,22 +134,65 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-b from-background to-muted/30">
+      {/* Map Section - Brazil Map */}
+      <section className="py-20">
         <div className="container mx-auto px-4">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Encontre seu próximo trabalho em mais de <span className="text-primary">1000 estabelecimentos</span></h2>
             <p className="text-lg text-muted-foreground">Vagas em todas as regiões de Brasília, perto de você</p>
           </motion.div>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/50">
-            <div className="aspect-[16/9] md:aspect-[21/9] bg-gradient-to-br from-muted to-muted/50 relative">
-              <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1920&q=80" alt="Mapa" className="w-full h-full object-cover opacity-60" />
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/50 bg-card/50 backdrop-blur-sm">
+            <div className="aspect-[16/9] md:aspect-[21/9] relative">
+              {/* Brazil Map SVG */}
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
+                <svg viewBox="0 0 800 600" className="w-full h-full max-w-4xl opacity-30">
+                  <path 
+                    d="M320,80 L380,60 L450,70 L520,90 L580,100 L620,130 L650,180 L680,250 L700,320 L690,400 L650,450 L600,480 L520,500 L440,510 L360,490 L300,450 L250,400 L220,340 L200,280 L190,220 L200,160 L240,110 L280,90 Z"
+                    fill="hsl(var(--primary))"
+                    opacity="0.3"
+                  />
+                  <path 
+                    d="M320,80 L380,60 L450,70 L520,90 L580,100 L620,130 L650,180 L680,250 L700,320 L690,400 L650,450 L600,480 L520,500 L440,510 L360,490 L300,450 L250,400 L220,340 L200,280 L190,220 L200,160 L240,110 L280,90 Z"
+                    fill="none"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth="2"
+                  />
+                  {/* Brasília marker */}
+                  <circle cx="450" cy="280" r="12" fill="hsl(var(--primary))" className="animate-pulse" />
+                  <circle cx="450" cy="280" r="20" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.5" />
+                  <circle cx="450" cy="280" r="30" fill="none" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.3" />
+                </svg>
+              </div>
+              
+              {/* Map Pins */}
               <div className="absolute inset-0">
-                {[{ top: "20%", left: "30%", label: "Garçom", rating: 5 }, { top: "40%", left: "55%", label: "Bartender", rating: 4.8 }, { top: "60%", left: "40%", label: "Cozinheiro", rating: 4.9 }].map((pin, i) => (
-                  <motion.div key={i} initial={{ opacity: 0, y: -20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 * i }} className="absolute" style={{ top: pin.top, left: pin.left }}>
-                    <div className="bg-background/95 backdrop-blur-sm rounded-lg px-3 py-2 shadow-lg border border-border/50 transform -translate-x-1/2">
-                      <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" /><span className="font-medium text-sm">{pin.label}</span></div>
-                      <div className="flex items-center gap-1 mt-1">{Array.from({ length: 5 }).map((_, j) => (<Star key={j} className={`h-3 w-3 ${j < Math.floor(pin.rating) ? "text-amber-400 fill-amber-400" : "text-muted"}`} />))}</div>
+                {[
+                  { top: "35%", left: "40%", label: "Asa Norte", jobs: 234 },
+                  { top: "45%", left: "45%", label: "Asa Sul", jobs: 189 },
+                  { top: "50%", left: "30%", label: "Taguatinga", jobs: 156 },
+                  { top: "40%", left: "60%", label: "Lago Sul", jobs: 98 },
+                  { top: "55%", left: "55%", label: "Águas Claras", jobs: 142 },
+                ].map((pin, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, scale: 0 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + 0.15 * i, type: "spring" }}
+                    className="absolute cursor-pointer group"
+                    style={{ top: pin.top, left: pin.left }}
+                  >
+                    <div className="bg-background/95 backdrop-blur-sm rounded-xl px-4 py-3 shadow-xl border border-primary/20 transform -translate-x-1/2 group-hover:scale-110 transition-transform">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-primary" />
+                        <span className="font-semibold text-sm">{pin.label}</span>
+                      </div>
+                      <div className="flex items-center gap-1 mt-1">
+                        <Briefcase className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">{pin.jobs} vagas</span>
+                      </div>
                     </div>
+                    <div className="w-3 h-3 bg-primary rounded-full mx-auto mt-1 animate-pulse" />
                   </motion.div>
                 ))}
               </div>
@@ -143,22 +201,25 @@ export default function Landing() {
         </div>
       </section>
 
-      <section id="parceiros" className="py-20 bg-muted/30">
+      {/* Partners Section */}
+      <section id="parceiros" className="py-20">
         <div className="container mx-auto px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Empresas que confiam no Scalador</h2>
             <p className="text-lg text-muted-foreground">Mais de 1000 estabelecimentos parceiros em Brasília</p>
           </motion.div>
           <div className="mx-auto my-5 h-px max-w-sm bg-border [mask-image:linear-gradient(to_right,transparent,black,transparent)]" />
-          <LogoCloud logos={partnerLogos} className="py-8" />
+          <div className="bg-card/50 backdrop-blur-sm rounded-2xl border border-border/50 py-8">
+            <LogoCloud logos={partnerLogos} />
+          </div>
           <div className="mt-5 h-px bg-border [mask-image:linear-gradient(to_right,transparent,black,transparent)]" />
         </div>
       </section>
 
+      {/* Intermediate CTA */}
       <section className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10" />
         <div className="container mx-auto px-4 relative z-10">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center max-w-3xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center max-w-3xl mx-auto bg-card/60 backdrop-blur-xl rounded-3xl p-12 border border-border/50 shadow-2xl">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Não perca mais tempo no caminho para o trabalho!</h2>
             <p className="text-lg text-muted-foreground mb-8">Complete seu perfil em menos de 5 minutos e encontre a vaga mais perto da sua casa.</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -169,7 +230,8 @@ export default function Landing() {
         </div>
       </section>
 
-      <section id="beneficios" className="py-20 bg-background">
+      {/* Benefits Section */}
+      <section id="beneficios" className="py-20">
         <div className="container mx-auto px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
             <span className="text-primary font-semibold text-lg">Benefícios</span>
@@ -178,7 +240,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-8 mb-16">
             {benefits.map((benefit, index) => (
               <motion.div key={index} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="group">
-                <div className="bg-card border border-border/50 rounded-2xl p-8 h-full hover:shadow-xl hover:border-primary/30 transition-all duration-300">
+                <div className="bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl p-8 h-full hover:shadow-xl hover:border-primary/30 transition-all duration-300 hover:bg-card/80">
                   <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors"><benefit.icon className="h-7 w-7 text-primary" /></div>
                   <h3 className="text-xl font-bold text-foreground mb-3">{benefit.title}</h3>
                   <p className="text-muted-foreground mb-4">{benefit.description}</p>
@@ -190,6 +252,7 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Stats/Impact Section */}
       <section className="py-20 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.2),transparent_50%)]" />
         <div className="container mx-auto px-4 relative z-10">
@@ -209,7 +272,8 @@ export default function Landing() {
         </div>
       </section>
 
-      <section id="depoimentos" className="py-20 bg-muted/30">
+      {/* Testimonials Section */}
+      <section id="depoimentos" className="py-20">
         <div className="container mx-auto px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Casos de Sucesso</h2>
@@ -217,7 +281,7 @@ export default function Landing() {
           </motion.div>
           <div className="grid md:grid-cols-2 gap-8">
             {testimonials.map((t, index) => (
-              <motion.div key={index} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="bg-card border border-border/50 rounded-2xl p-8 hover:shadow-xl transition-all duration-300">
+              <motion.div key={index} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl p-8 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-start gap-4">
                   <div className="relative"><img src={t.avatar} alt={t.name} className="w-16 h-16 rounded-full object-cover border-2 border-primary/30" /><div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-primary flex items-center justify-center"><Play className="h-4 w-4 text-primary-foreground fill-current" /></div></div>
                   <div className="flex-1"><h3 className="font-bold text-primary text-lg">{t.name}</h3><p className="text-muted-foreground text-sm">{t.role}</p></div>
@@ -229,7 +293,8 @@ export default function Landing() {
         </div>
       </section>
 
-      <section id="faq" className="py-20 bg-background">
+      {/* FAQ Section */}
+      <section id="faq" className="py-20">
         <div className="container mx-auto px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Perguntas Frequentes</h2>
@@ -238,7 +303,7 @@ export default function Landing() {
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="max-w-3xl mx-auto">
             <Accordion type="single" collapsible className="space-y-4">
               {faqs.map((faq, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="bg-card border border-border/50 rounded-xl px-6 overflow-hidden">
+                <AccordionItem key={index} value={`item-${index}`} className="bg-card/60 backdrop-blur-sm border border-border/50 rounded-xl px-6 overflow-hidden">
                   <AccordionTrigger className="text-left font-semibold text-foreground hover:text-primary py-6">{faq.question}</AccordionTrigger>
                   <AccordionContent className="text-muted-foreground pb-6">{faq.answer}</AccordionContent>
                 </AccordionItem>
@@ -248,6 +313,7 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Final CTA Section */}
       <section className="py-20 bg-gradient-to-r from-primary via-primary/90 to-primary relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,white/10,transparent_40%)]" />
         <div className="container mx-auto px-4 relative z-10">
@@ -262,6 +328,7 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Footer */}
       <footer className="py-12 bg-slate-900 text-white">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
@@ -280,6 +347,6 @@ export default function Landing() {
           </div>
         </div>
       </footer>
-    </div>
+    </InfiniteGridBackground>
   );
 }
