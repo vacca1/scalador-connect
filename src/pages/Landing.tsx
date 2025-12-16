@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, MapPin, Briefcase, Users, Building2, DollarSign, Clock, FileText, ChevronDown, Play, Star, Facebook, Instagram, Linkedin, Youtube, TrendingUp, CheckCircle2 } from "lucide-react";
+import { Menu, X, MapPin, Briefcase, Users, Building2, DollarSign, Clock, FileText, ChevronDown, Play, Star, Facebook, Instagram, Linkedin, Youtube, TrendingUp, CheckCircle2, Gift, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LogoCloud } from "@/components/ui/logo-cloud";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { InfiniteGridBackground } from "@/components/ui/the-infinite-grid";
+import { MenuBar } from "@/components/ui/menu-bar";
 import scaladorLogo from "@/assets/scalador-logo.png";
 import logoFF from "@/assets/logos/ff.png";
 import logoAbrasel from "@/assets/logos/abrasel.png";
@@ -52,10 +53,42 @@ const faqs = [
   { question: "Em quais cidades o Scalador está disponível?", answer: "O Scalador está presente em todas as capitais e principais cidades do Brasil, com expansão contínua para novas regiões." },
 ];
 
+const menuItems = [
+  {
+    icon: Gift,
+    label: "Benefícios",
+    href: "#beneficios",
+    gradient: "radial-gradient(circle, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.06) 50%, rgba(194,65,12,0) 100%)",
+    iconColor: "text-orange-500",
+  },
+  {
+    icon: Building2,
+    label: "Parceiros",
+    href: "#parceiros",
+    gradient: "radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(37,99,235,0.06) 50%, rgba(29,78,216,0) 100%)",
+    iconColor: "text-blue-500",
+  },
+  {
+    icon: MessageCircle,
+    label: "Depoimentos",
+    href: "#depoimentos",
+    gradient: "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
+    iconColor: "text-green-500",
+  },
+  {
+    icon: FileText,
+    label: "FAQ",
+    href: "#faq",
+    gradient: "radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(147,51,234,0.06) 50%, rgba(126,34,206,0) 100%)",
+    iconColor: "text-purple-500",
+  },
+];
+
 export default function Landing() {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("Benefícios");
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -64,13 +97,21 @@ export default function Landing() {
   }, []);
 
   const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    const sectionMap: Record<string, string> = {
+      "Benefícios": "beneficios",
+      "Parceiros": "parceiros",
+      "Depoimentos": "depoimentos",
+      "FAQ": "faq",
+    };
+    const targetId = sectionMap[id] || id.toLowerCase();
+    document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+    setActiveSection(id);
     setMobileMenuOpen(false);
   };
 
   return (
     <InfiniteGridBackground className="min-h-screen">
-      {/* Header with Glassmorphism */}
+      {/* Header with Glassmorphism + MenuBar */}
       <motion.header 
         initial={{ y: -100 }} 
         animate={{ y: 0 }} 
@@ -80,31 +121,41 @@ export default function Landing() {
             : "bg-background/30 backdrop-blur-md"
         }`}
       >
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/"><img src={scaladorLogo} alt="Scalador" className="h-10 w-auto" /></Link>
-          <nav className="hidden md:flex items-center gap-6">
-            {["beneficios", "parceiros", "depoimentos", "faq"].map((id) => (
-              <button 
-                key={id} 
-                onClick={() => scrollToSection(id)} 
-                className="text-foreground/80 hover:text-primary transition-colors font-medium capitalize px-3 py-2 rounded-lg hover:bg-primary/10"
-              >
-                {id === "faq" ? "FAQ" : id}
-              </button>
-            ))}
-          </nav>
+          
+          {/* Desktop MenuBar */}
+          <div className="hidden lg:block">
+            <MenuBar
+              items={menuItems}
+              activeItem={activeSection}
+              onItemClick={scrollToSection}
+            />
+          </div>
+
           <div className="flex items-center gap-3">
             <Button variant="ghost" onClick={() => navigate("/login")} className="hidden md:flex backdrop-blur-sm bg-background/50 hover:bg-background/70">Entrar</Button>
             <Button onClick={() => navigate("/login")} className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25">Começar Agora</Button>
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 text-foreground">{mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}</button>
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-foreground">{mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}</button>
           </div>
         </div>
         <AnimatePresence>
           {mobileMenuOpen && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="md:hidden bg-background/90 backdrop-blur-xl border-t border-border">
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="lg:hidden bg-background/90 backdrop-blur-xl border-t border-border">
               <nav className="container mx-auto px-4 py-4 flex flex-col gap-3">
-                {["beneficios", "parceiros", "depoimentos", "faq"].map((id) => (
-                  <button key={id} onClick={() => scrollToSection(id)} className="text-left py-2 text-foreground/80 hover:text-primary capitalize">{id === "faq" ? "FAQ" : id}</button>
+                {menuItems.map((item) => (
+                  <button 
+                    key={item.label} 
+                    onClick={() => scrollToSection(item.label)} 
+                    className={`flex items-center gap-3 text-left py-3 px-4 rounded-xl transition-colors ${
+                      activeSection === item.label 
+                        ? "bg-primary/10 text-primary" 
+                        : "text-foreground/80 hover:bg-muted"
+                    }`}
+                  >
+                    <item.icon className={`h-5 w-5 ${item.iconColor}`} />
+                    <span className="font-medium">{item.label}</span>
+                  </button>
                 ))}
                 <Button variant="outline" onClick={() => navigate("/login")} className="mt-2">Entrar</Button>
               </nav>
