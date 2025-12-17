@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, MapPin, Briefcase, Users, Building2, DollarSign, Clock, FileText, ChevronDown, Play, Star, Facebook, Instagram, Linkedin, Youtube, TrendingUp, CheckCircle2, Gift, MessageCircle } from "lucide-react";
+import { Menu, X, MapPin, Briefcase, Users, Building2, DollarSign, Clock, FileText, ChevronDown, Play, Star, Facebook, Instagram, Linkedin, Youtube, TrendingUp, CheckCircle2, Gift, MessageCircle, Zap, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LogoCloud } from "@/components/ui/logo-cloud";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -40,10 +40,10 @@ const benefits = [
 ];
 
 const stats = [
-  { value: "+5.000", label: "Vagas abertas no Brasil", icon: Briefcase },
-  { value: "+3.000", label: "Empresas parceiras", icon: Building2 },
-  { value: "+5 milhões", label: "De oportunidades geradas", icon: Users },
-  { value: "+500 milhões", label: "De renda gerada (GMV)", icon: DollarSign },
+  { value: "+3.500", label: "Vagas Freelancer", icon: Zap, color: "text-orange-500" },
+  { value: "+1.500", label: "Vagas CLT", icon: Briefcase, color: "text-indigo-500" },
+  { value: "+3.000", label: "Empresas parceiras", icon: Building2, color: "text-primary" },
+  { value: "+5 milhões", label: "De oportunidades geradas", icon: Users, color: "text-primary" },
 ];
 
 const faqs = [
@@ -56,30 +56,30 @@ const faqs = [
 
 const menuItems = [
   {
-    icon: Gift,
-    label: "Benefícios",
-    href: "#beneficios",
+    icon: Zap,
+    label: "Freelancer",
+    href: "#freelancer",
     gradient: "radial-gradient(circle, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.06) 50%, rgba(194,65,12,0) 100%)",
     iconColor: "text-orange-500",
   },
   {
-    icon: Building2,
-    label: "Parceiros",
-    href: "#parceiros",
-    gradient: "radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(37,99,235,0.06) 50%, rgba(29,78,216,0) 100%)",
-    iconColor: "text-blue-500",
+    icon: Briefcase,
+    label: "Vagas CLT",
+    href: "#clt",
+    gradient: "radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(79,70,229,0.06) 50%, rgba(67,56,202,0) 100%)",
+    iconColor: "text-indigo-500",
+  },
+  {
+    icon: Gift,
+    label: "Benefícios",
+    href: "#beneficios",
+    gradient: "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
+    iconColor: "text-green-500",
   },
   {
     icon: MessageCircle,
     label: "Depoimentos",
     href: "#depoimentos",
-    gradient: "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
-    iconColor: "text-green-500",
-  },
-  {
-    icon: FileText,
-    label: "FAQ",
-    href: "#faq",
     gradient: "radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(147,51,234,0.06) 50%, rgba(126,34,206,0) 100%)",
     iconColor: "text-purple-500",
   },
@@ -99,10 +99,10 @@ export default function Landing() {
 
   const scrollToSection = (id: string) => {
     const sectionMap: Record<string, string> = {
+      "Freelancer": "tipos-trabalho",
+      "Vagas CLT": "tipos-trabalho",
       "Benefícios": "beneficios",
-      "Parceiros": "parceiros",
       "Depoimentos": "depoimentos",
-      "FAQ": "faq",
     };
     const targetId = sectionMap[id] || id.toLowerCase();
     document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
@@ -173,16 +173,64 @@ export default function Landing() {
             <p className="text-sm text-muted-foreground"><span className="font-semibold text-foreground">+5 milhões</span> de oportunidades geradas</p>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight mb-6">Com o Scalador você consegue <span className="text-primary">vagas de trabalho</span> nos melhores estabelecimentos do Brasil</h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-10">Encontre seu próximo trabalho em menos de <span className="font-semibold text-foreground">5 minutos!</span></p>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight mb-6">
+              Com o Scalador você consegue <span className="text-orange-500">trabalhos freelancer</span> e <span className="text-indigo-600">empregos CLT</span> nos melhores estabelecimentos do Brasil
+            </h1>
+            <p className="text-xl md:text-2xl text-muted-foreground mb-10">Encontre seu próximo trabalho em menos de <span className="font-semibold text-foreground">5 minutos</span>, seja para um bico ou uma carreira formal!</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" onClick={() => navigate("/freelancer")} className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25"><Briefcase className="mr-2 h-5 w-5" />Ver Vagas (+5.000)</Button>
-              <Button size="lg" variant="outline" onClick={() => navigate("/login")} className="text-lg px-8 py-6 border-primary/30 hover:bg-primary/10 backdrop-blur-sm bg-background/50"><Users className="mr-2 h-5 w-5" />Quero Trabalhar</Button>
+              <Button size="lg" onClick={() => navigate("/freelancer")} className="text-lg px-8 py-6 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/25"><Zap className="mr-2 h-5 w-5" />Bicos & Freelancer</Button>
+              <Button size="lg" onClick={() => navigate("/empresa")} className="text-lg px-8 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-500/25"><Briefcase className="mr-2 h-5 w-5" />Emprego Formal (CLT)</Button>
             </div>
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="flex justify-center mt-16">
             <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity }} className="flex flex-col items-center text-muted-foreground"><span className="text-sm mb-2">Role para descobrir mais</span><ChevronDown className="h-5 w-5" /></motion.div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Tipos de Trabalho Section */}
+      <section id="tipos-trabalho" className="py-20">
+        <div className="container mx-auto px-4">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Encontre o trabalho ideal para você</h2>
+            <p className="text-lg text-muted-foreground">Duas formas de trabalhar, uma única plataforma</p>
+          </motion.div>
+          
+          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            {/* Card Freelancer */}
+            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="bg-card/60 backdrop-blur-sm p-8 rounded-3xl border-2 border-transparent hover:border-orange-500 transition-all duration-300 group">
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Zap className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-foreground mb-4">Trabalhos Freelancer</h3>
+              <p className="text-muted-foreground mb-4">Bicos, diárias e trabalhos pontuais. Ganhe dinheiro hoje!</p>
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-center gap-2"><Check className="w-5 h-5 text-orange-500" /><span className="text-foreground/90">Pagamento no mesmo dia</span></li>
+                <li className="flex items-center gap-2"><Check className="w-5 h-5 text-orange-500" /><span className="text-foreground/90">Flexibilidade de horários</span></li>
+                <li className="flex items-center gap-2"><Check className="w-5 h-5 text-orange-500" /><span className="text-foreground/90">Trabalhe quando quiser</span></li>
+              </ul>
+              <Button onClick={() => navigate("/freelancer")} className="w-full py-6 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold">
+                <Zap className="mr-2 h-5 w-5" />Ver Vagas Freelancer
+              </Button>
+            </motion.div>
+            
+            {/* Card CLT */}
+            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="bg-card/60 backdrop-blur-sm p-8 rounded-3xl border-2 border-transparent hover:border-indigo-600 transition-all duration-300 group">
+              <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Briefcase className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-foreground mb-4">Empregos CLT</h3>
+              <p className="text-muted-foreground mb-4">Carteira assinada, estabilidade e carreira. Construa seu futuro!</p>
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-center gap-2"><Check className="w-5 h-5 text-indigo-600" /><span className="text-foreground/90">Carteira assinada + FGTS</span></li>
+                <li className="flex items-center gap-2"><Check className="w-5 h-5 text-indigo-600" /><span className="text-foreground/90">Plano de saúde e benefícios</span></li>
+                <li className="flex items-center gap-2"><Check className="w-5 h-5 text-indigo-600" /><span className="text-foreground/90">Crescimento na carreira</span></li>
+              </ul>
+              <Button onClick={() => navigate("/empresa")} className="w-full py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold">
+                <Briefcase className="mr-2 h-5 w-5" />Ver Vagas CLT
+              </Button>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -263,8 +311,8 @@ export default function Landing() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <motion.div key={index} initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="text-center">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20"><stat.icon className="h-8 w-8 text-primary" /></div>
-                <div className="text-3xl md:text-4xl font-bold text-primary mb-2">{stat.value}</div>
+                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20"><stat.icon className={`h-8 w-8 ${stat.color}`} /></div>
+                <div className={`text-3xl md:text-4xl font-bold mb-2 ${stat.color}`}>{stat.value}</div>
                 <div className="text-slate-300 text-sm md:text-base">{stat.label}</div>
               </motion.div>
             ))}
@@ -314,15 +362,15 @@ export default function Landing() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-primary via-primary/90 to-primary relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,white/10,transparent_40%)]" />
+      <section className="py-20 bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(249,115,22,0.2),transparent_40%),radial-gradient(circle_at_70%_80%,rgba(99,102,241,0.2),transparent_40%)]" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">Temos mais de 5.000 vagas em todo o Brasil te esperando!</h2>
-            <p className="text-lg text-primary-foreground/80 mb-10">Cadastre-se grátis no Scalador e aguarde seus convites de entrevista.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Mais de <span className="text-orange-500">3.500 vagas freelancer</span> e <span className="text-indigo-400">1.500 vagas CLT</span> te esperando!</h2>
+            <p className="text-lg text-slate-300 mb-10">Cadastre-se grátis no Scalador e encontre seu próximo trabalho.</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" onClick={() => navigate("/login")} className="text-lg px-8 py-6 bg-white text-primary hover:bg-white/90">Quero Trabalhar</Button>
-              <Button size="lg" variant="outline" onClick={() => navigate("/freelancer")} className="text-lg px-8 py-6 border-white text-white hover:bg-white/10">Ver Vagas (+5.000)</Button>
+              <Button size="lg" onClick={() => navigate("/freelancer")} className="text-lg px-8 py-6 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"><Zap className="mr-2 h-5 w-5" />Vagas Freelancer</Button>
+              <Button size="lg" onClick={() => navigate("/empresa")} className="text-lg px-8 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"><Briefcase className="mr-2 h-5 w-5" />Vagas CLT</Button>
             </div>
           </motion.div>
         </div>
