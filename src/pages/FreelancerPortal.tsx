@@ -1666,6 +1666,68 @@ const FreelancerPortal = () => {
         </div>
       </div>
 
+      {/* Avaliação Detalhada - 5 Critérios */}
+      <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+        <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <Star className="w-5 h-5 text-amber-500" />
+          Avaliação Detalhada
+        </h2>
+        <p className="text-sm text-gray-500 mb-6">Baseada nas avaliações das empresas</p>
+        
+        {/* Média Geral */}
+        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl p-4 border border-amber-200 mb-6">
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-gray-900">Nota Geral</span>
+            <div className="flex items-center gap-2">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <Star key={s} className={`w-5 h-5 ${s <= 4.8 ? "fill-amber-400 text-amber-400" : "text-gray-300"}`} />
+              ))}
+              <span className="text-2xl font-black text-amber-600 ml-2">4.8</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 5 Critérios */}
+        <div className="space-y-4">
+          {[
+            { label: "Pontualidade", value: 4.9, icon: "⏰" },
+            { label: "Qualidade do Trabalho", value: 4.8, icon: "⭐" },
+            { label: "Comunicação", value: 4.7, icon: "💬" },
+            { label: "Profissionalismo", value: 4.9, icon: "👔" },
+            { label: "Apresentação", value: 4.7, icon: "✨" },
+          ].map((criterio) => (
+            <div key={criterio.label} className="space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span>{criterio.icon}</span>
+                  <span className="text-sm font-medium text-gray-700">{criterio.label}</span>
+                </div>
+                <span className="font-bold text-amber-600">{criterio.value.toFixed(1)}</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div 
+                  className="bg-gradient-to-r from-amber-400 to-orange-500 h-2.5 rounded-full transition-all duration-500" 
+                  style={{ width: `${(criterio.value / 5) * 100}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Pontos Fortes */}
+        <div className="mt-6 p-4 bg-green-50 rounded-xl border border-green-200">
+          <p className="font-bold text-green-700 mb-2 flex items-center gap-2">
+            <CheckCircle className="w-4 h-4" />
+            Pontos Fortes
+          </p>
+          <ul className="text-sm text-green-600 space-y-1">
+            <li>• Pontualidade excepcional</li>
+            <li>• Alta qualidade no trabalho</li>
+            <li>• Postura profissional exemplar</li>
+          </ul>
+        </div>
+      </div>
+
       {/* Save Button */}
       <Button
         onClick={() => toast({ title: "Perfil atualizado!", description: "Suas informações foram salvas com sucesso" })}
