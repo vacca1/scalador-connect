@@ -1230,47 +1230,91 @@ export default function EmpresaPortal() {
         color: "bg-gradient-to-r from-red-500 to-rose-500 text-white shadow-lg shadow-red-500/40"
       }
     };
-    return <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 hover:shadow-2xl hover:shadow-orange-500/20 transition-all duration-500 cursor-pointer group hover:-translate-y-1 sm:hover:-translate-y-2 relative overflow-hidden" onClick={() => navegarPara("vaga-detalhes", job.id)}>
-        <div className="absolute inset-0 bg-gradient-to-br from-scalador-orange/5 to-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+    
+    const isFreelance = job.tipo === "freelance";
+    const tipoBorderColor = isFreelance ? "border-l-amber-500" : "border-l-indigo-500";
+    const tipoGlowColor = isFreelance ? "hover:shadow-orange-500/20" : "hover:shadow-indigo-500/20";
+    const tipoIconBg = isFreelance ? "from-amber-100 to-orange-100" : "from-indigo-100 to-purple-100";
+    
+    return <div className={`glass rounded-2xl sm:rounded-3xl p-4 sm:p-8 hover:shadow-2xl ${tipoGlowColor} transition-all duration-500 cursor-pointer group hover:-translate-y-1 sm:hover:-translate-y-2 relative overflow-hidden border-l-4 ${tipoBorderColor}`} onClick={() => navegarPara("vaga-detalhes", job.id)}>
+        <div className={`absolute inset-0 ${isFreelance ? "bg-gradient-to-br from-scalador-orange/5 to-amber-500/5" : "bg-gradient-to-br from-indigo-500/5 to-purple-500/5"} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+        
+        {/* Badge de Tipo no Canto Superior */}
+        <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
+          <span className={`px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 ${
+            isFreelance 
+              ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/40" 
+              : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/40"
+          }`}>
+            {isFreelance ? <Zap className="w-3.5 h-3.5" /> : <Briefcase className="w-3.5 h-3.5" />}
+            {isFreelance ? "Freelancer" : "CLT"}
+          </span>
+        </div>
+        
         <div className="relative flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
-          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-orange-100 to-amber-100 rounded-xl sm:rounded-2xl flex items-center justify-center text-2xl sm:text-3xl shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 flex-shrink-0">
+          <div className={`w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br ${tipoIconBg} rounded-xl sm:rounded-2xl flex items-center justify-center text-2xl sm:text-3xl shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 flex-shrink-0`}>
             {job.logoEmpresa}
           </div>
           <div className="flex-1 w-full">
-            <div className="flex items-start justify-between mb-2 sm:mb-3 gap-2">
+            <div className="flex items-start justify-between mb-2 sm:mb-3 gap-2 pr-24 sm:pr-28">
               <div className="flex-1 min-w-0">
-                <p className="text-xs sm:text-sm font-semibold text-scalador-orange mb-1">{job.empresa}</p>
-                <h3 className="text-lg sm:text-2xl font-black text-gray-900 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-scalador-orange group-hover:to-amber-500 group-hover:bg-clip-text transition-all duration-300 line-clamp-2">
+                <p className={`text-xs sm:text-sm font-semibold mb-1 ${isFreelance ? "text-amber-600" : "text-indigo-600"}`}>{job.empresa}</p>
+                <h3 className={`text-lg sm:text-2xl font-black text-gray-900 group-hover:text-transparent group-hover:bg-clip-text transition-all duration-300 line-clamp-2 ${
+                  isFreelance 
+                    ? "group-hover:bg-gradient-to-r group-hover:from-amber-500 group-hover:to-orange-500" 
+                    : "group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600"
+                }`}>
                   {job.titulo}
                 </h3>
               </div>
-              <span className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs font-bold ${statusBadge[job.status].color} whitespace-nowrap flex-shrink-0`}>
-                {statusBadge[job.status].text}
-              </span>
             </div>
+            
+            {/* Valor/Salário diferenciado */}
             <div className="mb-3 sm:mb-4">
-              <DisplayValor valorBase={job.valorDiaria} tipoUsuario={userType} />
+              {isFreelance ? (
+                <DisplayValor valorBase={job.valorDiaria} tipoUsuario={userType} />
+              ) : (
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl sm:text-3xl font-black text-indigo-600">
+                    R$ {(job.valorDiaria * 30).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </span>
+                  <span className="text-sm text-gray-500">/mês</span>
+                </div>
+              )}
             </div>
+            
             <p className="text-gray-700 text-sm sm:text-base mb-4 sm:mb-6 line-clamp-2 leading-relaxed">{job.descricao}</p>
+            
+            {/* Badges de Profissão e Benefícios */}
             <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
               <span className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-sm ${
-                job.tipo === "freelance" 
-                  ? "bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300 text-amber-700" 
-                  : "bg-gradient-to-r from-indigo-100 to-purple-100 border border-indigo-300 text-indigo-700"
+                isFreelance 
+                  ? "bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 text-scalador-blue" 
+                  : "bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200/50 text-indigo-700"
               }`}>
-                {job.tipo === "freelance" ? "⚡ Freelancer" : "💼 CLT"}
-              </span>
-              <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 text-scalador-blue rounded-full text-xs sm:text-sm font-bold shadow-sm">
                 👔 {job.profissao}
               </span>
-              <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50 text-scalador-orange rounded-full text-xs sm:text-sm font-bold shadow-sm whitespace-nowrap">
+              <span className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-sm ${
+                isFreelance 
+                  ? "bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50 text-amber-700" 
+                  : "bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200/50 text-purple-700"
+              }`}>
                 {job.experienciaNecessaria ? "⭐ Com experiência" : "🌟 Sem experiência"}
               </span>
+              
+              {/* Benefícios CLT */}
+              {!isFreelance && job.beneficios && job.beneficios.length > 0 && (
+                <span className="px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50 text-green-700 rounded-full text-xs sm:text-sm font-bold shadow-sm">
+                  ✅ {job.beneficios.slice(0, 2).join(" • ")}
+                  {job.beneficios.length > 2 && ` +${job.beneficios.length - 2}`}
+                </span>
+              )}
             </div>
+            
             <div className="flex flex-wrap gap-3 sm:gap-6 text-xs sm:text-sm text-gray-600 font-medium">
               <span className="flex items-center gap-1.5 sm:gap-2 group/item">
-                <MapPin className="w-4 sm:w-5 h-4 sm:h-5 text-scalador-orange group-hover/item:scale-110 transition-transform flex-shrink-0" />
-                <span className="font-bold text-scalador-orange">{job.localizacao.bairro}</span>
+                <MapPin className={`w-4 sm:w-5 h-4 sm:h-5 ${isFreelance ? "text-amber-500" : "text-indigo-500"} group-hover/item:scale-110 transition-transform flex-shrink-0`} />
+                <span className={`font-bold ${isFreelance ? "text-amber-600" : "text-indigo-600"}`}>{job.localizacao.bairro}</span>
                 <span className="text-gray-400">•</span>
                 <span className="text-gray-600">{job.localizacao.cidade}</span>
               </span>
@@ -1281,13 +1325,21 @@ export default function EmpresaPortal() {
                   </span>
                 </span>}
               <span className="flex items-center gap-1.5 sm:gap-2 group/item whitespace-nowrap">
-                <Calendar className="w-4 sm:w-5 h-4 sm:h-5 text-scalador-blue group-hover/item:scale-110 transition-transform flex-shrink-0" />
-                {new Date(job.data).toLocaleDateString("pt-BR")}
+                <Calendar className={`w-4 sm:w-5 h-4 sm:h-5 ${isFreelance ? "text-amber-500" : "text-indigo-500"} group-hover/item:scale-110 transition-transform flex-shrink-0`} />
+                {isFreelance ? new Date(job.data).toLocaleDateString("pt-BR") : "Início imediato"}
               </span>
               <span className="flex items-center gap-1.5 sm:gap-2 group/item whitespace-nowrap">
-                <Clock className="w-4 sm:w-5 h-4 sm:h-5 text-scalador-orange group-hover/item:scale-110 transition-transform flex-shrink-0" />
-                {job.horarioEntrada} - {job.horarioSaida}
+                <Clock className={`w-4 sm:w-5 h-4 sm:h-5 ${isFreelance ? "text-amber-500" : "text-indigo-500"} group-hover/item:scale-110 transition-transform flex-shrink-0`} />
+                {isFreelance ? `${job.horarioEntrada} - ${job.horarioSaida}` : "Segunda a Sexta"}
               </span>
+            </div>
+            
+            {/* Status Badge */}
+            <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+              <span className={`px-3 sm:px-4 py-1.5 rounded-full text-xs font-bold ${statusBadge[job.status].color}`}>
+                {statusBadge[job.status].text}
+              </span>
+              <span className="text-xs text-gray-400">{getTempoPublicacao(job.publicadoEm)}</span>
             </div>
           </div>
         </div>
@@ -1329,6 +1381,51 @@ export default function EmpresaPortal() {
             </div>
             <button className="px-5 sm:px-10 py-3 sm:py-5 bg-gradient-to-r from-scalador-orange via-scalador-orange to-scalador-orange-light bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-xl sm:rounded-2xl font-bold text-sm sm:text-lg shadow-xl shadow-orange-500/40 hover:shadow-2xl hover:shadow-orange-600/50 hover:scale-105 active:scale-95 transition-all duration-300 whitespace-nowrap">
               Buscar
+            </button>
+          </div>
+        </div>
+
+        {/* Tabs de Filtro Rápido por Tipo */}
+        <div className="max-w-4xl mx-auto mb-6 sm:mb-8">
+          <div className="flex gap-2 sm:gap-3 justify-center">
+            <button 
+              onClick={() => setFiltros({ ...filtros, tipo: "todos" })}
+              className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center gap-2 ${
+                filtros.tipo === "todos" 
+                  ? "bg-gray-900 text-white shadow-lg shadow-gray-900/30" 
+                  : "glass text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              <span className="hidden sm:inline">Todas as</span> Vagas
+              <span className="text-xs px-2 py-0.5 bg-white/20 rounded-full">{jobs.length}</span>
+            </button>
+            <button 
+              onClick={() => setFiltros({ ...filtros, tipo: "freelance" })}
+              className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center gap-2 ${
+                filtros.tipo === "freelance" 
+                  ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/30" 
+                  : "glass text-amber-600 hover:bg-amber-50 border border-amber-200"
+              }`}
+            >
+              <Zap className="w-4 h-4" />
+              Freelancer
+              <span className={`text-xs px-2 py-0.5 rounded-full ${filtros.tipo === "freelance" ? "bg-white/20" : "bg-amber-100"}`}>
+                {jobs.filter(j => j.tipo === "freelance").length}
+              </span>
+            </button>
+            <button 
+              onClick={() => setFiltros({ ...filtros, tipo: "clt" })}
+              className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center gap-2 ${
+                filtros.tipo === "clt" 
+                  ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30" 
+                  : "glass text-indigo-600 hover:bg-indigo-50 border border-indigo-200"
+              }`}
+            >
+              <Briefcase className="w-4 h-4" />
+              CLT
+              <span className={`text-xs px-2 py-0.5 rounded-full ${filtros.tipo === "clt" ? "bg-white/20" : "bg-indigo-100"}`}>
+                {jobs.filter(j => j.tipo === "clt").length}
+              </span>
             </button>
           </div>
         </div>
@@ -1586,11 +1683,19 @@ export default function EmpresaPortal() {
       titulo: "",
       profissao: "",
       descricao: "",
+      // Campos Freelancer
       valorDiaria: 0,
       quantidadeFreelancers: 1,
       data: "",
       horarioEntrada: "",
       horarioSaida: "",
+      // Campos CLT
+      salarioMensal: 0,
+      escala: "",
+      cargaHoraria: "",
+      beneficiosCLT: [] as string[],
+      tipoContrato: "CLT" as "CLT" | "PJ" | "Temporário",
+      // Campos comuns
       endereco: "",
       bairro: "",
       cidade: "Brasília",
@@ -1695,7 +1800,24 @@ export default function EmpresaPortal() {
           ← Voltar
         </button>
 
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">Calcule seu orçamento</h2>
+        {/* Header com tipo selecionado */}
+        <div className="flex items-center gap-4 mb-8">
+          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+            tipoVaga === "freelance" 
+              ? "bg-gradient-to-br from-amber-100 to-orange-100" 
+              : "bg-gradient-to-br from-indigo-100 to-purple-100"
+          }`}>
+            {tipoVaga === "freelance" ? <Zap className="w-6 h-6 text-amber-600" /> : <Briefcase className="w-6 h-6 text-indigo-600" />}
+          </div>
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900">
+              {tipoVaga === "freelance" ? "Vaga Freelancer" : "Vaga CLT"}
+            </h2>
+            <p className="text-gray-500 text-sm">
+              {tipoVaga === "freelance" ? "Trabalho temporário ou por diária" : "Emprego formal com carteira assinada"}
+            </p>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
@@ -1723,84 +1845,209 @@ export default function EmpresaPortal() {
             })} />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Valor da diária (R$) *</label>
-                <input type="number" step="0.01" placeholder="0.00" className="w-full p-3 border border-gray-300 rounded-lg" value={formData.valorDiaria || ""} onChange={e => setFormData({
-                ...formData,
-                valorDiaria: parseFloat(e.target.value) || 0
-              })} />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Quantidade de freelancers *</label>
-                <input type="number" min="1" placeholder="1" className="w-full p-3 border border-gray-300 rounded-lg" value={formData.quantidadeFreelancers} onChange={e => setFormData({
-                ...formData,
-                quantidadeFreelancers: parseInt(e.target.value) || 1
-              })} />
-              </div>
-            </div>
-
-            {/* Preview de valores - FASE 4 */}
-            {formData.valorDiaria > 0 && <div className="bg-gradient-to-r from-orange-50 to-green-50 rounded-2xl p-6 border border-orange-200/50">
-                <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <DollarSign className="w-5 h-5 text-scalador-orange" /> Preview dos valores
-                </h4>
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="bg-white rounded-xl p-4 border border-orange-200/50">
-                    <p className="text-sm text-gray-500 mb-1">Você pagará</p>
-                    <p className="text-2xl font-black text-scalador-orange">
-                      R$ {calcularValores(formData.valorDiaria).valorParaEmpresa.toFixed(2)}
-                    </p>
-                    <p className="text-xs text-scalador-orange/80 mt-1">
-                      (inclui taxa de {calcularValores(formData.valorDiaria).taxaServico}%)
-                    </p>
-                  </div>
-                  <div className="bg-white rounded-xl p-4 border border-green-200/50">
-                    <p className="text-sm text-gray-500 mb-1">Freelancer receberá</p>
-                    <p className="text-2xl font-black text-scalador-green">
-                      R$ {calcularValores(formData.valorDiaria).valorParaFreelancer.toFixed(2)}
-                    </p>
-                    <p className="text-xs text-scalador-green/80 mt-1">
-                      (valor líquido)
-                    </p>
+            {/* ===== CAMPOS ESPECÍFICOS POR TIPO ===== */}
+            {tipoVaga === "freelance" ? (
+              <>
+                {/* Campos Freelancer */}
+                <div className={`p-6 rounded-2xl border-2 border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50`}>
+                  <h4 className="font-bold text-amber-700 mb-4 flex items-center gap-2">
+                    <Zap className="w-5 h-5" /> Informações do Trabalho Freelancer
+                  </h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Valor da diária (R$) *</label>
+                      <input type="number" step="0.01" placeholder="0.00" className="w-full p-3 border border-amber-200 rounded-lg bg-white" value={formData.valorDiaria || ""} onChange={e => setFormData({
+                      ...formData,
+                      valorDiaria: parseFloat(e.target.value) || 0
+                    })} />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Quantidade de freelancers *</label>
+                      <input type="number" min="1" placeholder="1" className="w-full p-3 border border-amber-200 rounded-lg bg-white" value={formData.quantidadeFreelancers} onChange={e => setFormData({
+                      ...formData,
+                      quantidadeFreelancers: parseInt(e.target.value) || 1
+                    })} />
+                    </div>
                   </div>
                 </div>
-                {formData.quantidadeFreelancers > 1 && <div className="mt-4 pt-4 border-t border-gray-200">
-                    <p className="text-sm text-gray-600">
-                      <strong>Total para {formData.quantidadeFreelancers} freelancers:</strong>{" "}
-                      <span className="text-scalador-orange font-black">
-                        R$ {(calcularValores(formData.valorDiaria).valorParaEmpresa * formData.quantidadeFreelancers).toFixed(2)}
-                      </span>
-                    </p>
+
+                {/* Preview de valores Freelancer */}
+                {formData.valorDiaria > 0 && <div className="bg-gradient-to-r from-orange-50 to-green-50 rounded-2xl p-6 border border-orange-200/50">
+                    <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <DollarSign className="w-5 h-5 text-scalador-orange" /> Preview dos valores
+                    </h4>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="bg-white rounded-xl p-4 border border-orange-200/50">
+                        <p className="text-sm text-gray-500 mb-1">Você pagará</p>
+                        <p className="text-2xl font-black text-scalador-orange">
+                          R$ {calcularValores(formData.valorDiaria).valorParaEmpresa.toFixed(2)}
+                        </p>
+                        <p className="text-xs text-scalador-orange/80 mt-1">
+                          (inclui taxa de {calcularValores(formData.valorDiaria).taxaServico}%)
+                        </p>
+                      </div>
+                      <div className="bg-white rounded-xl p-4 border border-green-200/50">
+                        <p className="text-sm text-gray-500 mb-1">Freelancer receberá</p>
+                        <p className="text-2xl font-black text-scalador-green">
+                          R$ {calcularValores(formData.valorDiaria).valorParaFreelancer.toFixed(2)}
+                        </p>
+                        <p className="text-xs text-scalador-green/80 mt-1">
+                          (valor líquido)
+                        </p>
+                      </div>
+                    </div>
+                    {formData.quantidadeFreelancers > 1 && <div className="mt-4 pt-4 border-t border-gray-200">
+                        <p className="text-sm text-gray-600">
+                          <strong>Total para {formData.quantidadeFreelancers} freelancers:</strong>{" "}
+                          <span className="text-scalador-orange font-black">
+                            R$ {(calcularValores(formData.valorDiaria).valorParaEmpresa * formData.quantidadeFreelancers).toFixed(2)}
+                          </span>
+                        </p>
+                      </div>}
                   </div>}
-              </div>}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Data do trabalho *</label>
-              <input type="date" className="w-full p-3 border border-gray-300 rounded-lg" value={formData.data} onChange={e => setFormData({
-              ...formData,
-              data: e.target.value
-            })} />
-            </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Data do trabalho *</label>
+                  <input type="date" className="w-full p-3 border border-gray-300 rounded-lg" value={formData.data} onChange={e => setFormData({
+                  ...formData,
+                  data: e.target.value
+                })} />
+                </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Horário de entrada *</label>
-                <input type="time" className="w-full p-3 border border-gray-300 rounded-lg" value={formData.horarioEntrada} onChange={e => setFormData({
-                ...formData,
-                horarioEntrada: e.target.value
-              })} />
-              </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Horário de entrada *</label>
+                    <input type="time" className="w-full p-3 border border-gray-300 rounded-lg" value={formData.horarioEntrada} onChange={e => setFormData({
+                    ...formData,
+                    horarioEntrada: e.target.value
+                  })} />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Horário de saída *</label>
+                    <input type="time" className="w-full p-3 border border-gray-300 rounded-lg" value={formData.horarioSaida} onChange={e => setFormData({
+                    ...formData,
+                    horarioSaida: e.target.value
+                  })} />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Campos CLT */}
+                <div className={`p-6 rounded-2xl border-2 border-indigo-200 bg-gradient-to-r from-indigo-50 to-purple-50`}>
+                  <h4 className="font-bold text-indigo-700 mb-4 flex items-center gap-2">
+                    <Briefcase className="w-5 h-5" /> Informações do Emprego CLT
+                  </h4>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Salário Mensal (R$) *</label>
+                        <input type="number" step="0.01" placeholder="0.00" className="w-full p-3 border border-indigo-200 rounded-lg bg-white" value={formData.salarioMensal || ""} onChange={e => setFormData({
+                        ...formData,
+                        salarioMensal: parseFloat(e.target.value) || 0,
+                        valorDiaria: (parseFloat(e.target.value) || 0) / 30 // Calcula valor diário para compatibilidade
+                      })} />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Contrato *</label>
+                        <select className="w-full p-3 border border-indigo-200 rounded-lg bg-white" value={formData.tipoContrato} onChange={e => setFormData({
+                        ...formData,
+                        tipoContrato: e.target.value as "CLT" | "PJ" | "Temporário"
+                      })}>
+                          <option value="CLT">CLT</option>
+                          <option value="PJ">PJ</option>
+                          <option value="Temporário">Temporário</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Escala de Trabalho *</label>
+                        <select className="w-full p-3 border border-indigo-200 rounded-lg bg-white" value={formData.escala} onChange={e => setFormData({
+                        ...formData,
+                        escala: e.target.value
+                      })}>
+                          <option value="">Selecione a escala</option>
+                          <option value="Segunda a Sexta">Segunda a Sexta</option>
+                          <option value="Segunda a Sábado">Segunda a Sábado</option>
+                          <option value="6x1">6x1</option>
+                          <option value="12x36">12x36</option>
+                          <option value="Escala alternada">Escala alternada</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Carga Horária</label>
+                        <select className="w-full p-3 border border-indigo-200 rounded-lg bg-white" value={formData.cargaHoraria} onChange={e => setFormData({
+                        ...formData,
+                        cargaHoraria: e.target.value
+                      })}>
+                          <option value="">Selecione</option>
+                          <option value="44h semanais">44h semanais</option>
+                          <option value="40h semanais">40h semanais</option>
+                          <option value="36h semanais">36h semanais</option>
+                          <option value="30h semanais">30h semanais</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Horário de saída *</label>
-                <input type="time" className="w-full p-3 border border-gray-300 rounded-lg" value={formData.horarioSaida} onChange={e => setFormData({
-                ...formData,
-                horarioSaida: e.target.value
-              })} />
-              </div>
-            </div>
+                {/* Benefícios CLT */}
+                <div className={`p-6 rounded-2xl border-2 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50`}>
+                  <h4 className="font-bold text-green-700 mb-4 flex items-center gap-2">
+                    <Check className="w-5 h-5" /> Benefícios oferecidos
+                  </h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {["Vale Transporte", "Vale Refeição", "Vale Alimentação", "Plano de Saúde", "Plano Odontológico", "Seguro de Vida", "13º Salário", "Férias Remuneradas", "FGTS"].map((beneficio) => (
+                      <label key={beneficio} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-green-200 cursor-pointer hover:bg-green-50 transition-colors">
+                        <input 
+                          type="checkbox" 
+                          checked={formData.beneficiosCLT.includes(beneficio)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData({...formData, beneficiosCLT: [...formData.beneficiosCLT, beneficio], beneficios: [...formData.beneficiosCLT, beneficio]});
+                            } else {
+                              setFormData({...formData, beneficiosCLT: formData.beneficiosCLT.filter(b => b !== beneficio), beneficios: formData.beneficiosCLT.filter(b => b !== beneficio)});
+                            }
+                          }}
+                          className="w-4 h-4 text-green-600 rounded"
+                        />
+                        <span className="text-sm font-medium text-gray-700">{beneficio}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Preview de valores CLT */}
+                {formData.salarioMensal > 0 && <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-200/50">
+                    <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <DollarSign className="w-5 h-5 text-indigo-600" /> Resumo da Vaga CLT
+                    </h4>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="bg-white rounded-xl p-4 border border-indigo-200/50">
+                        <p className="text-sm text-gray-500 mb-1">Salário Mensal</p>
+                        <p className="text-2xl font-black text-indigo-600">
+                          R$ {formData.salarioMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </p>
+                        <p className="text-xs text-indigo-500/80 mt-1">
+                          Bruto mensal
+                        </p>
+                      </div>
+                      <div className="bg-white rounded-xl p-4 border border-green-200/50">
+                        <p className="text-sm text-gray-500 mb-1">Benefícios</p>
+                        <p className="text-xl font-bold text-green-600">
+                          {formData.beneficiosCLT.length} selecionados
+                        </p>
+                        <p className="text-xs text-green-500/80 mt-1">
+                          {formData.beneficiosCLT.slice(0, 2).join(", ")}
+                          {formData.beneficiosCLT.length > 2 && "..."}
+                        </p>
+                      </div>
+                    </div>
+                  </div>}
+              </>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Endereço completo *</label>
