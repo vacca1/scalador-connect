@@ -37,6 +37,10 @@ import {
   AlertCircle,
   Timer,
   Loader2,
+  Map,
+  Target,
+  Locate,
+  Circle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -409,6 +413,7 @@ const FreelancerPortal = () => {
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: Home },
     { id: "trabalho", label: "Trabalho Atual", icon: Play },
+    { id: "mapa", label: "Mapa de Vagas", icon: Map },
     { id: "vagas", label: "Vagas Disponíveis", icon: Briefcase },
     { id: "candidaturas", label: "Minhas Candidaturas", icon: FileText },
     { id: "favoritas", label: "Vagas Favoritas", icon: Heart },
@@ -417,6 +422,10 @@ const FreelancerPortal = () => {
     { id: "configuracoes", label: "Configurações", icon: Settings },
     { id: "notificacoes", label: "Notificações", icon: Bell },
   ];
+
+  // Estado do filtro de distância do mapa
+  const [filtroDistanciaMapa, setFiltroDistanciaMapa] = useState<number>(10);
+  const [vagaHoverMapa, setVagaHoverMapa] = useState<string | null>(null);
 
   // ===== TIMER useEffect =====
   useEffect(() => {
@@ -1798,11 +1807,281 @@ const FreelancerPortal = () => {
     );
   };
 
+  // ===== PÁGINA MAPA DE VAGAS (ESTILO UBER) =====
+  const PaginaMapaVagas = () => {
+    // Filtrar vagas por distância
+    const vagasComDistancia = VAGAS_DISPONIVEIS
+      .filter(v => v.localizacao.coordenadas)
+      .map(v => ({
+        ...v,
+        distancia: calcularDistancia(
+          localizacaoUsuario.lat,
+          localizacaoUsuario.lng,
+          v.localizacao.coordenadas!.lat,
+          v.localizacao.coordenadas!.lng
+        )
+      }))
+      .filter(v => v.distancia <= filtroDistanciaMapa)
+      .sort((a, b) => a.distancia - b.distancia);
+
+    // Converter coordenadas para posição no mapa visual (relativo ao centro)
+    const coordenadaParaPosicao = (lat: number, lng: number) => {
+      const centerLat = localizacaoUsuario.lat;
+      const centerLng = localizacaoUsuario.lng;
+      // Escala baseada no filtro de distância
+      const escala = 40 / filtroDistanciaMapa; // quanto maior a distância, menor a escala
+      
+      const x = 50 + (lng - centerLng) * 1000 * escala;
+      const y = 50 - (lat - centerLat) * 1000 * escala;
+      
+      return { x: Math.max(5, Math.min(95, x)), y: Math.max(5, Math.min(95, y)) };
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="mb-6 text-center animate-fade-in">
+          <h2 className="text-3xl sm:text-5xl font-black mb-3">
+            <span className="bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
+              Mapa de Vagas
+            </span>
+          </h2>
+          <p className="text-gray-600 text-base sm:text-xl">Encontre oportunidades perto de você</p>
+        </div>
+
+        {/* Filtros de Distância */}
+        <div className="flex flex-wrap justify-center gap-2 mb-6">
+          {[2, 5, 10, 20, 50].map((dist) => (
+            <button
+              key={dist}
+              onClick={() => setFiltroDistanciaMapa(dist)}
+              className={`px-4 py-2 rounded-full font-bold text-sm transition-all ${
+                filtroDistanciaMapa === dist
+                  ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30"
+                  : "glass text-gray-600 hover:bg-amber-50 border border-amber-200"
+              }`}
+            >
+              {dist}km
+            </button>
+          ))}
+        </div>
+
+        {/* Layout: Mapa + Lista */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Mapa Visual */}
+          <div className="relative h-[400px] sm:h-[500px] bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-3xl overflow-hidden shadow-xl border-2 border-amber-200">
+            {/* Grid de fundo estilo mapa */}
+            <div className="absolute inset-0 opacity-20">
+              <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f97316" strokeWidth="0.5"/>
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)" />
+              </svg>
+            </div>
+
+            {/* Círculos de distância */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="relative">
+                {[0.25, 0.5, 0.75, 1].map((ratio, i) => (
+                  <div
+                    key={i}
+                    className="absolute rounded-full border border-amber-300/40"
+                    style={{
+                      width: `${ratio * Math.min(350, window.innerWidth * 0.35)}px`,
+                      height: `${ratio * Math.min(350, window.innerWidth * 0.35)}px`,
+                      transform: 'translate(-50%, -50%)',
+                      left: '50%',
+                      top: '50%'
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Label de distância */}
+            <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-lg border border-amber-200">
+              <p className="text-xs text-gray-500">Raio de busca</p>
+              <p className="font-black text-amber-600 text-lg">{filtroDistanciaMapa}km</p>
+            </div>
+
+            {/* Contador de vagas */}
+            <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl px-3 py-2 shadow-lg">
+              <p className="text-xs opacity-90">Vagas encontradas</p>
+              <p className="font-black text-xl">{vagasComDistancia.length}</p>
+            </div>
+
+            {/* Você está aqui (centro) */}
+            <div 
+              className="absolute z-20 transform -translate-x-1/2 -translate-y-1/2"
+              style={{ left: '50%', top: '50%' }}
+            >
+              <div className="relative">
+                <div className="absolute -inset-4 bg-blue-500/20 rounded-full animate-ping" />
+                <div className="absolute -inset-3 bg-blue-500/30 rounded-full animate-pulse" />
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full border-4 border-white shadow-xl flex items-center justify-center">
+                  <Target className="w-4 h-4 text-white" />
+                </div>
+              </div>
+              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                Você
+              </div>
+            </div>
+
+            {/* Pins das Vagas */}
+            {vagasComDistancia.map((vaga) => {
+              const pos = coordenadaParaPosicao(
+                vaga.localizacao.coordenadas!.lat,
+                vaga.localizacao.coordenadas!.lng
+              );
+              const isHovered = vagaHoverMapa === vaga.id;
+              
+              return (
+                <div
+                  key={vaga.id}
+                  className={`absolute z-10 transform -translate-x-1/2 -translate-y-full cursor-pointer transition-all duration-300 ${
+                    isHovered ? 'z-30 scale-125' : 'hover:scale-110'
+                  }`}
+                  style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+                  onMouseEnter={() => setVagaHoverMapa(vaga.id)}
+                  onMouseLeave={() => setVagaHoverMapa(null)}
+                  onClick={() => setSelectedVaga(vaga)}
+                >
+                  {/* Pin */}
+                  <div className={`relative ${isHovered ? 'animate-bounce' : ''}`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg shadow-xl border-2 border-white transition-all ${
+                      isHovered 
+                        ? 'bg-gradient-to-br from-amber-500 to-orange-600' 
+                        : 'bg-white'
+                    }`}>
+                      {vaga.logoEmpresa}
+                    </div>
+                    {/* Triangulo do pin */}
+                    <div className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent ${
+                      isHovered ? 'border-t-orange-600' : 'border-t-white'
+                    }`} />
+                  </div>
+                  
+                  {/* Tooltip */}
+                  {isHovered && (
+                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-48 bg-white rounded-xl shadow-2xl p-3 border border-amber-200 animate-fade-in">
+                      <p className="font-bold text-gray-900 text-sm truncate">{vaga.titulo}</p>
+                      <p className="text-xs text-amber-600 font-semibold">{vaga.empresa}</p>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-green-600 font-black text-sm">R$ {vaga.valorDiaria}</span>
+                        <span className="text-xs text-gray-500 flex items-center gap-1">
+                          <Navigation className="w-3 h-3" />
+                          {vaga.distancia.toFixed(1)}km
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {/* Legenda */}
+            <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg border border-amber-200">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-4 h-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full border-2 border-white" />
+                <span className="text-xs text-gray-600">Sua localização</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-white rounded-full border-2 border-amber-300 flex items-center justify-center text-[8px]">💼</div>
+                <span className="text-xs text-gray-600">Vaga disponível</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Lista de Vagas */}
+          <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+            <div className="sticky top-0 bg-gradient-to-br from-amber-50/95 via-white/95 to-orange-50/95 backdrop-blur-sm py-2 z-10">
+              <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                <Locate className="w-5 h-5 text-amber-600" />
+                Vagas mais próximas ({vagasComDistancia.length})
+              </h3>
+            </div>
+            
+            {vagasComDistancia.length === 0 ? (
+              <div className="text-center py-12 glass rounded-2xl">
+                <MapPin className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-gray-700">Nenhuma vaga encontrada</h3>
+                <p className="text-gray-500 mb-4">Tente aumentar o raio de busca</p>
+                <Button 
+                  onClick={() => setFiltroDistanciaMapa(50)} 
+                  className="bg-gradient-to-r from-amber-500 to-orange-600"
+                >
+                  Buscar em 50km
+                </Button>
+              </div>
+            ) : (
+              vagasComDistancia.map((vaga, index) => (
+                <div
+                  key={vaga.id}
+                  className={`bg-white rounded-2xl p-4 shadow-lg border transition-all cursor-pointer hover:shadow-xl hover:-translate-y-1 ${
+                    vagaHoverMapa === vaga.id 
+                      ? 'border-amber-500 ring-2 ring-amber-500/20' 
+                      : 'border-gray-100 hover:border-amber-200'
+                  }`}
+                  onMouseEnter={() => setVagaHoverMapa(vaga.id)}
+                  onMouseLeave={() => setVagaHoverMapa(null)}
+                  onClick={() => setSelectedVaga(vaga)}
+                >
+                  <div className="flex items-start gap-3">
+                    {/* Ranking */}
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${
+                      index === 0 ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white' :
+                      index === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white' :
+                      index === 2 ? 'bg-gradient-to-br from-amber-600 to-amber-700 text-white' :
+                      'bg-gray-100 text-gray-600'
+                    }`}>
+                      {index + 1}
+                    </div>
+                    
+                    {/* Logo */}
+                    <div className="w-12 h-12 bg-gradient-to-br from-amber-100 to-orange-100 rounded-xl flex items-center justify-center text-xl shadow">
+                      {vaga.logoEmpresa}
+                    </div>
+                    
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-gray-900 truncate">{vaga.titulo}</h4>
+                      <p className="text-sm text-amber-600 font-semibold">{vaga.empresa}</p>
+                      <div className="flex flex-wrap items-center gap-2 mt-2 text-xs">
+                        <span className="flex items-center gap-1 text-green-600 font-bold">
+                          <DollarSign className="w-3 h-3" />
+                          R$ {vaga.valorDiaria}
+                        </span>
+                        <span className="flex items-center gap-1 text-gray-500">
+                          <MapPin className="w-3 h-3 text-amber-500" />
+                          {vaga.localizacao.bairro}
+                        </span>
+                        <span className="flex items-center gap-1 bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">
+                          <Navigation className="w-3 h-3" />
+                          {vaga.distancia.toFixed(1)}km
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* Arrow */}
+                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // ===== RENDER CONTENT =====
   const renderContent = () => {
     switch (currentPage) {
       case "dashboard": return <PaginaDashboard />;
       case "trabalho": return <PaginaTrabalhoAtual />;
+      case "mapa": return <PaginaMapaVagas />;
       case "vagas": return <PaginaVagas />;
       case "candidaturas": return <PaginaCandidaturas />;
       case "favoritas": return <PaginaFavoritas />;
