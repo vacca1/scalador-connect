@@ -41,6 +41,9 @@ import {
   Target,
   Locate,
   Circle,
+  Pause,
+  Coffee,
+  ListChecks,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -399,6 +402,13 @@ const FreelancerPortal = () => {
   const [modalSelfieOpen, setModalSelfieOpen] = useState(false);
   const [horaCheckIn, setHoraCheckIn] = useState<Date | null>(null);
   const [tempoTrabalhado, setTempoTrabalhado] = useState(0);
+  
+  // Hourly Tracking - Pausas
+  const [emPausa, setEmPausa] = useState(false);
+  const [pausas, setPausas] = useState<{ inicio: Date; fim?: Date; motivo: string }[]>([]);
+  const [motivoPausa, setMotivoPausa] = useState("");
+  const [modalPausaOpen, setModalPausaOpen] = useState(false);
+  const [tempoPausado, setTempoPausado] = useState(0);
 
   // Profile state
   const [perfilNome, setPerfilNome] = useState("João Silva");
@@ -430,13 +440,22 @@ const FreelancerPortal = () => {
   // ===== TIMER useEffect =====
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (checkInRealizado && horaCheckIn && !checkOutRealizado) {
+    if (checkInRealizado && horaCheckIn && !checkOutRealizado && !emPausa) {
       interval = setInterval(() => {
-        setTempoTrabalhado(Math.floor((Date.now() - horaCheckIn.getTime()) / 1000));
+        // Calcula tempo total menos pausas
+        const totalPausado = pausas.reduce((acc, p) => {
+          if (p.fim) {
+            return acc + (p.fim.getTime() - p.inicio.getTime());
+          }
+          return acc;
+        }, 0);
+        const tempoReal = Date.now() - horaCheckIn.getTime() - totalPausado;
+        setTempoTrabalhado(Math.floor(tempoReal / 1000));
+        setTempoPausado(Math.floor(totalPausado / 1000));
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [checkInRealizado, horaCheckIn, checkOutRealizado]);
+  }, [checkInRealizado, horaCheckIn, checkOutRealizado, emPausa, pausas]);
 
   // ===== FUNÇÕES =====
   const calcularDistancia = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
@@ -585,11 +604,50 @@ const FreelancerPortal = () => {
   };
 
   const realizarCheckOut = () => {
+    // Se estiver em pausa, finaliza a pausa primeiro
+    if (emPausa && pausas.length > 0) {
+      const ultimaPausa = pausas[pausas.length - 1];
+      if (!ultimaPausa.fim) {
+        setPausas(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { ...ultimaPausa, fim: new Date() };
+          return updated;
+        });
+      }
+      setEmPausa(false);
+    }
     setCheckOutRealizado(true);
     toast({ 
       title: "👋 Check-out realizado!", 
-      description: `Trabalho finalizado. Total: ${formatarTempo(tempoTrabalhado)}`
+      description: `Trabalho finalizado. Total trabalhado: ${formatarTempo(tempoTrabalhado)}`
     });
+  };
+
+  const iniciarPausa = (motivo: string) => {
+    if (!motivo.trim()) {
+      toast({ title: "Motivo obrigatório", description: "Informe o motivo da pausa", variant: "destructive" });
+      return;
+    }
+    setPausas(prev => [...prev, { inicio: new Date(), motivo }]);
+    setEmPausa(true);
+    setMotivoPausa("");
+    setModalPausaOpen(false);
+    toast({ title: "⏸️ Pausa iniciada", description: `Motivo: ${motivo}` });
+  };
+
+  const finalizarPausa = () => {
+    if (pausas.length > 0) {
+      const ultimaPausa = pausas[pausas.length - 1];
+      if (!ultimaPausa.fim) {
+        setPausas(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { ...ultimaPausa, fim: new Date() };
+          return updated;
+        });
+      }
+    }
+    setEmPausa(false);
+    toast({ title: "▶️ Pausa finalizada", description: "Timer retomado" });
   };
 
   const formatarTempo = (segundos: number): string => {
@@ -597,6 +655,12 @@ const FreelancerPortal = () => {
     const minutos = Math.floor((segundos % 3600) / 60);
     const segs = segundos % 60;
     return `${String(horas).padStart(2, "0")}:${String(minutos).padStart(2, "0")}:${String(segs).padStart(2, "0")}`;
+  };
+
+  const formatarTempoMinutos = (segundos: number): string => {
+    const minutos = Math.floor(segundos / 60);
+    const segs = segundos % 60;
+    return `${minutos}min ${segs}s`;
   };
 
   // ===== COMPONENTES =====
@@ -1717,31 +1781,187 @@ const FreelancerPortal = () => {
             </h3>
             
             <div className="text-center py-6">
-              <div className="text-6xl font-mono font-black text-amber-600 mb-4">
+              {/* Timer Principal */}
+              <div className={`text-6xl font-mono font-black mb-2 ${emPausa ? "text-gray-400" : "text-amber-600"}`}>
                 {formatarTempo(tempoTrabalhado)}
               </div>
+              {emPausa && (
+                <div className="flex items-center justify-center gap-2 text-amber-500 mb-2 animate-pulse">
+                  <Pause className="w-5 h-5" />
+                  <span className="font-bold">Em Pausa</span>
+                </div>
+              )}
               <p className="text-sm text-gray-500">
                 Check-in às {horaCheckIn?.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
               </p>
+
+              {/* Tempo pausado */}
+              {tempoPausado > 0 && (
+                <p className="text-xs text-gray-400 mt-1">
+                  Tempo em pausas: {formatarTempoMinutos(tempoPausado)}
+                </p>
+              )}
               
               {checkOutRealizado ? (
                 <div className="mt-6 p-4 bg-green-50 rounded-xl border border-green-200">
                   <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2" />
                   <p className="text-green-700 font-bold">Trabalho finalizado!</p>
                   <p className="text-sm text-gray-600">Aguarde a confirmação da empresa</p>
+                  
+                  {/* Relatório de Horas */}
+                  <div className="mt-4 p-4 bg-white rounded-xl border border-gray-200 text-left">
+                    <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <ListChecks className="w-4 h-4 text-amber-600" />
+                      Relatório de Horas
+                    </h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Tempo trabalhado:</span>
+                        <span className="font-bold text-green-600">{formatarTempo(tempoTrabalhado)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Tempo em pausas:</span>
+                        <span className="font-bold text-amber-600">{formatarTempoMinutos(tempoPausado)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Total de pausas:</span>
+                        <span className="font-bold">{pausas.length}</span>
+                      </div>
+                      <div className="flex justify-between border-t pt-2 mt-2">
+                        <span className="text-gray-900 font-bold">Valor a receber:</span>
+                        <span className="font-black text-green-600">R$ {trabalho?.vaga.valorDiaria.toFixed(2)}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Histórico de Pausas */}
+                    {pausas.length > 0 && (
+                      <div className="mt-4">
+                        <p className="text-xs text-gray-500 mb-2 font-bold">Histórico de Pausas:</p>
+                        <div className="space-y-1">
+                          {pausas.map((p, idx) => (
+                            <div key={idx} className="text-xs bg-gray-50 p-2 rounded flex justify-between items-center">
+                              <span className="text-gray-600">
+                                <Coffee className="w-3 h-3 inline mr-1" />
+                                {p.motivo}
+                              </span>
+                              <span className="text-gray-500">
+                                {p.inicio.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })} - 
+                                {p.fim ? p.fim.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "..."}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ) : (
-                <Button 
-                  onClick={realizarCheckOut}
-                  variant="outline"
-                  className="mt-6 border-red-300 text-red-600 hover:bg-red-50"
-                >
-                  Fazer Check-out
-                </Button>
+                <div className="mt-6 space-y-4">
+                  {/* Botões de Pausa/Retomar */}
+                  <div className="flex gap-3 justify-center">
+                    {!emPausa ? (
+                      <Button 
+                        onClick={() => setModalPausaOpen(true)}
+                        variant="outline"
+                        className="border-amber-300 text-amber-600 hover:bg-amber-50"
+                      >
+                        <Pause className="w-4 h-4 mr-2" />
+                        Iniciar Pausa
+                      </Button>
+                    ) : (
+                      <Button 
+                        onClick={finalizarPausa}
+                        className="bg-gradient-to-r from-green-500 to-emerald-600"
+                      >
+                        <Play className="w-4 h-4 mr-2" />
+                        Retomar Trabalho
+                      </Button>
+                    )}
+                    <Button 
+                      onClick={realizarCheckOut}
+                      variant="outline"
+                      className="border-red-300 text-red-600 hover:bg-red-50"
+                    >
+                      Fazer Check-out
+                    </Button>
+                  </div>
+
+                  {/* Pausas realizadas */}
+                  {pausas.length > 0 && (
+                    <div className="text-left p-4 bg-amber-50 rounded-xl border border-amber-200">
+                      <p className="text-sm font-bold text-amber-700 mb-2 flex items-center gap-2">
+                        <Coffee className="w-4 h-4" />
+                        Pausas realizadas: {pausas.length}
+                      </p>
+                      <div className="space-y-1">
+                        {pausas.map((p, idx) => (
+                          <div key={idx} className="text-xs flex justify-between items-center text-amber-600">
+                            <span>{p.motivo}</span>
+                            <span>
+                              {p.fim 
+                                ? formatarTempoMinutos(Math.floor((p.fim.getTime() - p.inicio.getTime()) / 1000))
+                                : "Em andamento..."}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </div>
         )}
+
+        {/* Modal de Pausa */}
+        <Dialog open={modalPausaOpen} onOpenChange={setModalPausaOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Coffee className="w-5 h-5 text-amber-600" />
+                Iniciar Pausa
+              </DialogTitle>
+              <DialogDescription>
+                Informe o motivo da pausa. O timer será pausado até você retomar.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label>Motivo da Pausa</Label>
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  {["Almoço", "Café", "Banheiro", "Intervalo"].map((m) => (
+                    <Button
+                      key={m}
+                      variant="outline"
+                      className={motivoPausa === m ? "border-amber-500 bg-amber-50" : ""}
+                      onClick={() => setMotivoPausa(m)}
+                    >
+                      {m}
+                    </Button>
+                  ))}
+                </div>
+                <Input
+                  placeholder="Ou digite outro motivo..."
+                  value={motivoPausa}
+                  onChange={(e) => setMotivoPausa(e.target.value)}
+                  className="mt-3"
+                />
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setModalPausaOpen(false)} className="flex-1">
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={() => iniciarPausa(motivoPausa)}
+                  disabled={!motivoPausa.trim()}
+                  className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600"
+                >
+                  Iniciar Pausa
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Botão de Check-in */}
         {localizacaoGPS && !checkInRealizado && (

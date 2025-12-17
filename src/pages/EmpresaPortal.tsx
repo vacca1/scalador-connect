@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Briefcase, Clock, MapPin, Calendar, DollarSign, User, Bell, MessageSquare, Menu, Search, X, Plus, Check, TrendingUp, Users, Activity, ArrowRight, Phone, Navigation, AlertCircle, CheckCircle, XCircle, Timer, Send, Star, Edit, Settings, HelpCircle, LogOut, Filter, ChevronDown, Home, Wallet, FileText, Heart, UserPlus, Award, Zap, Lock, CreditCard, QrCode, Building, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Briefcase, Clock, MapPin, Calendar, DollarSign, User, Bell, MessageSquare, Menu, Search, X, Plus, Check, TrendingUp, Users, Activity, ArrowRight, Phone, Navigation, AlertCircle, CheckCircle, XCircle, Timer, Send, Star, Edit, Settings, HelpCircle, LogOut, Filter, ChevronDown, Home, Wallet, FileText, Heart, UserPlus, Award, Zap, Lock, CreditCard, QrCode, Building, ArrowUpRight, ArrowDownRight, Coffee, Pause, ListChecks, Play } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
@@ -71,6 +71,8 @@ interface Job {
       horario?: Date;
     };
     horasTrabalhadas?: number; // em segundos
+    tempoPausado?: number; // em segundos
+    pausas?: { inicio: Date; fim?: Date; motivo: string }[];
   };
   tempoLimiteEmpresaCancelar?: Date;
 }
@@ -417,7 +419,12 @@ const MOCK_JOBS: Job[] = [{
       localizacaoVerificada: true,
       distanciaDoLocal: 15
     },
-    horasTrabalhadas: 5400 // 1.5 horas em segundos
+    horasTrabalhadas: 5400, // 1.5 horas em segundos
+    tempoPausado: 900, // 15 minutos em segundos
+    pausas: [
+      { inicio: new Date(Date.now() - 1 * 60 * 60 * 1000), fim: new Date(Date.now() - 55 * 60 * 1000), motivo: "Almoço" },
+      { inicio: new Date(Date.now() - 30 * 60 * 1000), fim: new Date(Date.now() - 25 * 60 * 1000), motivo: "Café" }
+    ]
   }
 }];
 const MOCK_HISTORICO_FREELANCERS = [{
@@ -3089,7 +3096,7 @@ export default function EmpresaPortal() {
               </div>
 
               {/* Status do Check-in */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="bg-white/70 rounded-xl p-4 border border-green-200">
                   <div className="flex items-center gap-2 mb-2">
                     <Timer className="w-5 h-5 text-green-600" />
@@ -3103,7 +3110,7 @@ export default function EmpresaPortal() {
                   {job.freelancerSelecionado.checkIn?.localizacaoVerificada && (
                     <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
                       <MapPin className="w-3 h-3" />
-                      GPS verificado - Local confirmado
+                      GPS verificado
                     </p>
                   )}
                 </div>
@@ -3122,7 +3129,46 @@ export default function EmpresaPortal() {
                     })()}
                   </p>
                 </div>
+
+                <div className="bg-white/70 rounded-xl p-4 border border-amber-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Coffee className="w-5 h-5 text-amber-600" />
+                    <span className="font-bold text-gray-900">Pausas</span>
+                  </div>
+                  <p className="text-xl font-mono font-black text-amber-600">
+                    {job.freelancerSelecionado.pausas?.length || 0}
+                  </p>
+                  {job.freelancerSelecionado.tempoPausado && job.freelancerSelecionado.tempoPausado > 0 && (
+                    <p className="text-xs text-amber-600 mt-1">
+                      Total: {Math.floor(job.freelancerSelecionado.tempoPausado / 60)}min
+                    </p>
+                  )}
+                </div>
               </div>
+
+              {/* Histórico de Pausas */}
+              {job.freelancerSelecionado.pausas && job.freelancerSelecionado.pausas.length > 0 && (
+                <div className="bg-white/70 rounded-xl p-4 border border-amber-200 mb-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <ListChecks className="w-5 h-5 text-amber-600" />
+                    <span className="font-bold text-gray-900">Histórico de Pausas</span>
+                  </div>
+                  <div className="space-y-2">
+                    {job.freelancerSelecionado.pausas.map((pausa, idx) => (
+                      <div key={idx} className="flex items-center justify-between text-sm bg-amber-50 p-2 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Coffee className="w-4 h-4 text-amber-500" />
+                          <span className="text-gray-700">{pausa.motivo}</span>
+                        </div>
+                        <span className="text-gray-500 text-xs">
+                          {new Date(pausa.inicio).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })} - 
+                          {pausa.fim ? new Date(pausa.fim).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "..."}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Selfie de Confirmação */}
               {job.freelancerSelecionado.checkIn?.selfieUrl && (
