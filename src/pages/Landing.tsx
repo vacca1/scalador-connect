@@ -179,7 +179,7 @@ export default function Landing() {
             <p className="text-xl md:text-2xl text-muted-foreground mb-10">Encontre seu próximo trabalho em menos de <span className="font-semibold text-foreground">5 minutos</span>, seja para um bico ou uma carreira formal!</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" onClick={() => navigate("/freelancer")} className="text-lg px-8 py-6 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/25"><Zap className="mr-2 h-5 w-5" />Bicos & Freelancer</Button>
-              <Button size="lg" onClick={() => navigate("/empresa")} className="text-lg px-8 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-500/25"><Briefcase className="mr-2 h-5 w-5" />Emprego Formal (CLT)</Button>
+              <Button size="lg" onClick={() => navigate("/empregos")} className="text-lg px-8 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-500/25"><Briefcase className="mr-2 h-5 w-5" />Emprego Formal (CLT)</Button>
             </div>
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="flex justify-center mt-16">
@@ -226,7 +226,7 @@ export default function Landing() {
                 <li className="flex items-center gap-2"><Check className="w-5 h-5 text-indigo-600" /><span className="text-foreground/90">Plano de saúde e benefícios</span></li>
                 <li className="flex items-center gap-2"><Check className="w-5 h-5 text-indigo-600" /><span className="text-foreground/90">Crescimento na carreira</span></li>
               </ul>
-              <Button onClick={() => navigate("/empresa")} className="w-full py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold">
+              <Button onClick={() => navigate("/empregos")} className="w-full py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold">
                 <Briefcase className="mr-2 h-5 w-5" />Ver Vagas CLT
               </Button>
             </motion.div>
@@ -370,7 +370,7 @@ export default function Landing() {
             <p className="text-lg text-slate-300 mb-10">Cadastre-se grátis no Scalador e encontre seu próximo trabalho.</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" onClick={() => navigate("/freelancer")} className="text-lg px-8 py-6 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"><Zap className="mr-2 h-5 w-5" />Vagas Freelancer</Button>
-              <Button size="lg" onClick={() => navigate("/empresa")} className="text-lg px-8 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"><Briefcase className="mr-2 h-5 w-5" />Vagas CLT</Button>
+              <Button size="lg" onClick={() => navigate("/empregos")} className="text-lg px-8 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"><Briefcase className="mr-2 h-5 w-5" />Vagas CLT</Button>
             </div>
           </motion.div>
         </div>
