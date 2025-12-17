@@ -58,6 +58,19 @@ interface Job {
     tempoEstimadoChegada: string;
     horarioAceite?: Date;
     horarioChegada?: Date;
+    // Novos campos para GPS Check-in
+    checkIn?: {
+      realizado: boolean;
+      horario?: Date;
+      selfieUrl?: string;
+      localizacaoVerificada: boolean;
+      distanciaDoLocal?: number; // em metros
+    };
+    checkOut?: {
+      realizado: boolean;
+      horario?: Date;
+    };
+    horasTrabalhadas?: number; // em segundos
   };
   tempoLimiteEmpresaCancelar?: Date;
 }
@@ -353,6 +366,59 @@ const MOCK_JOBS: Job[] = [{
     pergunta: "Qual o horário do almoço?",
     resposta: "Intervalo de 1 hora entre 12:00 e 13:00."
   }]
+}, {
+  id: "4",
+  titulo: "Bartender para Evento VIP",
+  empresa: "Club Premium",
+  logoEmpresa: "🍸",
+  tipo: "freelance",
+  profissao: "Bartender",
+  descricao: "Bartender experiente para evento exclusivo",
+  atividades: ["Preparar drinks e coquetéis", "Atendimento ao cliente no bar", "Controle de estoque"],
+  valorDiaria: 250.0,
+  valorTotal: 250.0,
+  taxaScalador: 25.0,
+  valorComTaxa: 275.0,
+  quantidadeFreelancers: 1,
+  localizacao: {
+    endereco: "SCLN 408 Bloco D",
+    bairro: "Asa Norte",
+    cidade: "Brasília",
+    estado: "DF",
+    cep: "70865-540",
+    coordenadas: {
+      lat: -15.7601,
+      lng: -47.8892
+    }
+  },
+  data: "2025-12-17",
+  horarioEntrada: "21:00",
+  horarioSaida: "05:00",
+  vestimenta: "Camisa preta, calça social preta",
+  experienciaNecessaria: true,
+  beneficios: ["Alimentação", "Gorjeta", "Transporte"],
+  status: "em_andamento",
+  publicadoEm: new Date(Date.now() - 3 * 60 * 60 * 1000),
+  perguntasFrequentes: [{
+    pergunta: "Preciso saber fazer drinks específicos?",
+    resposta: "Sim, experiência com coquetéis clássicos e modernos é necessária."
+  }],
+  freelancerSelecionado: {
+    id: "f2",
+    nome: "Maria Santos",
+    foto: "👩",
+    rating: 4.9,
+    telefone: "(61) 98111-2222",
+    tempoEstimadoChegada: "Chegou",
+    horarioAceite: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    checkIn: {
+      realizado: true,
+      horario: new Date(Date.now() - 1.5 * 60 * 60 * 1000),
+      localizacaoVerificada: true,
+      distanciaDoLocal: 15
+    },
+    horasTrabalhadas: 5400 // 1.5 horas em segundos
+  }
 }];
 const MOCK_HISTORICO_FREELANCERS = [{
   id: "h1",
@@ -2992,6 +3058,101 @@ export default function EmpresaPortal() {
                 </button>
                 <button onClick={() => confirmarChegada(job.id, "empresa")} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-scalador-blue text-white rounded-xl hover:bg-scalador-blue/90 font-bold transition-colors">
                   <CheckCircle className="w-4 h-4" /> Confirmar Chegada
+                </button>
+              </div>
+            </div>}
+
+          {/* NOVO: Seção Check-in em Andamento */}
+          {job.status === "em_andamento" && job.freelancerSelecionado && <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6 mb-6">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-500" /> Freelancer em Trabalho
+                  </h3>
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <div className="text-4xl">{job.freelancerSelecionado.foto}</div>
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-3 h-3 text-white" />
+                      </div>
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900">{job.freelancerSelecionado.nome}</p>
+                      <p className="text-sm text-gray-600">{job.freelancerSelecionado.telefone}</p>
+                      <div className="flex items-center gap-1 mt-1">
+                        {[1, 2, 3, 4, 5].map(i => <Star key={i} className={`w-3 h-3 ${i <= job.freelancerSelecionado!.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />)}
+                        <span className="text-xs text-gray-600 ml-1">{job.freelancerSelecionado.rating}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Status do Check-in */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div className="bg-white/70 rounded-xl p-4 border border-green-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Timer className="w-5 h-5 text-green-600" />
+                    <span className="font-bold text-gray-900">Check-in</span>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    ✅ Realizado às {job.freelancerSelecionado.checkIn?.horario 
+                      ? new Date(job.freelancerSelecionado.checkIn.horario).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+                      : new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                  </p>
+                  {job.freelancerSelecionado.checkIn?.localizacaoVerificada && (
+                    <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      GPS verificado - Local confirmado
+                    </p>
+                  )}
+                </div>
+
+                <div className="bg-white/70 rounded-xl p-4 border border-green-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Activity className="w-5 h-5 text-green-600" />
+                    <span className="font-bold text-gray-900">Tempo Trabalhado</span>
+                  </div>
+                  <p className="text-2xl font-mono font-black text-green-600">
+                    {(() => {
+                      const segundos = job.freelancerSelecionado.horasTrabalhadas || Math.floor((Date.now() - (job.freelancerSelecionado.checkIn?.horario?.getTime() || Date.now())) / 1000);
+                      const h = Math.floor(segundos / 3600);
+                      const m = Math.floor((segundos % 3600) / 60);
+                      return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+                    })()}
+                  </p>
+                </div>
+              </div>
+
+              {/* Selfie de Confirmação */}
+              {job.freelancerSelecionado.checkIn?.selfieUrl && (
+                <div className="bg-white/70 rounded-xl p-4 border border-green-200 mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-green-300">
+                      <img src={job.freelancerSelecionado.checkIn.selfieUrl} alt="Selfie check-in" className="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900">📸 Selfie de Confirmação</p>
+                      <p className="text-sm text-gray-600">Presença verificada por foto</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <button onClick={() => simularEnvioWhatsApp("mensagem_empresa", job.freelancerSelecionado!.nome, {
+                  texto: "Como está o trabalho?",
+                  jobId: job.id
+                })} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-bold transition-colors">
+                  <MessageSquare className="w-4 h-4" /> Enviar Mensagem
+                </button>
+                <button onClick={() => {
+                  toast({
+                    title: "Trabalho finalizado!",
+                    description: "O trabalho foi marcado como concluído. Faça a avaliação."
+                  });
+                }} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-scalador-blue text-white rounded-xl hover:bg-scalador-blue/90 font-bold transition-colors">
+                  <CheckCircle className="w-4 h-4" /> Finalizar Trabalho
                 </button>
               </div>
             </div>}

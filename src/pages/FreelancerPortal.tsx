@@ -31,6 +31,12 @@ import {
   Navigation,
   ChevronRight,
   ArrowRight,
+  Camera,
+  Play,
+  MapPinned,
+  AlertCircle,
+  Timer,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -376,6 +382,20 @@ const FreelancerPortal = () => {
     distanciaMaxima: "todas",
   });
 
+  // ===== ESTADOS GPS CHECK-IN =====
+  const [localizacaoGPS, setLocalizacaoGPS] = useState<{lat: number; lng: number} | null>(null);
+  const [gpsLoading, setGpsLoading] = useState(false);
+  const [gpsError, setGpsError] = useState<string | null>(null);
+  const [trabalhoEmAndamento, setTrabalhoEmAndamento] = useState<Candidatura | null>(
+    MINHAS_CANDIDATURAS.find(c => c.status === "aceito") || null
+  );
+  const [checkInRealizado, setCheckInRealizado] = useState(false);
+  const [checkOutRealizado, setCheckOutRealizado] = useState(false);
+  const [selfieCapturada, setSelfieCapturada] = useState<string | null>(null);
+  const [modalSelfieOpen, setModalSelfieOpen] = useState(false);
+  const [horaCheckIn, setHoraCheckIn] = useState<Date | null>(null);
+  const [tempoTrabalhado, setTempoTrabalhado] = useState(0);
+
   // Profile state
   const [perfilNome, setPerfilNome] = useState("João Silva");
   const [perfilTelefone, setPerfilTelefone] = useState("(61) 99999-9999");
@@ -388,6 +408,7 @@ const FreelancerPortal = () => {
   // Menu items
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: Home },
+    { id: "trabalho", label: "Trabalho Atual", icon: Play },
     { id: "vagas", label: "Vagas Disponíveis", icon: Briefcase },
     { id: "candidaturas", label: "Minhas Candidaturas", icon: FileText },
     { id: "favoritas", label: "Vagas Favoritas", icon: Heart },
@@ -396,6 +417,17 @@ const FreelancerPortal = () => {
     { id: "configuracoes", label: "Configurações", icon: Settings },
     { id: "notificacoes", label: "Notificações", icon: Bell },
   ];
+
+  // ===== TIMER useEffect =====
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (checkInRealizado && horaCheckIn && !checkOutRealizado) {
+      interval = setInterval(() => {
+        setTempoTrabalhado(Math.floor((Date.now() - horaCheckIn.getTime()) / 1000));
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [checkInRealizado, horaCheckIn, checkOutRealizado]);
 
   // ===== FUNÇÕES =====
   const calcularDistancia = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
@@ -467,6 +499,95 @@ const FreelancerPortal = () => {
 
   const removeHabilidade = (hab: string) => {
     setPerfilHabilidades(perfilHabilidades.filter((h) => h !== hab));
+  };
+
+  // ===== FUNÇÕES GPS CHECK-IN =====
+  const obterLocalizacaoGPS = () => {
+    setGpsLoading(true);
+    setGpsError(null);
+    
+    if (!navigator.geolocation) {
+      setGpsError("Geolocalização não suportada pelo navegador");
+      setGpsLoading(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocalizacaoGPS({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+        setGpsLoading(false);
+        toast({ title: "📍 Localização obtida!", description: "Sua localização foi capturada com sucesso" });
+      },
+      (error) => {
+        setGpsError("Erro ao obter localização. Verifique as permissões.");
+        setGpsLoading(false);
+        toast({ title: "Erro de GPS", description: "Não foi possível obter sua localização", variant: "destructive" });
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  };
+
+  const verificarProximidade = (vagaCoords: { lat: number; lng: number }): { dentroDoRaio: boolean; distancia: number } => {
+    if (!localizacaoGPS) return { dentroDoRaio: false, distancia: 999 };
+    const distancia = calcularDistancia(localizacaoGPS.lat, localizacaoGPS.lng, vagaCoords.lat, vagaCoords.lng);
+    return { dentroDoRaio: distancia <= 0.05, distancia }; // 50 metros
+  };
+
+  const handleCapturaSelfie = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setSelfieCapturada(event.target?.result as string);
+        setModalSelfieOpen(false);
+        toast({ title: "📸 Selfie capturada!", description: "Agora você pode fazer o check-in" });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const realizarCheckIn = () => {
+    if (!trabalhoEmAndamento?.vaga.localizacao.coordenadas) {
+      toast({ title: "Erro", description: "Coordenadas do local não disponíveis", variant: "destructive" });
+      return;
+    }
+    
+    const { dentroDoRaio } = verificarProximidade(trabalhoEmAndamento.vaga.localizacao.coordenadas);
+    if (!dentroDoRaio) {
+      toast({ title: "Fora do alcance", description: "Você precisa estar a menos de 50m do local", variant: "destructive" });
+      return;
+    }
+    
+    if (!selfieCapturada) {
+      toast({ title: "Selfie necessária", description: "Tire uma selfie para confirmar sua presença", variant: "destructive" });
+      setModalSelfieOpen(true);
+      return;
+    }
+
+    setCheckInRealizado(true);
+    setHoraCheckIn(new Date());
+    toast({ 
+      title: "✅ Check-in realizado!", 
+      description: `Presença confirmada às ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`
+    });
+  };
+
+  const realizarCheckOut = () => {
+    setCheckOutRealizado(true);
+    toast({ 
+      title: "👋 Check-out realizado!", 
+      description: `Trabalho finalizado. Total: ${formatarTempo(tempoTrabalhado)}`
+    });
+  };
+
+  const formatarTempo = (segundos: number): string => {
+    const horas = Math.floor(segundos / 3600);
+    const minutos = Math.floor((segundos % 3600) / 60);
+    const segs = segundos % 60;
+    return `${String(horas).padStart(2, "0")}:${String(minutos).padStart(2, "0")}:${String(segs).padStart(2, "0")}`;
   };
 
   // ===== COMPONENTES =====
@@ -1390,10 +1511,298 @@ const FreelancerPortal = () => {
     </div>
   );
 
+  // ===== PÁGINA TRABALHO ATUAL (GPS CHECK-IN) =====
+  const PaginaTrabalhoAtual = () => {
+    const trabalho = trabalhoEmAndamento;
+    const coordenadasVaga = trabalho?.vaga.localizacao.coordenadas;
+    const proximidade = coordenadasVaga ? verificarProximidade(coordenadasVaga) : null;
+    const dentroDoRaio = proximidade?.dentroDoRaio ?? false;
+    const distanciaAtual = proximidade?.distancia ?? 0;
+
+    if (!trabalho) {
+      return (
+        <div className="space-y-6">
+          <div className="mb-8 text-center animate-fade-in">
+            <h2 className="text-3xl sm:text-5xl font-black mb-3">
+              <span className="bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">Trabalho Atual</span>
+            </h2>
+          </div>
+          <div className="text-center py-12 glass rounded-2xl">
+            <Briefcase className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-700">Nenhum trabalho agendado</h3>
+            <p className="text-gray-500 mb-4">Candidate-se a vagas para ter um trabalho ativo</p>
+            <Button onClick={() => navegarPara("vagas")} className="bg-gradient-to-r from-amber-500 to-orange-600">
+              Ver Vagas Disponíveis
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-6">
+        <div className="mb-8 text-center animate-fade-in">
+          <h2 className="text-3xl sm:text-5xl font-black mb-3">
+            <span className="bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">Trabalho Atual</span>
+          </h2>
+          <p className="text-gray-600 text-base sm:text-xl">GPS Check-in/out</p>
+        </div>
+
+        {/* Card do Trabalho */}
+        <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+              {trabalho.vaga.logoEmpresa}
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">{trabalho.vaga.titulo}</h3>
+              <p className="text-amber-600 font-semibold">{trabalho.vaga.empresa}</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="p-4 bg-amber-50 rounded-xl">
+              <p className="text-xs text-gray-500 mb-1">📅 Data</p>
+              <p className="font-bold text-gray-900">{new Date(trabalho.vaga.data).toLocaleDateString("pt-BR")}</p>
+            </div>
+            <div className="p-4 bg-amber-50 rounded-xl">
+              <p className="text-xs text-gray-500 mb-1">⏰ Horário</p>
+              <p className="font-bold text-gray-900">{trabalho.vaga.horarioEntrada} - {trabalho.vaga.horarioSaida}</p>
+            </div>
+            <div className="p-4 bg-amber-50 rounded-xl col-span-2">
+              <p className="text-xs text-gray-500 mb-1">📍 Local</p>
+              <p className="font-bold text-amber-600">{trabalho.vaga.localizacao.bairro}</p>
+              <p className="text-sm text-gray-600">{trabalho.vaga.localizacao.endereco}</p>
+            </div>
+          </div>
+
+          {/* Valor */}
+          <div className="p-4 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl text-white mb-6">
+            <p className="text-sm opacity-90">Você vai receber</p>
+            <p className="text-2xl font-black">R$ {trabalho.vaga.valorDiaria.toFixed(2)}</p>
+          </div>
+        </div>
+
+        {/* Status GPS */}
+        <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <MapPinned className="w-5 h-5 text-amber-600" />
+            Verificação de Localização
+          </h3>
+
+          {!localizacaoGPS ? (
+            <div className="text-center py-6">
+              <div className="w-20 h-20 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <Navigation className="w-10 h-10 text-gray-400" />
+              </div>
+              <p className="text-gray-600 mb-4">Ative sua localização para fazer check-in</p>
+              <Button 
+                onClick={obterLocalizacaoGPS} 
+                disabled={gpsLoading}
+                className="bg-gradient-to-r from-amber-500 to-orange-600"
+              >
+                {gpsLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Obtendo localização...
+                  </>
+                ) : (
+                  <>
+                    <Navigation className="w-4 h-4 mr-2" />
+                    Ativar GPS
+                  </>
+                )}
+              </Button>
+              {gpsError && (
+                <p className="text-red-500 text-sm mt-2">{gpsError}</p>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className={`p-4 rounded-xl border-2 ${dentroDoRaio ? "bg-green-50 border-green-300" : "bg-amber-50 border-amber-300"}`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {dentroDoRaio ? (
+                      <CheckCircle className="w-8 h-8 text-green-500" />
+                    ) : (
+                      <AlertCircle className="w-8 h-8 text-amber-500" />
+                    )}
+                    <div>
+                      <p className={`font-bold ${dentroDoRaio ? "text-green-700" : "text-amber-700"}`}>
+                        {dentroDoRaio ? "Dentro do raio permitido!" : "Fora do raio permitido"}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Distância: {(distanciaAtual * 1000).toFixed(0)}m do local
+                      </p>
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={obterLocalizacaoGPS}
+                    disabled={gpsLoading}
+                  >
+                    {gpsLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Atualizar"}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Raio necessário */}
+              <div className="text-center text-sm text-gray-500">
+                <p>📍 Raio máximo para check-in: <span className="font-bold">50 metros</span></p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Selfie Section */}
+        {localizacaoGPS && !checkInRealizado && (
+          <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Camera className="w-5 h-5 text-amber-600" />
+              Selfie de Confirmação
+            </h3>
+
+            {selfieCapturada ? (
+              <div className="text-center">
+                <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-green-300 shadow-lg mb-4">
+                  <img src={selfieCapturada} alt="Selfie" className="w-full h-full object-cover" />
+                </div>
+                <p className="text-green-600 font-semibold flex items-center justify-center gap-2">
+                  <CheckCircle className="w-5 h-5" />
+                  Selfie capturada!
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-2"
+                  onClick={() => setModalSelfieOpen(true)}
+                >
+                  Tirar outra
+                </Button>
+              </div>
+            ) : (
+              <div className="text-center py-4">
+                <div className="w-20 h-20 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <Camera className="w-10 h-10 text-gray-400" />
+                </div>
+                <p className="text-gray-600 mb-4">Tire uma selfie para confirmar sua presença</p>
+                <Button 
+                  onClick={() => setModalSelfieOpen(true)}
+                  className="bg-gradient-to-r from-amber-500 to-orange-600"
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  Tirar Selfie
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Timer de Trabalho */}
+        {checkInRealizado && (
+          <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Timer className="w-5 h-5 text-amber-600" />
+              Tempo de Trabalho
+            </h3>
+            
+            <div className="text-center py-6">
+              <div className="text-6xl font-mono font-black text-amber-600 mb-4">
+                {formatarTempo(tempoTrabalhado)}
+              </div>
+              <p className="text-sm text-gray-500">
+                Check-in às {horaCheckIn?.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+              </p>
+              
+              {checkOutRealizado ? (
+                <div className="mt-6 p-4 bg-green-50 rounded-xl border border-green-200">
+                  <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2" />
+                  <p className="text-green-700 font-bold">Trabalho finalizado!</p>
+                  <p className="text-sm text-gray-600">Aguarde a confirmação da empresa</p>
+                </div>
+              ) : (
+                <Button 
+                  onClick={realizarCheckOut}
+                  variant="outline"
+                  className="mt-6 border-red-300 text-red-600 hover:bg-red-50"
+                >
+                  Fazer Check-out
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Botão de Check-in */}
+        {localizacaoGPS && !checkInRealizado && (
+          <Button
+            onClick={realizarCheckIn}
+            disabled={!dentroDoRaio || !selfieCapturada}
+            className={`w-full h-16 text-lg font-bold rounded-2xl shadow-xl transition-all ${
+              dentroDoRaio && selfieCapturada
+                ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:shadow-2xl hover:scale-[1.02]"
+                : "bg-gray-300 cursor-not-allowed"
+            }`}
+          >
+            {!dentroDoRaio ? (
+              <>
+                <AlertCircle className="w-6 h-6 mr-2" />
+                Aproxime-se do local (máx. 50m)
+              </>
+            ) : !selfieCapturada ? (
+              <>
+                <Camera className="w-6 h-6 mr-2" />
+                Tire uma selfie primeiro
+              </>
+            ) : (
+              <>
+                <CheckCircle className="w-6 h-6 mr-2" />
+                Fazer Check-in
+              </>
+            )}
+          </Button>
+        )}
+
+        {/* Modal Selfie */}
+        <Dialog open={modalSelfieOpen} onOpenChange={setModalSelfieOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Camera className="w-5 h-5 text-amber-600" />
+                Tirar Selfie
+              </DialogTitle>
+            </DialogHeader>
+            <div className="text-center py-6">
+              <div className="w-32 h-32 bg-gray-100 rounded-full mx-auto mb-6 flex items-center justify-center border-4 border-dashed border-gray-300">
+                <Camera className="w-12 h-12 text-gray-400" />
+              </div>
+              <p className="text-gray-600 mb-6">Posicione seu rosto no centro da câmera</p>
+              <label className="cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="user"
+                  onChange={handleCapturaSelfie}
+                  className="hidden"
+                />
+                <span className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all">
+                  <Camera className="w-5 h-5" />
+                  Abrir Câmera
+                </span>
+              </label>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  };
+
   // ===== RENDER CONTENT =====
   const renderContent = () => {
     switch (currentPage) {
       case "dashboard": return <PaginaDashboard />;
+      case "trabalho": return <PaginaTrabalhoAtual />;
       case "vagas": return <PaginaVagas />;
       case "candidaturas": return <PaginaCandidaturas />;
       case "favoritas": return <PaginaFavoritas />;
