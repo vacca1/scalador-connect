@@ -3,6 +3,8 @@ import { Briefcase, Clock, MapPin, Calendar, DollarSign, User, Bell, MessageSqua
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import scaladorLogo from "@/assets/scalador-logo.png";
 import { GlowMenu } from "@/components/ui/glow-menu";
@@ -813,6 +815,19 @@ export default function EmpresaPortal() {
   const [carteiraFreelancers, setCarteiraFreelancers] = useState<string[]>(["f1", "f2"]); // IDs dos favoritos
   const [selectedFreelancer, setSelectedFreelancer] = useState<Freelancer | null>(null);
   const [userType, setUserType] = useState<UserType>("freelancer"); // Tipo de usuário logado
+  
+  // Estados para Modal de Avaliação
+  const [modalAvaliacaoOpen, setModalAvaliacaoOpen] = useState(false);
+  const [freelancerParaAvaliar, setFreelancerParaAvaliar] = useState<{ id: string; nome: string; foto: string; jobId: string; valor: number } | null>(null);
+  const [avaliacao, setAvaliacao] = useState({
+    pontualidade: 5,
+    qualidadeTrabalho: 5,
+    comunicacao: 5,
+    profissionalismo: 5,
+    apresentacao: 5,
+    comentario: ""
+  });
+
   const {
     toast
   } = useToast();
@@ -3328,19 +3343,32 @@ export default function EmpresaPortal() {
                 </button>
                 <button 
                   onClick={() => {
-                    toast({
-                      title: "✅ Pagamento Aprovado!",
-                      description: "PIX será enviado ao freelancer em até 24h."
+                    // Abrir modal de avaliação antes de aprovar pagamento
+                    setFreelancerParaAvaliar({
+                      id: job.freelancerSelecionado!.id,
+                      nome: job.freelancerSelecionado!.nome,
+                      foto: job.freelancerSelecionado!.foto,
+                      jobId: job.id,
+                      valor: job.valorDiaria
                     });
+                    setAvaliacao({
+                      pontualidade: 5,
+                      qualidadeTrabalho: 5,
+                      comunicacao: 5,
+                      profissionalismo: 5,
+                      apresentacao: 5,
+                      comentario: ""
+                    });
+                    setModalAvaliacaoOpen(true);
                   }}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:shadow-lg hover:scale-[1.02] font-bold transition-all"
                 >
-                  <DollarSign className="w-4 h-4" /> Aprovar Pagamento PIX
+                  <Star className="w-4 h-4" /> Avaliar e Aprovar Pagamento
                 </button>
               </div>
 
               <p className="text-xs text-green-600 mt-3 text-center">
-                💡 Ao aprovar, o valor será debitado do seu saldo e transferido via PIX ao freelancer
+                💡 Avalie o freelancer para aprovar o pagamento PIX
               </p>
             </div>}
 
@@ -5689,5 +5717,141 @@ _Responda diretamente por este chat._`;
       <Footer />
       <ModalWhatsApp />
       {selectedFreelancer && <ModalDetalhesFreelancer />}
+      
+      {/* Modal de Avaliação Detalhada */}
+      <Dialog open={modalAvaliacaoOpen} onOpenChange={setModalAvaliacaoOpen}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Star className="w-6 h-6 text-amber-500" />
+              Avaliar Freelancer
+            </DialogTitle>
+            <DialogDescription>
+              Avalie o desempenho do freelancer em 5 critérios antes de aprovar o pagamento.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {freelancerParaAvaliar && (
+            <div className="space-y-6 py-4">
+              {/* Info do Freelancer */}
+              <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                <div className="text-4xl">{freelancerParaAvaliar.foto}</div>
+                <div>
+                  <p className="font-bold text-gray-900 text-lg">{freelancerParaAvaliar.nome}</p>
+                  <p className="text-sm text-gray-600">Valor: R$ {freelancerParaAvaliar.valor.toFixed(2)}</p>
+                </div>
+              </div>
+
+              {/* Critérios de Avaliação */}
+              <div className="space-y-5">
+                {[
+                  { key: "pontualidade", label: "Pontualidade", icon: "⏰", desc: "Chegou no horário combinado?" },
+                  { key: "qualidadeTrabalho", label: "Qualidade do Trabalho", icon: "⭐", desc: "O trabalho foi bem executado?" },
+                  { key: "comunicacao", label: "Comunicação", icon: "💬", desc: "Se comunicou de forma clara e profissional?" },
+                  { key: "profissionalismo", label: "Profissionalismo", icon: "👔", desc: "Teve postura adequada durante o trabalho?" },
+                  { key: "apresentacao", label: "Apresentação", icon: "✨", desc: "Aparência e vestimenta adequadas?" },
+                ].map(({ key, label, icon, desc }) => (
+                  <div key={key} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{icon}</span>
+                        <div>
+                          <span className="font-bold text-gray-900">{label}</span>
+                          <p className="text-xs text-gray-500">{desc}</p>
+                        </div>
+                      </div>
+                      <span className="text-2xl font-black text-amber-500">
+                        {(avaliacao as any)[key].toFixed(1)}
+                      </span>
+                    </div>
+                    <Slider 
+                      value={[(avaliacao as any)[key]]} 
+                      min={1} 
+                      max={5} 
+                      step={0.5}
+                      onValueChange={([v]) => setAvaliacao(prev => ({ ...prev, [key]: v }))}
+                      className="py-2"
+                    />
+                    <div className="flex justify-between text-xs text-gray-400">
+                      <span>Ruim (1)</span>
+                      <span>Regular (2)</span>
+                      <span>Bom (3)</span>
+                      <span>Ótimo (4)</span>
+                      <span>Excelente (5)</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Média Geral */}
+              <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl p-4 border-2 border-amber-200">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-gray-900">Média Geral</span>
+                  <div className="flex items-center gap-2">
+                    <Star className="w-6 h-6 fill-amber-400 text-amber-400" />
+                    <span className="text-3xl font-black text-amber-600">
+                      {((avaliacao.pontualidade + avaliacao.qualidadeTrabalho + avaliacao.comunicacao + avaliacao.profissionalismo + avaliacao.apresentacao) / 5).toFixed(1)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Comentário opcional */}
+              <div>
+                <label className="font-bold text-gray-900 mb-2 block">Comentário (opcional)</label>
+                <Textarea 
+                  placeholder="Deixe um comentário sobre o trabalho do freelancer..."
+                  value={avaliacao.comentario}
+                  onChange={(e) => setAvaliacao(prev => ({ ...prev, comentario: e.target.value }))}
+                  className="min-h-[80px]"
+                />
+              </div>
+
+              {/* Pontos de Melhoria */}
+              {(avaliacao.pontualidade < 4.5 || avaliacao.qualidadeTrabalho < 4.5 || avaliacao.comunicacao < 4.5 || avaliacao.profissionalismo < 4.5 || avaliacao.apresentacao < 4.5) && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                  <p className="font-bold text-amber-700 mb-2 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    Pontos de Melhoria
+                  </p>
+                  <ul className="text-sm text-amber-600 space-y-1">
+                    {avaliacao.pontualidade < 4.5 && <li>• Pontualidade pode melhorar</li>}
+                    {avaliacao.qualidadeTrabalho < 4.5 && <li>• Qualidade do trabalho pode melhorar</li>}
+                    {avaliacao.comunicacao < 4.5 && <li>• Comunicação pode melhorar</li>}
+                    {avaliacao.profissionalismo < 4.5 && <li>• Profissionalismo pode melhorar</li>}
+                    {avaliacao.apresentacao < 4.5 && <li>• Apresentação pode melhorar</li>}
+                  </ul>
+                </div>
+              )}
+
+              {/* Botões */}
+              <div className="flex gap-3 pt-2">
+                <button 
+                  onClick={() => setModalAvaliacaoOpen(false)}
+                  className="flex-1 px-4 py-3 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 font-bold transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={() => {
+                    // Salvar avaliação e aprovar pagamento
+                    toast({
+                      title: "⭐ Avaliação enviada!",
+                      description: `Nota: ${((avaliacao.pontualidade + avaliacao.qualidadeTrabalho + avaliacao.comunicacao + avaliacao.profissionalismo + avaliacao.apresentacao) / 5).toFixed(1)} - PIX aprovado!`
+                    });
+                    setModalAvaliacaoOpen(false);
+                    setFreelancerParaAvaliar(null);
+                    // Aqui você poderia atualizar o freelancer com a nova avaliação
+                  }}
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:shadow-lg font-bold transition-all flex items-center justify-center gap-2"
+                >
+                  <CheckCircle className="w-5 h-5" />
+                  Enviar Avaliação e Pagar
+                </button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>;
 }
