@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Briefcase, Clock, MapPin, Calendar, DollarSign, User, Bell, MessageSquare, Menu, Search, X, Plus, Check, TrendingUp, Users, Activity, ArrowRight, Phone, Navigation, AlertCircle, CheckCircle, XCircle, Timer, Send, Star, Edit, Settings, HelpCircle, LogOut, Filter, ChevronDown, Home, Wallet, FileText, Heart, UserPlus, Award, Zap, Lock, CreditCard, QrCode, Building, ArrowUpRight, ArrowDownRight, Coffee, Pause, ListChecks, Play } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import scaladorLogo from "@/assets/scalador-logo.png";
 import { GlowMenu } from "@/components/ui/glow-menu";
@@ -424,6 +425,59 @@ const MOCK_JOBS: Job[] = [{
     pausas: [
       { inicio: new Date(Date.now() - 1 * 60 * 60 * 1000), fim: new Date(Date.now() - 55 * 60 * 1000), motivo: "Almoço" },
       { inicio: new Date(Date.now() - 30 * 60 * 1000), fim: new Date(Date.now() - 25 * 60 * 1000), motivo: "Café" }
+    ]
+  }
+}, {
+  id: "5",
+  titulo: "Garçom para Almoço Executivo",
+  empresa: "Restaurante Italiano",
+  logoEmpresa: "🍝",
+  tipo: "freelance",
+  profissao: "Garçom",
+  descricao: "Atendimento para almoço executivo - Trabalho concluído",
+  atividades: ["Servir mesas", "Atendimento VIP", "Organização do salão"],
+  valorDiaria: 180.0,
+  valorTotal: 180.0,
+  taxaScalador: 18.0,
+  valorComTaxa: 198.0,
+  quantidadeFreelancers: 1,
+  localizacao: {
+    endereco: "CLS 104 Bloco A",
+    bairro: "Asa Sul",
+    cidade: "Brasília",
+    estado: "DF",
+    cep: "70340-510",
+    coordenadas: { lat: -15.8167, lng: -47.9333 }
+  },
+  data: "2025-12-17",
+  horarioEntrada: "11:00",
+  horarioSaida: "15:00",
+  vestimenta: "Camisa social branca, calça preta",
+  experienciaNecessaria: true,
+  beneficios: ["Alimentação", "Gorjeta"],
+  status: "em_andamento",
+  publicadoEm: new Date(Date.now() - 6 * 60 * 60 * 1000),
+  freelancerSelecionado: {
+    id: "f1",
+    nome: "João Silva",
+    foto: "👨",
+    rating: 4.8,
+    telefone: "(61) 98765-4321",
+    tempoEstimadoChegada: "Chegou",
+    checkIn: {
+      realizado: true,
+      horario: new Date(Date.now() - 4 * 60 * 60 * 1000),
+      localizacaoVerificada: true,
+      distanciaDoLocal: 8
+    },
+    checkOut: {
+      realizado: true,
+      horario: new Date()
+    },
+    horasTrabalhadas: 14400, // 4 horas
+    tempoPausado: 1800, // 30 minutos
+    pausas: [
+      { inicio: new Date(Date.now() - 2 * 60 * 60 * 1000), fim: new Date(Date.now() - 1.5 * 60 * 60 * 1000), motivo: "Almoço" }
     ]
   }
 }];
@@ -3193,14 +3247,101 @@ export default function EmpresaPortal() {
                   <MessageSquare className="w-4 h-4" /> Enviar Mensagem
                 </button>
                 <button onClick={() => {
+                  // Simular finalização com pagamento pendente
                   toast({
                     title: "Trabalho finalizado!",
-                    description: "O trabalho foi marcado como concluído. Faça a avaliação."
+                    description: "O trabalho foi marcado como concluído. Aprove o pagamento PIX."
                   });
                 }} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-scalador-blue text-white rounded-xl hover:bg-scalador-blue/90 font-bold transition-colors">
                   <CheckCircle className="w-4 h-4" /> Finalizar Trabalho
                 </button>
               </div>
+            </div>}
+
+          {/* SEÇÃO APROVAÇÃO DE PAGAMENTO PIX */}
+          {job.status === "em_andamento" && job.freelancerSelecionado?.checkOut?.realizado && <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-2xl p-6 mb-6 shadow-lg">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <QrCode className="w-7 h-7 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-lg">Aprovar Pagamento PIX</h3>
+                    <p className="text-sm text-gray-600">Trabalho concluído - Libere o pagamento</p>
+                  </div>
+                </div>
+                <Badge className="bg-amber-100 text-amber-700 px-3 py-1">
+                  Aguardando aprovação
+                </Badge>
+              </div>
+
+              {/* Resumo do Trabalho */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div className="bg-white rounded-xl p-4 border border-green-200">
+                  <p className="text-sm text-gray-600 mb-1">Freelancer</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">{job.freelancerSelecionado.foto}</span>
+                    <span className="font-bold text-gray-900">{job.freelancerSelecionado.nome}</span>
+                  </div>
+                </div>
+                <div className="bg-white rounded-xl p-4 border border-green-200">
+                  <p className="text-sm text-gray-600 mb-1">Horas Trabalhadas</p>
+                  <p className="text-2xl font-mono font-black text-green-600">
+                    {(() => {
+                      const segundos = job.freelancerSelecionado.horasTrabalhadas || 0;
+                      const h = Math.floor(segundos / 3600);
+                      const m = Math.floor((segundos % 3600) / 60);
+                      return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+                    })()}
+                  </p>
+                </div>
+                <div className="bg-white rounded-xl p-4 border border-green-200">
+                  <p className="text-sm text-gray-600 mb-1">Valor a Pagar</p>
+                  <p className="text-2xl font-black text-green-600">R$ {job.valorDiaria.toFixed(2)}</p>
+                </div>
+              </div>
+
+              {/* Chave PIX do Freelancer */}
+              <div className="bg-white rounded-xl p-4 border border-green-200 mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <QrCode className="w-5 h-5 text-green-600" />
+                  <span className="font-bold text-gray-900">Chave PIX do Freelancer</span>
+                </div>
+                <p className="font-mono text-lg text-green-700 bg-green-50 p-3 rounded-lg">
+                  joao.silva@email.com
+                </p>
+                <p className="text-xs text-gray-500 mt-2">Tipo: E-mail</p>
+              </div>
+
+              {/* Botões de Ação */}
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => {
+                    toast({
+                      title: "⚠️ Problema reportado",
+                      description: "Nossa equipe entrará em contato."
+                    });
+                  }}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-100 text-red-700 rounded-xl hover:bg-red-200 font-bold transition-colors"
+                >
+                  <AlertCircle className="w-4 h-4" /> Reportar Problema
+                </button>
+                <button 
+                  onClick={() => {
+                    toast({
+                      title: "✅ Pagamento Aprovado!",
+                      description: "PIX será enviado ao freelancer em até 24h."
+                    });
+                  }}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:shadow-lg hover:scale-[1.02] font-bold transition-all"
+                >
+                  <DollarSign className="w-4 h-4" /> Aprovar Pagamento PIX
+                </button>
+              </div>
+
+              <p className="text-xs text-green-600 mt-3 text-center">
+                💡 Ao aprovar, o valor será debitado do seu saldo e transferido via PIX ao freelancer
+              </p>
             </div>}
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

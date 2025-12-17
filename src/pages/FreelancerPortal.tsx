@@ -44,6 +44,10 @@ import {
   Pause,
   Coffee,
   ListChecks,
+  QrCode,
+  Banknote,
+  Edit,
+  Smartphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -334,11 +338,15 @@ const MINHAS_CANDIDATURAS: Candidatura[] = [
 ];
 
 const HISTORICO_PAGAMENTOS = [
-  { id: 1, data: "15/12/2025", empresa: "Restaurante Sabor & Arte", valor: 180, status: "Pago" },
-  { id: 2, data: "10/12/2025", empresa: "Hotel Grand Brasília", valor: 200, status: "Pago" },
-  { id: 3, data: "05/12/2025", empresa: "Buffet Elegance", valor: 300, status: "Pago" },
-  { id: 4, data: "01/12/2025", empresa: "Bar do João", valor: 220, status: "Pago" },
-  { id: 5, data: "28/11/2025", empresa: "Club VIP Brasília", valor: 250, status: "Pago" },
+  { id: 1, data: "15/12/2025", empresa: "Restaurante Sabor & Arte", valor: 180, status: "Pago", metodo: "PIX" },
+  { id: 2, data: "10/12/2025", empresa: "Hotel Grand Brasília", valor: 200, status: "Pago", metodo: "PIX" },
+  { id: 3, data: "05/12/2025", empresa: "Buffet Elegance", valor: 300, status: "Pago", metodo: "PIX" },
+  { id: 4, data: "01/12/2025", empresa: "Bar do João", valor: 220, status: "Pago", metodo: "PIX" },
+  { id: 5, data: "28/11/2025", empresa: "Club VIP Brasília", valor: 250, status: "Pago", metodo: "PIX" },
+];
+
+const PAGAMENTOS_PENDENTES = [
+  { id: "pp1", empresa: "Club Premium", vaga: "Bartender para Evento VIP", valor: 250, horasTrabalhadas: "01:30", status: "aguardando_aprovacao", data: new Date() },
 ];
 
 const BAIRROS_BRASILIA = [
@@ -418,6 +426,13 @@ const FreelancerPortal = () => {
   const [perfilProfissao, setPerfilProfissao] = useState("Garçom/Garçonete");
   const [perfilHabilidades, setPerfilHabilidades] = useState(["Atendimento ao cliente", "Inglês básico", "Trabalho em equipe", "Eventos corporativos"]);
   const [novaHabilidade, setNovaHabilidade] = useState("");
+
+  // PIX state
+  const [chavePix, setChavePix] = useState("joao.silva@email.com");
+  const [tipoChavePix, setTipoChavePix] = useState<"email" | "cpf" | "telefone" | "aleatoria">("email");
+  const [modalPixOpen, setModalPixOpen] = useState(false);
+  const [novaChavePix, setNovaChavePix] = useState("");
+  const [novoTipoChavePix, setNovoTipoChavePix] = useState<"email" | "cpf" | "telefone" | "aleatoria">("email");
 
   // Menu items
   const menuItems = [
@@ -1302,72 +1317,236 @@ const FreelancerPortal = () => {
     );
   };
 
-  const PaginaGanhos = () => (
-    <div className="space-y-6">
-      <div className="mb-8 text-center animate-fade-in">
-        <h2 className="text-3xl sm:text-5xl font-black mb-3">
-          <span className="bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">Meus Ganhos</span>
-        </h2>
-        <p className="text-gray-600 text-base sm:text-xl">Acompanhe seus recebimentos</p>
-      </div>
+  const PaginaGanhos = () => {
+    const salvarChavePix = () => {
+      if (!novaChavePix.trim()) {
+        toast({ title: "Erro", description: "Informe a chave PIX", variant: "destructive" });
+        return;
+      }
+      setChavePix(novaChavePix);
+      setTipoChavePix(novoTipoChavePix);
+      setModalPixOpen(false);
+      toast({ title: "✅ Chave PIX atualizada!", description: "Sua chave foi salva com sucesso" });
+    };
 
-      {/* Hero Card */}
-      <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-green-500/30">
-        <p className="text-lg opacity-90">Ganhos este mês</p>
-        <p className="text-4xl md:text-5xl font-black mt-2">R$ 2.450,00</p>
-        <p className="text-sm opacity-80 mt-2">💰 Pagamento direto após cada trabalho</p>
-      </div>
+    return (
+      <div className="space-y-6">
+        <div className="mb-8 text-center animate-fade-in">
+          <h2 className="text-3xl sm:text-5xl font-black mb-3">
+            <span className="bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">Meus Ganhos</span>
+          </h2>
+          <p className="text-gray-600 text-base sm:text-xl">Pagamento PIX diário após cada trabalho</p>
+        </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 text-center">
-          <p className="text-2xl font-black text-gray-900">12</p>
-          <p className="text-sm text-gray-600">Trabalhos</p>
+        {/* PIX Diário Banner */}
+        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-green-500/30 relative overflow-hidden">
+          <div className="absolute top-0 right-0 opacity-10">
+            <QrCode className="w-40 h-40" />
+          </div>
+          <div className="relative">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                <Banknote className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-lg font-bold">PIX Diário</p>
+                <p className="text-sm opacity-80">Pagamento em até 24h após trabalho</p>
+              </div>
+            </div>
+            <p className="text-lg opacity-90">Ganhos este mês</p>
+            <p className="text-4xl md:text-5xl font-black mt-2">R$ 2.450,00</p>
+          </div>
         </div>
-        <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 text-center">
-          <p className="text-2xl font-black text-gray-900">R$ 204</p>
-          <p className="text-sm text-gray-600">Média</p>
-        </div>
-        <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 text-center">
-          <p className="text-2xl font-black text-gray-900">95%</p>
-          <p className="text-sm text-gray-600">Comparecimento</p>
-        </div>
-        <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 text-center">
-          <p className="text-2xl font-black text-gray-900">4.8 ⭐</p>
-          <p className="text-sm text-gray-600">Avaliação</p>
-        </div>
-      </div>
 
-      {/* Payment History */}
-      <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-        <h2 className="text-lg font-bold text-gray-900 mb-4">Histórico de Pagamentos</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-2 text-sm font-semibold text-gray-600">Data</th>
-                <th className="text-left py-3 px-2 text-sm font-semibold text-gray-600">Empresa</th>
-                <th className="text-left py-3 px-2 text-sm font-semibold text-gray-600">Valor</th>
-                <th className="text-left py-3 px-2 text-sm font-semibold text-gray-600">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {HISTORICO_PAGAMENTOS.map((p) => (
-                <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-3 px-2 text-sm text-gray-600">{p.data}</td>
-                  <td className="py-3 px-2 text-sm font-medium text-gray-900">{p.empresa}</td>
-                  <td className="py-3 px-2 text-sm font-bold text-green-600">R$ {p.valor}</td>
-                  <td className="py-3 px-2">
-                    <Badge className="bg-green-100 text-green-700">{p.status}</Badge>
-                  </td>
-                </tr>
+        {/* Chave PIX Configurada */}
+        <div className="bg-white rounded-2xl p-6 shadow-lg border-2 border-green-200">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <QrCode className="w-5 h-5 text-green-600" />
+              Sua Chave PIX
+            </h3>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                setNovaChavePix(chavePix);
+                setNovoTipoChavePix(tipoChavePix);
+                setModalPixOpen(true);
+              }}
+              className="border-green-300 text-green-600 hover:bg-green-50"
+            >
+              <Edit className="w-4 h-4 mr-1" />
+              Editar
+            </Button>
+          </div>
+          <div className="p-4 bg-green-50 rounded-xl border border-green-200">
+            <p className="text-sm text-gray-600 mb-1">Tipo: {tipoChavePix.charAt(0).toUpperCase() + tipoChavePix.slice(1)}</p>
+            <p className="text-xl font-mono font-bold text-green-700">{chavePix}</p>
+          </div>
+          <p className="text-xs text-gray-500 mt-3 flex items-center gap-1">
+            <CheckCircle className="w-3 h-3 text-green-500" />
+            Pagamentos serão enviados automaticamente para esta chave
+          </p>
+        </div>
+
+        {/* Pagamentos Pendentes */}
+        {PAGAMENTOS_PENDENTES.length > 0 && (
+          <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl p-6 shadow-lg border-2 border-amber-200">
+            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Clock className="w-5 h-5 text-amber-600" />
+              Pagamentos Pendentes
+            </h3>
+            <div className="space-y-3">
+              {PAGAMENTOS_PENDENTES.map((p) => (
+                <div key={p.id} className="bg-white rounded-xl p-4 border border-amber-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-bold text-gray-900">{p.empresa}</p>
+                      <p className="text-sm text-gray-600">{p.vaga}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        ⏱️ Horas trabalhadas: {p.horasTrabalhadas}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-black text-amber-600">R$ {p.valor.toFixed(2)}</p>
+                      <Badge className="bg-amber-100 text-amber-700 mt-1">
+                        {p.status === "aguardando_aprovacao" ? "Aguardando aprovação" : "Processando"}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+            <p className="text-xs text-amber-600 mt-3">
+              💡 Após a empresa aprovar, o PIX será enviado em até 24h
+            </p>
+          </div>
+        )}
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 text-center">
+            <p className="text-2xl font-black text-gray-900">12</p>
+            <p className="text-sm text-gray-600">Trabalhos</p>
+          </div>
+          <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 text-center">
+            <p className="text-2xl font-black text-gray-900">R$ 204</p>
+            <p className="text-sm text-gray-600">Média</p>
+          </div>
+          <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 text-center">
+            <p className="text-2xl font-black text-green-600">100%</p>
+            <p className="text-sm text-gray-600">Taxa Pagamento</p>
+          </div>
+          <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 text-center">
+            <p className="text-2xl font-black text-gray-900">&lt;24h</p>
+            <p className="text-sm text-gray-600">Tempo Médio</p>
+          </div>
         </div>
+
+        {/* Payment History */}
+        <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <ListChecks className="w-5 h-5 text-green-600" />
+            Histórico de Pagamentos PIX
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-2 text-sm font-semibold text-gray-600">Data</th>
+                  <th className="text-left py-3 px-2 text-sm font-semibold text-gray-600">Empresa</th>
+                  <th className="text-left py-3 px-2 text-sm font-semibold text-gray-600">Valor</th>
+                  <th className="text-left py-3 px-2 text-sm font-semibold text-gray-600">Método</th>
+                  <th className="text-left py-3 px-2 text-sm font-semibold text-gray-600">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {HISTORICO_PAGAMENTOS.map((p) => (
+                  <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-3 px-2 text-sm text-gray-600">{p.data}</td>
+                    <td className="py-3 px-2 text-sm font-medium text-gray-900">{p.empresa}</td>
+                    <td className="py-3 px-2 text-sm font-bold text-green-600">R$ {p.valor}</td>
+                    <td className="py-3 px-2">
+                      <Badge className="bg-green-100 text-green-700">
+                        <QrCode className="w-3 h-3 mr-1" />
+                        {p.metodo}
+                      </Badge>
+                    </td>
+                    <td className="py-3 px-2">
+                      <Badge className="bg-green-100 text-green-700">{p.status}</Badge>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Modal para editar chave PIX */}
+        <Dialog open={modalPixOpen} onOpenChange={setModalPixOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <QrCode className="w-5 h-5 text-green-600" />
+                Configurar Chave PIX
+              </DialogTitle>
+              <DialogDescription>
+                Configure sua chave PIX para receber pagamentos diários.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label>Tipo de Chave</Label>
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  {[
+                    { value: "email", label: "E-mail", icon: Mail },
+                    { value: "cpf", label: "CPF", icon: User },
+                    { value: "telefone", label: "Telefone", icon: Smartphone },
+                    { value: "aleatoria", label: "Aleatória", icon: QrCode },
+                  ].map((tipo) => (
+                    <Button
+                      key={tipo.value}
+                      variant="outline"
+                      className={`flex items-center gap-2 ${novoTipoChavePix === tipo.value ? "border-green-500 bg-green-50" : ""}`}
+                      onClick={() => setNovoTipoChavePix(tipo.value as any)}
+                    >
+                      <tipo.icon className="w-4 h-4" />
+                      {tipo.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label>Chave PIX</Label>
+                <Input
+                  placeholder={
+                    novoTipoChavePix === "email" ? "seu@email.com" :
+                    novoTipoChavePix === "cpf" ? "000.000.000-00" :
+                    novoTipoChavePix === "telefone" ? "(00) 00000-0000" :
+                    "Chave aleatória"
+                  }
+                  value={novaChavePix}
+                  onChange={(e) => setNovaChavePix(e.target.value)}
+                  className="mt-2"
+                />
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setModalPixOpen(false)} className="flex-1">
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={salvarChavePix}
+                  className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600"
+                >
+                  Salvar Chave
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
-    </div>
-  );
+    );
+  };
 
   const PaginaPerfil = () => (
     <div className="space-y-6">
