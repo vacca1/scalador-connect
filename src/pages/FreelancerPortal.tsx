@@ -1728,6 +1728,103 @@ const FreelancerPortal = () => {
         </div>
       </div>
 
+      {/* Histórico de Avaliações */}
+      <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+        <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <MessageSquare className="w-5 h-5 text-amber-500" />
+          Histórico de Avaliações
+        </h2>
+        <p className="text-sm text-gray-500 mb-6">Comentários das empresas</p>
+        
+        <div className="space-y-4">
+          {[
+            {
+              empresa: "Coco Bambu",
+              logoEmpresa: "🍽️",
+              data: "12/12/2024",
+              trabalho: "Garçom - Evento Corporativo",
+              nota: 5.0,
+              comentario: "Excelente profissional! Muito pontual, educado e proativo. Recomendo fortemente para qualquer evento.",
+              criterios: { pontualidade: 5, qualidade: 5, comunicacao: 5, profissionalismo: 5, apresentacao: 5 }
+            },
+            {
+              empresa: "Restaurante Villa Carioca",
+              logoEmpresa: "🏠",
+              data: "08/12/2024",
+              trabalho: "Garçom - Jantar VIP",
+              nota: 4.8,
+              comentario: "Muito bom atendimento. Profissional atencioso e dedicado. Pequena demora em alguns momentos, mas nada crítico.",
+              criterios: { pontualidade: 5, qualidade: 4.5, comunicacao: 5, profissionalismo: 5, apresentacao: 4.5 }
+            },
+            {
+              empresa: "D'Burger Premium",
+              logoEmpresa: "🍔",
+              data: "01/12/2024",
+              trabalho: "Atendente - Inauguração",
+              nota: 4.6,
+              comentario: "Bom trabalho durante a inauguração. Poderia melhorar um pouco na comunicação com a equipe, mas entregou bem.",
+              criterios: { pontualidade: 4.5, qualidade: 5, comunicacao: 4, profissionalismo: 5, apresentacao: 4.5 }
+            },
+            {
+              empresa: "Hotel Alpinus",
+              logoEmpresa: "🏨",
+              data: "25/11/2024",
+              trabalho: "Garçom - Café da Manhã",
+              nota: 4.9,
+              comentario: "Profissional exemplar! Chegou antes do horário, uniforme impecável e ótimo atendimento aos hóspedes.",
+              criterios: { pontualidade: 5, qualidade: 5, comunicacao: 4.5, profissionalismo: 5, apresentacao: 5 }
+            }
+          ].map((avaliacao, index) => (
+            <div key={index} className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center text-xl shrink-0">
+                  {avaliacao.logoEmpresa}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <h4 className="font-bold text-gray-900">{avaliacao.empresa}</h4>
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                      <span className="font-bold text-amber-600">{avaliacao.nota.toFixed(1)}</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 mb-2">{avaliacao.trabalho} • {avaliacao.data}</p>
+                  
+                  {/* Comentário */}
+                  <div className="bg-gray-50 rounded-lg p-3 mb-3">
+                    <p className="text-sm text-gray-700 italic">"{avaliacao.comentario}"</p>
+                  </div>
+                  
+                  {/* Mini critérios */}
+                  <div className="flex flex-wrap gap-2">
+                    <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full flex items-center gap-1">
+                      ⏰ {avaliacao.criterios.pontualidade.toFixed(1)}
+                    </span>
+                    <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full flex items-center gap-1">
+                      ⭐ {avaliacao.criterios.qualidade.toFixed(1)}
+                    </span>
+                    <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full flex items-center gap-1">
+                      💬 {avaliacao.criterios.comunicacao.toFixed(1)}
+                    </span>
+                    <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full flex items-center gap-1">
+                      👔 {avaliacao.criterios.profissionalismo.toFixed(1)}
+                    </span>
+                    <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full flex items-center gap-1">
+                      ✨ {avaliacao.criterios.apresentacao.toFixed(1)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Ver mais */}
+        <Button variant="outline" className="w-full mt-4 border-amber-300 text-amber-600 hover:bg-amber-50">
+          Ver todas as avaliações
+        </Button>
+      </div>
+
       {/* Save Button */}
       <Button
         onClick={() => toast({ title: "Perfil atualizado!", description: "Suas informações foram salvas com sucesso" })}
